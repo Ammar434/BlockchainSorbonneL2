@@ -1,5 +1,5 @@
 #include "primalite.h"
-
+//
 int is_prime_naive(long p)
 {
     if (p % 2 == 0)
