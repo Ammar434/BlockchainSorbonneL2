@@ -1,41 +1,106 @@
 #include "primalite.h"
-//
+
+// Exercice 1
+
+// Question 1.1
 int is_prime_naive(long p)
 {
-    if (p % 2 == 0)
+    if ((p == 0) || (p == 1))
     {
         return 1;
     }
-
-    for (int i = 0; i < p; i++)
+    else
     {
-        if (p % i == 0)
+        for (int i = 3; i < p; i++)
         {
-            return 1;
+            if (p % i == 0)
+            {
+                return 0;
+            }
         }
+        return 1;
     }
-    return 0;
 }
 
+// Question 1.2
+void test_q_1_2()
+{
+    clock_t ti, tf;
+    double temps;
+    int p = 3;
+    while (is_prime_naive(p) == 0 || temps < 0.002)
+    {
+        ti = clock();
+        is_prime_naive(p);
+        tf = clock();
+        temps = (double)(tf - ti) / CLOCKS_PER_SEC;
+        p = p + 2;
+    }
+    printf("%d\n", p);
+    printf("%d\n", is_prime_naive(p));
+    return;
+}
+
+// Question 1.3
 long modpow_naive(long a, long m, long n)
 {
     long res = 1;
-    for (int i = 0; i < m; i++)
+    for (int i = 1; i <= m; i++)
     {
         res = res * a;
+        res = res % n;
     }
-    res = res % n;
     return res;
 }
+
+// Question 1.4
 long modpow(long a, long m, long n)
 {
-    long res = 1;
-    for (int i = 0; i < m; i++)
+    if (m == 0)
     {
-        res = (res * res) % n;
+        return a % n;
     }
-    return res;
+    if (m % 2 == 0)
+    {
+        long b = modpow(a, m / 2, n);
+        return b * b % n;
+    }
+    else
+    {
+        long b = modpow(a, m / 2, n);
+        return a * b * b % n;
+    }
 }
+
+// Question 1.5
+void test_q_1_5()
+{
+    FILE *f = fopen("q1_5.txt", "w");
+    if (f == NULL)
+    {
+        printf("Erreur lors de l'ouverture du fichier\n");
+        return;
+    }
+    clock_t ti, tf;
+    double temps_naive, temps;
+    for (int i = 1; i <= 10000; i++)
+    {
+        ti = clock();
+        modpow_naive(5, i, 3);
+        tf = clock();
+        temps_naive = ((double)(tf - ti)) / CLOCKS_PER_SEC;
+
+        ti = clock();
+        modpow(5, i, 3);
+        tf = clock();
+
+        temps = ((double)(tf - ti)) / CLOCKS_PER_SEC;
+        fprintf(f, "%d %f %f\n", i, temps_naive, temps);
+    }
+    fclose(f);
+}
+
+// Question 1.6
 int witness(long a, long b, long d, long p)
 {
     long x = modpow(a, d, p);
@@ -77,7 +142,7 @@ int is_prime_miller(long p, int k)
         d = d / 2;
         b = b + 1;
     }
-    // On genere k valeurs pour a, et on teste si c’est un temoin :
+    // On genere k reseurs pour a, et on teste si c’est un temoin :
     long a;
     int i;
     for (i = 0; i < k; i++)
@@ -89,4 +154,104 @@ int is_prime_miller(long p, int k)
         }
     }
     return 1;
+}
+
+// Question 1.8 à rechecker
+long power(long a, long b)
+{
+    long cpt = 1;
+    for (int i = 0; i <= b; i++)
+    {
+        cpt = cpt * a;
+    }
+    return cpt;
+}
+
+long random_prime_number(int low_size, int up_size, int k)
+{
+    long l = (long)(power(2, low_size - 1));
+    long u = (long)(power(2, up_size) - 1);
+    long s = rand_long(l, u);
+
+    while (is_prime_miller(s, k) == 0)
+    {
+        s = rand_long(l, u);
+    }
+    if (is_prime_naive(s) == 0)
+    {
+        printf("nombre non premier\n");
+    }
+    return s;
+}
+
+// Exercice 2
+
+// Question 2.1
+long extended_gcd(long s, long t, long *u, long *v)
+{
+    if (s == 0)
+    {
+        *u = 0;
+        *v = 1;
+        return t;
+    }
+    long uPrim, vPrim;
+    long gcd = extended_gcd(t % s, s, &uPrim, &vPrim);
+    *u = vPrim - (t / s) * uPrim;
+    *v = uPrim;
+    return gcd;
+}
+
+void generate_key_values(long p, long q, long *n, long *s, long *u)
+{
+    *n = p * q;
+    long t = (p - 1) * (q - 1);
+    *s = rand_long(2, t);
+    long v;
+    printf("avant la boucle\n");
+    while (extended_gcd(*s, t, u, &v) != 1)
+    {
+        *s = rand_long(2, t);
+    }
+    return;
+}
+
+// Question 2.2
+long *encrypt(char *chaine, long s, long n)
+{
+    int i = 0;
+    long *tab = (long *)malloc(sizeof(long) * strlen(chaine));
+    while (chaine[i] != '\0')
+    {
+        int ptr = (int)(chaine[i]);
+        long v = (long)ptr;
+        tab[i] = modpow(v, s, n);
+        i++;
+    }
+    return tab;
+}
+
+// Question 2.3 à rechecker
+char *decrypt(long *crypted, int size, long u, long n)
+{
+    int i;
+    char *tab = (char *)malloc(sizeof(char) * size + 1);
+    ;
+    for (i = 0; i < size; i++)
+    {
+        tab[i] = (char)modpow(crypted[i], u, n);
+    }
+    tab[size] = '\0';
+    return tab;
+}
+
+// Fonction de test
+void print_long_vector(long *result, int size)
+{
+    printf("Vector: [");
+    for (int i = 0; i < size; i++)
+    {
+        printf("%ld \t", result[i]);
+    }
+    printf("]\n");
 }
