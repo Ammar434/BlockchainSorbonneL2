@@ -302,7 +302,9 @@ char *key_to_str(Key *key)
     return str;
 }
 
-// char *str_to_key(Key *key)
-// {
-//     char *str = "%l,%l";
-// }
+Key *str_to_key(char *str)
+{
+    Key *key = malloc(sizeof(Key));
+    sscanf(str, "(%ld,%ld)", &(key->a), &(key->b));
+    return key;
+}

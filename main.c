@@ -51,5 +51,10 @@ int main()
     k->b = 121213131232112;
     // char *test = key_to_str(k);
     // printf("%s\n", test);
+
+    Key *test = str_to_key("(133202,76876)");
+    printf("%ld\n", test->a);
+    printf("%ld\n", test->b);
+
     return 0;
 }
