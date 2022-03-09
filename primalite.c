@@ -280,20 +280,25 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
         &(sKey->a));
 }
 
+int getLenNum(long a)
+{
+    int i = 1;
+    while (a / 10 != 0)
+    {
+        a = a / 10;
+        i++;
+    }
+    return i;
+}
+
 // Question 3.4
 char *key_to_str(Key *key)
 {
     int len;
     char *str;
-    int i = log10(key->a) + 1;
-    int j = log10(key->b) + 1;
-    len = i + 1 + j + 1;
+    len = getLenNum(key->a) + 1 + getLenNum(key->b) + 2;
     str = malloc(sizeof(char) * len);
-    ltoa(key->a, str, 10);
-    str = str + i;
-    str[i + 1] = ',';
-    ltoa(key->b, str, 10);
-    str[len] = '\0';
+    sprintf(str, "(%lx,%lx)", key->a, key->b);
     return str;
 }
 
