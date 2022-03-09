@@ -58,8 +58,14 @@ long modpow(long a, long m, long n)
 {
     if (m == 0)
     {
+        return 1;
+    }
+
+    if (m == 1)
+    {
         return a % n;
     }
+
     if (m % 2 == 0)
     {
         long b = modpow(a, m / 2, n);
@@ -255,3 +261,43 @@ void print_long_vector(long *result, int size)
     }
     printf("]\n");
 }
+
+// Question 3.2
+void init_key(Key *key, long val, long n)
+{
+    key->a = val;
+    key->b = n;
+}
+
+// Question 3.3
+void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
+{
+    generate_key_values(
+        random_prime_number(low_size, up_size, 5000),
+        random_prime_number(low_size, up_size, 5000),
+        &(pKey->b),
+        &(pKey->a),
+        &(sKey->a));
+}
+
+// Question 3.4
+char *key_to_str(Key *key)
+{
+    int len;
+    char *str;
+    int i = log10(key->a) + 1;
+    int j = log10(key->b) + 1;
+    len = i + 1 + j + 1;
+    str = malloc(sizeof(char) * len);
+    ltoa(key->a, str, 10);
+    str = str + i;
+    str[i + 1] = ',';
+    ltoa(key->b, str, 10);
+    str[len] = '\0';
+    return str;
+}
+
+// char *str_to_key(Key *key)
+// {
+//     char *str = "%l,%l";
+// }

@@ -6,7 +6,7 @@ PROGRAMS = main
 
 all: $(PROGRAMS)
 
-main: main.o  primalite.o
+main: main.o  primalite.o 
 	$(CC) -o $@ $(CFLAGS) $^
 
 main.o: main.c
