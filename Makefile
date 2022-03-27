@@ -6,14 +6,22 @@ PROGRAMS = main
 
 all: $(PROGRAMS)
 
-main: main.o  primalite.o 
+main: main.o  partie1.o 
 	$(CC) -o $@ $(CFLAGS) $^
 
 main.o: main.c
 	$(CC) -c $(CFLAGS) main.c
 
-primalite.o: primalite.c
-	$(CC) -c $(CFLAGS) primalite.c
+jeuDeTest: jeuDeTest.o  partie1.o partie2.o -lm
+	$(CC) -o $@ $(CFLAGS) $^
 
+jeuDeTest.o: jeuDeTest.c
+	$(CC) -c $(CFLAGS) jeuDeTest.c 
+	
+partie1.o: partie1.c
+	$(CC) -c $(CFLAGS) partie1.c
+
+partie2.o: partie2.c
+	$(CC) -c  $(CFLAGS) partie2.c 
 clean:
 	rm -f *.o *~ $(PROGRAMS)
