@@ -1,48 +1,5 @@
 #include "partie2.h"
 
-// Question 2.1
-void generate_key_values(long p, long q, long *n, long *s, long *u)
-{
-    *n = p * q;
-    long t = (p - 1) * (q - 1);
-    *s = rand_long(2, t);
-    long v;
-    while (extended_gcd(*s, t, u, &v) != 1)
-    {
-        *s = rand_long(2, t);
-    }
-    // printf("Clé publique : %lx %lx \n", *s, *n);
-    // printf("Clé secrete : %lx %lx \n", *u, *n);
-}
-// Question 2.2
-long *encrypt(char *chaine, long s, long n)
-{
-    int i = 0;
-    long m = 0;
-    long *tab = (long *)malloc(sizeof(long) * strlen(chaine));
-    while (chaine[i] != '\0')
-    {
-        int tmp = chaine[i];
-        m = (long)(tmp);
-        tab[i] = modpow(m, s, n);
-        i++;
-    }
-
-    return tab;
-}
-
-// Question 2.3 à rechecker
-char *decrypt(long *crypted, int size, long u, long n)
-{
-    char *tab = (char *)malloc(sizeof(char) * size + 1);
-    for (int i = 0; i < size; i++)
-    {
-        tab[i] = modpow(crypted[i], u, n);
-    }
-    tab[size] = '\0';
-    return tab;
-}
-
 void print_long_vector(long *result, int size)
 {
     printf("Vector: [");

@@ -168,12 +168,12 @@ long power(long a, long b)
 
 long random_prime_number(int low_size, int up_size, int k)
 {
-    long res = rand_long(expo(2, (low_size - 1)), (expo(2, up_size) - 1));
+    long res = rand_long(power(2, (low_size - 1)), (power(2, up_size) - 1));
     int tmp = is_prime_miller(res, k);
 
-    while (tmp == NULL)
+    while (tmp == 0)
     {
-        res = rand_long(expo(2, (low_size - 1)), (expo(2, up_size) - 1));
+        res = rand_long(power(2, (low_size - 1)), (power(2, up_size) - 1));
         tmp = is_prime_miller(res, k);
     }
     return res;
@@ -196,7 +196,56 @@ long extended_gcd(long s, long t, long *u, long *v)
     return gcd;
 }
 
-int main()
+// Question 2.1
+void generate_key_values(long p, long q, long *n, long *s, long *u)
 {
-    return 0;
+    *n = p * q;
+    long t = (p - 1) * (q - 1);
+    *s = rand_long(2, t);
+    long v;
+    while (extended_gcd(*s, t, u, &v) != 1)
+    {
+        *s = rand_long(2, t);
+    }
+    // printf("Clé publique : %lx %lx \n", *s, *n);
+    // printf("Clé secrete : %lx %lx \n", *u, *n);
+}
+
+// Question 2.2
+long *encrypt(char *chaine, long s, long n)
+{
+    int i = 0;
+    long *tab = (long *)malloc(sizeof(long) * strlen(chaine));
+    while (chaine[i] != '\0')
+    {
+        tab[i] = modpow((int)chaine[i], s, n);
+        i++;
+    }
+    return tab;
+}
+
+// Question 2.3
+char *decrypt(long *crypted, int size, long u, long n)
+{
+    char *tab = (char *)malloc(sizeof(char) * size + 1);
+    assert(tab);
+    for (int i = 0; i < size; i++)
+    {
+        tab[i] = (char)modpow(crypted[i], u, n);
+    }
+    tab[size] = '\0';
+    return tab;
+}
+
+void print_long_vector(long *result, int size)
+{
+    printf("Vector: [");
+    for (int i = 0; i < size; i++)
+    {
+        if (i < size - 1)
+            printf("%lx\t", result[i]);
+        else
+            printf("%lx", result[i]);
+    }
+    printf("]\n");
 }
