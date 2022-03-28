@@ -1,7 +1,8 @@
-#include "primalite.h"
+#include "partie1.h"
 
 int main()
 {
+    // test1
     // // POUR EXO1
     // // calcul_1();
     // /*calcul_2();
