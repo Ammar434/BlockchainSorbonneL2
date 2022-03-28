@@ -34,4 +34,6 @@ Signature *str_to_signature(char *str);
 Protected *init_protected(Key *pKey, char *mess, Signature *sgn);
 char *protected_to_str(Protected *protected);
 Protected *str_to_protected(char *str);
+int verify(Protected *pr);
+
 #endif // PARTIE2_H

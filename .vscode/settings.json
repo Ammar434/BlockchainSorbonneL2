@@ -1,0 +1,7 @@
+{
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+        "partie1.h": "c",
+        "partie2.h": "c"
+    }
+}

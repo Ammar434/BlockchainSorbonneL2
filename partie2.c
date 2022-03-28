@@ -6,6 +6,7 @@ void init_key(Key *key, long val, long n)
     key->b = n;
 }
 
+// Question 3.3
 void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
 {
     long p = random_prime_number(low_size, up_size, 5000);
@@ -17,6 +18,7 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
     sKey->b = pKey->b;
 }
 
+// Question 3.4
 char *key_to_str(Key *key)
 {
     int len;
@@ -41,26 +43,21 @@ int getLenNum(long a)
     return floor(log10(labs(a))) + 1;
 }
 
+// Question 3.6
 Signature *init_signature(long *content, int size)
 {
-    Signature *signature = malloc(sizeof(Signature));
-    signature->tab = malloc(sizeof(long) * size);
+    Signature *signature = (Signature *)malloc(sizeof(Signature));
+    signature->tab = content;
     signature->size = size;
-    for (int i = 0; i < size; i++)
-    {
-        signature->tab[i] = content[i];
-    }
     return signature;
 }
 
+// Question 3.7
 Signature *sign(char *mess, Key *sKey)
 {
-    Signature *signature = malloc(sizeof(Signature));
-    signature->tab = malloc(sizeof(long) * strlen(mess));
-    signature->size = strlen(mess);
-
-    signature->tab = encrypt(mess, sKey->a, sKey->b);
-    return signature;
+    long *content = encrypt(mess, sKey->a, sKey->b);
+    int size = strlen(mess);
+    return init_signature(content, size);
 }
 
 char *signature_to_str(Signature *sgn)
@@ -146,6 +143,7 @@ char *protected_to_str(Protected *protected)
     char *sgn_str = signature_to_str(protected->signature);
     int len = strlen(key_str) + strlen(sgn_str) + strlen(protected->message) + 3;
     char *mess_str = malloc(len * sizeof(char));
+
     while (key_str[j] != '\0')
     {
         mess_str[i] = key_str[i];

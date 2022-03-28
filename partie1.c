@@ -207,8 +207,6 @@ void generate_key_values(long p, long q, long *n, long *s, long *u)
     {
         *s = rand_long(2, t);
     }
-    // printf("Clé publique : %lx %lx \n", *s, *n);
-    // printf("Clé secrete : %lx %lx \n", *u, *n);
 }
 
 // Question 2.2

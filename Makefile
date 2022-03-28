@@ -6,14 +6,12 @@ PROGRAMS = main
 
 all: $(PROGRAMS)
 
-main: main.o  partie1.o 
+main: main.o  partie1.o partie2.o partie3.o jeuDeTest.o -lm
 	$(CC) -o $@ $(CFLAGS) $^
 
 main.o: main.c
 	$(CC) -c $(CFLAGS) main.c
 
-jeuDeTest: jeuDeTest.o  partie1.o partie2.o partie3.o -lm
-	$(CC) -o $@ $(CFLAGS) $^
 
 jeuDeTest.o: jeuDeTest.c
 	$(CC) -c $(CFLAGS) jeuDeTest.c 
