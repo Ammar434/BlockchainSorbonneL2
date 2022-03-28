@@ -1,15 +1,4 @@
 #include "partie2.h"
-
-void print_long_vector(long *result, int size)
-{
-    printf("Vector: [");
-    for (int i = 0; i < size; i++)
-    {
-        printf(" %lx ", result[i]);
-    }
-    printf("]\n");
-}
-
 // Question 3.2
 void init_key(Key *key, long val, long n)
 {
@@ -103,6 +92,7 @@ Signature *str_to_signature(char *str)
     int num = 0;
     char buffer[256];
     int pos = 0;
+    long unsigned int *a = ((long unsigned int *)(&(content[num])));
     for (int i = 0; i < len; i++)
     {
         if (str[i] != '#')
@@ -115,7 +105,7 @@ Signature *str_to_signature(char *str)
             if (pos != 0)
             {
                 buffer[pos] = '\0';
-                sscanf(buffer, "%lx", &(content[num]));
+                sscanf(buffer, "%lx", a);
                 num = num + 1;
                 pos = 0;
             }

@@ -1,6 +1,7 @@
 #ifndef PARTIE2_H
 #define PARTIE2_H
 #include "partie1.h"
+#define BUFFER_SIZE 1024
 
 typedef struct _key
 {
