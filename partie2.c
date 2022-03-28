@@ -1,21 +1,5 @@
 #include "partie2.h"
 
-// Exercice 2
-// version r´ecursive de l’algorithme d’Euclide etendu
-long extended_gcd(long s, long t, long *u, long *v)
-{
-    if (s == 0)
-    {
-        *u = 0;
-        *v = 1;
-        return t;
-    }
-    long uPrim, vPrim;
-    long gcd = extended_gcd(t % s, s, &uPrim, &vPrim);
-    *u = vPrim - (t / s) * uPrim;
-    *v = uPrim;
-    return gcd;
-}
 // Question 2.1
 void generate_key_values(long p, long q, long *n, long *s, long *u)
 {

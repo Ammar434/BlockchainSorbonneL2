@@ -9,12 +9,10 @@ int is_prime_naive(long p)
     }
     else
     {
-        for (int i = 3; i < p; i++)
+        for (int i = 2; i <= (p / 2); i++)
         {
             if (p % i == 0)
-            {
                 return 0;
-            }
         }
         return 1;
     }
@@ -42,37 +40,34 @@ void test_q_1_2()
 // Question 1.3
 long modpow_naive(long a, long m, long n)
 {
-    long res = 1;
-    for (int i = 1; i <= m; i++)
+    long val = 1;
+    if (m == 0)
     {
-        res = res * a;
-        res = res % n;
+        return a % n;
     }
-    return res;
+    for (int i = 0; i < m; i++)
+    {
+        val = ((val * a) % n);
+    }
+    return val;
 }
 
 // Question 1.4
 long modpow(long a, long m, long n)
 {
-    if (m == 0)
-    {
-        return 1;
-    }
-
     if (m == 1)
     {
         return a % n;
     }
+    long x = modpow(a, m / 2, n);
 
-    if (m % 2 == 0)
+    if (m & 1)
     {
-        long b = modpow(a, m / 2, n);
-        return b * b % n;
+        return (a * x * x) % n;
     }
     else
     {
-        long b = modpow(a, m / 2, n);
-        return a * b * b % n;
+        return (x * x) % n;
     }
 }
 
@@ -173,17 +168,35 @@ long power(long a, long b)
 
 long random_prime_number(int low_size, int up_size, int k)
 {
-    long l = (long)(power(2, low_size - 1));
-    long u = (long)(power(2, up_size) - 1);
-    long s = rand_long(l, u);
+    long res = rand_long(expo(2, (low_size - 1)), (expo(2, up_size) - 1));
+    int tmp = is_prime_miller(res, k);
 
-    while (is_prime_miller(s, k) == 0)
+    while (tmp == NULL)
     {
-        s = rand_long(l, u);
+        res = rand_long(expo(2, (low_size - 1)), (expo(2, up_size) - 1));
+        tmp = is_prime_miller(res, k);
     }
-    if (is_prime_naive(s) == 0)
+    return res;
+}
+
+// Exercice 2
+// version récursive de l’algorithme d’Euclide etendu
+long extended_gcd(long s, long t, long *u, long *v)
+{
+    if (s == 0)
     {
-        printf("nombre non premier\n");
+        *u = 0;
+        *v = 1;
+        return t;
     }
-    return s;
+    long uPrim, vPrim;
+    long gcd = extended_gcd(t % s, s, &uPrim, &vPrim);
+    *u = vPrim - (t / s) * uPrim;
+    *v = uPrim;
+    return gcd;
+}
+
+int main()
+{
+    return 0;
 }
