@@ -1,5 +1,8 @@
 #include "partie3.h"
 
+// Exercice 5
+
+// Question 5.1
 CellKey *create_cell_key(Key *key)
 {
     CellKey *cell = malloc(sizeof(CellKey));
@@ -8,6 +11,7 @@ CellKey *create_cell_key(Key *key)
     return cell;
 }
 
+// Question 5.2
 CellKey *add_key_to_head(CellKey *cellKey, Key *key)
 {
     CellKey *newCell = create_cell_key(key);
@@ -16,6 +20,7 @@ CellKey *add_key_to_head(CellKey *cellKey, Key *key)
     return cellKey;
 }
 
+// Question 5.3
 CellKey *read_public_keys(char *filename)
 {
     CellKey *cell = NULL;
@@ -43,6 +48,7 @@ CellKey *read_public_keys(char *filename)
     return cell;
 }
 
+// Question 5.4
 void print_list_keys(CellKey *LCK)
 {
     if (!LCK)
@@ -55,6 +61,7 @@ void print_list_keys(CellKey *LCK)
     }
 }
 
+// Question 5.5
 void delete_cell_key(CellKey *c)
 {
     free(c->key);
@@ -72,6 +79,7 @@ void delete_list_keys(CellKey *c)
     }
 }
 
+// Question 5.6
 CellProtected *create_cell_protected(Protected *pr)
 {
     CellProtected *cell = (CellProtected *)malloc(sizeof(CellProtected));
@@ -80,6 +88,7 @@ CellProtected *create_cell_protected(Protected *pr)
     return cell;
 }
 
+// Question 5.7
 CellProtected *add_cell_prototected_to_head(CellProtected *cellProtected, Protected *pr)
 {
     CellProtected *new = create_cell_protected(pr);
@@ -88,6 +97,7 @@ CellProtected *add_cell_prototected_to_head(CellProtected *cellProtected, Protec
     return cellProtected;
 }
 
+// Question 5.8
 CellProtected *read_protected_from_file(char *filename)
 {
     CellProtected *cell = NULL;
@@ -117,6 +127,7 @@ CellProtected *read_protected_from_file(char *filename)
     return cell;
 }
 
+// Question 5.9
 void print_list_protected(CellProtected *cellProtected)
 {
     if (!cellProtected)
@@ -129,6 +140,7 @@ void print_list_protected(CellProtected *cellProtected)
     }
 }
 
+// Question 5.10
 void delete_cell_protect(CellProtected *cp)
 {
     free(cp->data);
@@ -146,6 +158,9 @@ void delete_list_protected(CellProtected *c)
     }
 }
 
+// Exercice 6
+
+// Question 6.1
 // CellProtected *supprimer_fausse_signature(CellProtected *cellProtected)
 // {
 //     CellProtected *tmp = cellProtected;

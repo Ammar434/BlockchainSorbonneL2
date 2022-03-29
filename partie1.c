@@ -72,31 +72,45 @@ long modpow(long a, long m, long n)
 }
 
 // Question 1.5
-void test_q_1_5()
+void generer_data_modpow_naive()
 {
-    FILE *f = fopen("q1_5.txt", "w");
-    if (f == NULL)
+    clock_t temps_initial;
+    clock_t temps_final;
+    float temps_cpu;
+    FILE *file = fopen("courbe_donnee/generer_data_modpow_naive.txt", "w");
+    long a, k, n;
+    a = rand_long(3, 7);
+    n = rand_long(3, 7);
+    for (int m = 1; m < 50000; m++)
     {
-        printf("Erreur lors de l'ouverture du fichier\n");
-        return;
+        temps_initial = clock();
+        k = modpow_naive(a, m, n);
+        temps_final = clock();
+        temps_cpu = (temps_final - temps_initial) * pow(10, -6);
+        fprintf(file, "%d %f\n", m, temps_cpu);
+        printf("Iteration %d de modpow_naive duree => %f\n", m, temps_cpu);
     }
-    clock_t ti, tf;
-    double temps_naive, temps;
-    for (int i = 1; i <= 10000; i++)
+    fclose(file);
+}
+void generer_data_modpow()
+{
+    clock_t temps_initial;
+    clock_t temps_final;
+    float temps_cpu;
+    FILE *file = fopen("courbe_donnee/generer_data_modpow.txt", "w");
+    long a, k, n;
+    a = rand_long(3, 7);
+    n = rand_long(3, 7);
+    for (int m = 1; m < 50000; m++)
     {
-        ti = clock();
-        modpow_naive(5, i, 3);
-        tf = clock();
-        temps_naive = ((double)(tf - ti)) / CLOCKS_PER_SEC;
-
-        ti = clock();
-        modpow(5, i, 3);
-        tf = clock();
-
-        temps = ((double)(tf - ti)) / CLOCKS_PER_SEC;
-        fprintf(f, "%d %f %f\n", i, temps_naive, temps);
+        temps_initial = clock();
+        k = modpow(a, m, n);
+        temps_final = clock();
+        temps_cpu = (temps_final - temps_initial) * pow(10, -6);
+        fprintf(file, "%d %f\n", m, temps_cpu);
+        printf("Iteration %d de modpow duree => %f\n", m, temps_cpu);
     }
-    fclose(f);
+    fclose(file);
 }
 
 // Question 1.6
@@ -155,7 +169,7 @@ int is_prime_miller(long p, int k)
     return 1;
 }
 
-// Question 1.8 à rechecker
+// Question 1.8
 long power(long a, long b)
 {
     long cpt = 1;
