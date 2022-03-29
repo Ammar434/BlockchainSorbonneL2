@@ -156,6 +156,7 @@ char *protected_to_str(Protected *protected)
     char *key_str = key_to_str(protected->pKey);
     char *sgn_str = signature_to_str(protected->signature);
     int len = strlen(key_str) + strlen(sgn_str) + strlen(protected->message) + 3;
+
     char *mess_str = malloc(len * sizeof(char));
 
     while (key_str[j] != '\0')
@@ -182,7 +183,7 @@ char *protected_to_str(Protected *protected)
         i = i + 1;
         j = j + 1;
     }
-    mess_str[len] = '\0';
+    mess_str[i] = '\0';
     return mess_str;
 }
 
@@ -211,7 +212,7 @@ Protected *str_to_protected(char *str)
     mess_str[j] = '\0';
     i = i + 1;
     j = 0;
-    while (str[i] != '\0')
+    while (str[i] != '\n')
     {
         sgn_str[j] = str[i];
         i = i + 1;
@@ -337,15 +338,13 @@ void generer_declaration_vote(char *filename, char *filename2, char *filename3, 
         secureKey = str_to_key(sKey);
         int votePour = rand() % nbCandidates;
         mess = key_to_str(tabCandidates[votePour]);
-        // printf("%s vote pour %s \n", key_to_str(publicKey), mess);
+        printf("%s vote pour %s \n", key_to_str(publicKey), mess);
 
-        printf("Message %s\n", mess);
-        printf("privee %s\n", sKey);
         sgn = sign(mess, secureKey);
 
         pr = init_protected(publicKey, mess, sgn);
-        printf("%s\n", protected_to_str(pr));
-        // fprintf(f3, "%s\n", protected_to_str(pr));
+        // printf("%s\n", protected_to_str(pr));
+        fprintf(f3, "%s\n", protected_to_str(pr));
         free(publicKey);
         free(secureKey);
         free(sgn);

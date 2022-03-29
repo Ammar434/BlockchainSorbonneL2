@@ -57,6 +57,7 @@ int main()
     //     }
     // } while (rep != 0);
     // printf("Merci , et au revoir.\n");
+    srand(time(NULL));
     generate_random_data(1000, 10);
     return 0;
 }
