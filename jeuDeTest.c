@@ -48,20 +48,25 @@ void jeu_test_exercice_2()
 
 void jeu_test_exercice_3()
 {
+    // Testing Init Keys
     Key *pKey = malloc(sizeof(Key));
     Key *sKey = malloc(sizeof(Key));
     init_pair_keys(pKey, sKey, 3, 7);
     printf("pKey: %lx, %lx \n", pKey->a, pKey->b);
     printf("sKey: %lx, %lx \n", sKey->a, sKey->b);
+
+    // Testing Key Serialization
     char *chaine = key_to_str(pKey);
     printf("keytostr: %s\n", chaine);
     Key *k = str_to_key(chaine);
     printf("strtokey: %lx, %lx\n", k->a, k->b);
+
     // Testing signature
     // Candidate keys:
     Key *pKeyC = malloc(sizeof(Key));
     Key *sKeyC = malloc(sizeof(Key));
     init_pair_keys(pKeyC, sKeyC, 3, 7);
+
     // Declaration:
     char *mess = key_to_str(pKeyC);
     printf("%s vote pour %s \n", key_to_str(pKey), mess);
@@ -73,6 +78,7 @@ void jeu_test_exercice_3()
     sgn = str_to_signature(chaine);
     printf("str to signature ");
     print_long_vector(sgn->tab, sgn->size);
+
     // Testing protected:
     Protected *pr = init_protected(pKey, mess, sgn);
 
@@ -89,4 +95,9 @@ void jeu_test_exercice_3()
     printf("protected to str: %s\n", chaine);
     pr = str_to_protected(chaine);
     printf("str to protected: %s %s %s \n", key_to_str(pr->pKey), pr->message, signature_to_str(pr->signature));
+
+    free(pKey);
+    free(sKey);
+    free(pKeyC);
+    free(sKeyC);
 }

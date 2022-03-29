@@ -25,5 +25,6 @@ CellProtected *read_protected_from_file(char *filename);
 void print_list_protected(CellProtected *cellProtected);
 void delete_cell_protect(CellProtected *cp);
 void delete_list_protected(CellProtected *c);
+CellProtected *supprimer_fausse_signature(CellProtected *cellProtected);
 
 #endif // PARTIE3_H

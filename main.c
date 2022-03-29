@@ -58,5 +58,11 @@ int main()
         }
     } while (rep != 0);
     printf("Merci , et au revoir.\n");
+
+    // CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
+    // // print_list_protected(cp);
+    // // delete_list_protected(cp);
+    // cp = supprimer_fausse_signature(cp);
+    // // verify(cp->data);
     return 0;
 }

@@ -36,6 +36,7 @@ char *protected_to_str(Protected *protected);
 Protected *str_to_protected(char *str);
 int verify(Protected *pr);
 void generer_all_data(char *filename, int nv);
+void generer_declaration_vote(char *filename, char *filename2, char *filename3, int nbCandidates);
 void generer_selection_candidat(char *filename, char *filename2, int nv, int nc);
 void generate_random_data(int nv, int nc);
 

@@ -6,6 +6,11 @@
 CellKey *create_cell_key(Key *key)
 {
     CellKey *cell = malloc(sizeof(CellKey));
+    if (cell == NULL)
+    {
+        printf("Erreur lors de l'allocation\n");
+        return NULL;
+    }
     cell->key = key;
     cell->next = NULL;
     return cell;
@@ -15,7 +20,12 @@ CellKey *create_cell_key(Key *key)
 CellKey *add_key_to_head(CellKey *cellKey, Key *key)
 {
     CellKey *newCell = create_cell_key(key);
-    (newCell->next) = cellKey;
+    if (newCell == NULL)
+    {
+        printf("Erreur lors de l'allocation\n");
+        return NULL;
+    }
+    newCell->next = cellKey;
     cellKey = newCell;
     return cellKey;
 }
@@ -83,6 +93,11 @@ void delete_list_keys(CellKey *c)
 CellProtected *create_cell_protected(Protected *pr)
 {
     CellProtected *cell = (CellProtected *)malloc(sizeof(CellProtected));
+    if (cell == NULL)
+    {
+        printf("Erreur lors de l'allocation\n");
+        return NULL;
+    }
     cell->data = pr;
     cell->next = NULL;
     return cell;
@@ -92,6 +107,11 @@ CellProtected *create_cell_protected(Protected *pr)
 CellProtected *add_cell_prototected_to_head(CellProtected *cellProtected, Protected *pr)
 {
     CellProtected *new = create_cell_protected(pr);
+    if (new == NULL)
+    {
+        printf("Erreur lors de l'allocation\n");
+        return NULL;
+    }
     new->next = cellProtected;
     cellProtected = new;
     return cellProtected;
@@ -111,7 +131,7 @@ CellProtected *read_protected_from_file(char *filename)
     }
     while (fgets(buff, BUFFER_SIZE, f) != 0)
     {
-        if (sscanf(buff, "%[^\n]", protected_text) != 1)
+        if (sscanf(buff, "%[^\t\n]", protected_text) != 1)
         {
             printf("erreur lecture\n");
             return NULL;
@@ -140,10 +160,17 @@ void print_list_protected(CellProtected *cellProtected)
     }
 }
 
-// Question 5.10
+// Question 5.10 à revoir
 void delete_cell_protect(CellProtected *cp)
 {
-    free(cp->data);
+    if (cp->data)
+    {
+        free(cp->data->pKey);
+        free((cp->data->signature)->tab);
+        free(cp->data->signature);
+        free((cp->data)->message);
+        free(cp->data);
+    }
     free(cp);
 }
 
@@ -159,18 +186,34 @@ void delete_list_protected(CellProtected *c)
 }
 
 // Exercice 6
-
 // Question 6.1
-// CellProtected *supprimer_fausse_signature(CellProtected *cellProtected)
-// {
-//     CellProtected *tmp = cellProtected;
-//     while (tmp != NULL)
-//     {
-//         int i = verify(tmp);
-//         if (i == 0)
-//         {
-//             CellProtected *a_supprimer = tmp;
-//             tmp = tmp->next;
-//         }
-//     }
-// }
+CellProtected *supprimer_fausse_signature(CellProtected *cellProtected)
+{
+    CellProtected *n, *prec;
+    if (cellProtected != NULL)
+    {
+        if (verify(cellProtected->data) == 0)
+        { // si premier
+            n = cellProtected;
+            cellProtected = cellProtected->next;
+            delete_cell_protect(n);
+        }
+        else
+        { // sinon voir les autres
+            prec = cellProtected;
+            n = cellProtected->next;
+            while (n != NULL)
+            {
+                if (verify(n->data) == 0)
+                {
+                    prec->next = n->next;
+                    delete_cell_protect(n);
+                    break;
+                }
+                prec = n;
+                n = n->next;
+            }
+        }
+    }
+    return cellProtected;
+}

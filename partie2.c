@@ -51,7 +51,7 @@ char *key_to_str(Key *key)
 
 Key *str_to_key(char *str)
 {
-    long a, b;
+    long unsigned int a, b;
     sscanf(str, "(%lx,%lx)", &a, &b);
 
     Key *res = (Key *)(malloc(sizeof(Key)));
@@ -109,25 +109,31 @@ char *signature_to_str(Signature *sgn)
 Signature *str_to_signature(char *str)
 {
     int len = strlen(str);
-    long *content = (long *)malloc(sizeof(long) * len);
+    long *content = (long *)(malloc(sizeof(long) * len));
+    if (content == NULL)
+    {
+        printf("Erreur d'allocation\n");
+        return NULL;
+    }
+
     int num = 0;
     char buffer[256];
     int pos = 0;
-    long unsigned int *a = ((long unsigned int *)(&(content[num])));
+
     for (int i = 0; i < len; i++)
     {
         if (str[i] != '#')
         {
             buffer[pos] = str[i];
-            pos = pos + 1;
+            pos++;
         }
         else
         {
             if (pos != 0)
             {
                 buffer[pos] = '\0';
-                sscanf(buffer, "%lx", a);
-                num = num + 1;
+                sscanf(buffer, "%lx", &(content[num]));
+                num++;
                 pos = 0;
             }
         }
@@ -159,11 +165,10 @@ int verify(Protected *pr)
     char *s = decrypt(sgn->tab, sgn->size, pKey->a, pKey->b);
     if (strcmp(mess, s) != 0)
     {
-        free(mess);
+        free(s);
         return 0;
     }
-    free(mess);
-
+    free(s);
     return 1;
 }
 
@@ -203,6 +208,8 @@ char *protected_to_str(Protected *protected)
         j = j + 1;
     }
     mess_str[i] = '\0';
+    free(key_str);
+    free(sgn_str);
     return mess_str;
 }
 
@@ -210,9 +217,9 @@ Protected *str_to_protected(char *str)
 {
     int i = 0;
     int j = 0;
-    char *key_str = malloc(256 * sizeof(char));
-    char *sgn_str = malloc(256 * sizeof(char));
-    char *mess_str = malloc(256 * sizeof(char));
+    char key_str[BUFFER_SIZE];
+    char sgn_str[BUFFER_SIZE];
+    char mess_str[BUFFER_SIZE];
     while (str[i] != ';')
     {
         key_str[j] = str[i];
@@ -231,7 +238,7 @@ Protected *str_to_protected(char *str)
     mess_str[j] = '\0';
     i = i + 1;
     j = 0;
-    while (str[i] != '\n')
+    while (str[i] != '\0')
     {
         sgn_str[j] = str[i];
         i = i + 1;
@@ -377,6 +384,10 @@ void generer_declaration_vote(char *filename, char *filename2, char *filename3, 
     fclose(f2);
     fclose(f3);
 }
+
+// Exercice 4
+
+// Question 4.1
 
 void generate_random_data(int nv, int nc)
 {
