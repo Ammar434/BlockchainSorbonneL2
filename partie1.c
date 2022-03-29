@@ -78,7 +78,7 @@ void generer_data_modpow_naive()
     clock_t temps_final;
     float temps_cpu;
     FILE *file = fopen("courbe_donnee/generer_data_modpow_naive.txt", "w");
-    long a, k, n;
+    long a, n;
     a = rand_long(3, 7);
     n = rand_long(3, 7);
     for (int m = 1; m < 50000; m++)
@@ -98,7 +98,7 @@ void generer_data_modpow()
     clock_t temps_final;
     float temps_cpu;
     FILE *file = fopen("courbe_donnee/generer_data_modpow.txt", "w");
-    long a, k, n;
+    long a, n;
     a = rand_long(3, 7);
     n = rand_long(3, 7);
     for (int m = 1; m < 50000; m++)

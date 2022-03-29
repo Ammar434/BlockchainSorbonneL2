@@ -12,7 +12,6 @@ main: main.o  partie1.o partie2.o partie3.o jeuDeTest.o -lm
 main.o: main.c
 	$(CC) -c $(CFLAGS) main.c
 
-
 jeuDeTest.o: jeuDeTest.c
 	$(CC) -c $(CFLAGS) jeuDeTest.c 
 	
