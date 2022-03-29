@@ -1,5 +1,7 @@
 #include "partie1.h"
+
 // Exercice 1
+
 // Question 1.1
 int is_prime_naive(long p)
 {
@@ -55,6 +57,11 @@ long modpow_naive(long a, long m, long n)
 // Question 1.4
 long modpow(long a, long m, long n)
 {
+    if (m == 0)
+    {
+        return 1;
+    }
+
     if (m == 1)
     {
         return a % n;
@@ -78,7 +85,7 @@ void generer_data_modpow_naive()
     clock_t temps_final;
     float temps_cpu;
     FILE *file = fopen("courbe_donnee/generer_data_modpow_naive.txt", "w");
-    long a, n;
+    long a, k, n;
     a = rand_long(3, 7);
     n = rand_long(3, 7);
     for (int m = 1; m < 50000; m++)
@@ -98,7 +105,7 @@ void generer_data_modpow()
     clock_t temps_final;
     float temps_cpu;
     FILE *file = fopen("courbe_donnee/generer_data_modpow.txt", "w");
-    long a, n;
+    long a, k, n;
     a = rand_long(3, 7);
     n = rand_long(3, 7);
     for (int m = 1; m < 50000; m++)
@@ -169,7 +176,7 @@ int is_prime_miller(long p, int k)
     return 1;
 }
 
-// Question 1.8
+// Question 1.8 à checker
 long power(long a, long b)
 {
     long cpt = 1;
@@ -185,7 +192,7 @@ long random_prime_number(int low_size, int up_size, int k)
     long res = rand_long(power(2, (low_size - 1)), (power(2, up_size) - 1));
     int tmp = is_prime_miller(res, k);
 
-    while (tmp == 0)
+    while (!tmp)
     {
         res = rand_long(power(2, (low_size - 1)), (power(2, up_size) - 1));
         tmp = is_prime_miller(res, k);
@@ -193,7 +200,41 @@ long random_prime_number(int low_size, int up_size, int k)
     return res;
 }
 
+long random_prime_number2(int low_size, int up_size, int k)
+{
+    long min = power(2, low_size - 1);
+    long max = power(2, up_size) - 1;
+
+    long p = 0;
+    long premier;
+
+    while (p == 0)
+    {
+        premier = rand_long(min, max);
+        p = is_prime_miller(premier, k);
+    }
+    return premier;
+}
+
+long random_prime_number3(int low_size, int up_size, int k)
+{
+    long low = (long)(power(2, low_size - 1));
+    long up = (long)(power(2, up_size) - 1);
+    long res = rand_long(low, up);
+    while (is_prime_miller(res, k) == 0)
+    {
+        res = rand_long(low, up);
+    }
+    if (is_prime_naive(res) == 0)
+    {
+        printf("NON PREMIER\n");
+    }
+    // printf("low=%ld up=%ld res=%ld\n",low,up,res);
+    return res;
+}
+
 // Exercice 2
+
 // version récursive de l’algorithme d’Euclide etendu
 long extended_gcd(long s, long t, long *u, long *v)
 {
@@ -235,6 +276,7 @@ long *encrypt(char *chaine, long s, long n)
 {
     int i = 0;
     long *tab = (long *)malloc(sizeof(long) * strlen(chaine));
+    assert(tab);
     while (chaine[i] != '\0')
     {
         tab[i] = modpow((int)chaine[i], s, n);
@@ -268,3 +310,12 @@ void print_long_vector(long *result, int size)
     }
     printf("]\n");
 }
+
+// int main()
+// {
+//     printf("%ld\n", random_prime_number(0, 10, 1));
+//     printf("%ld\n", random_prime_number2(0, 10, 1));
+//     printf("%ld\n", random_prime_number3(0, 10, 1));
+
+//     return 0;
+// }

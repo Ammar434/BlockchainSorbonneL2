@@ -29,34 +29,47 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
 }
 
 // Question 3.4
+int getLenNum(long a)
+{
+    return floor(log10(labs(a))) + 1;
+}
+
 char *key_to_str(Key *key)
 {
     int len;
     char *str;
     len = getLenNum(key->a) + 1 + getLenNum(key->b) + 2;
     str = malloc(sizeof(char) * len);
+    if (str == NULL)
+    {
+        printf("Erreur lors de l'allocation\n");
+        return NULL;
+    }
     sprintf(str, "(%lx,%lx)", key->a, key->b);
     return str;
 }
 
 Key *str_to_key(char *str)
 {
-    Key *key = malloc(sizeof(Key));
-    long unsigned int *a = ((long unsigned int *)(&key->a));
-    long unsigned int *b = ((long unsigned int *)(&key->b));
-    sscanf(str, "(%lx,%lx)", a, b);
-    return key;
-}
+    long a, b;
+    sscanf(str, "(%lx,%lx)", &a, &b);
 
-int getLenNum(long a)
-{
-    return floor(log10(labs(a))) + 1;
+    Key *res = (Key *)(malloc(sizeof(Key)));
+    if (res == NULL)
+    {
+        printf("Erreur lors de l'allocation\n");
+
+        return NULL;
+    }
+    init_key(res, a, b);
+    return res;
 }
 
 // Question 3.6
 Signature *init_signature(long *content, int size)
 {
     Signature *signature = (Signature *)malloc(sizeof(Signature));
+    assert(signature);
     signature->tab = content;
     signature->size = size;
     return signature;
@@ -127,6 +140,7 @@ Signature *str_to_signature(char *str)
 Protected *init_protected(Key *pKey, char *mess, Signature *sgn)
 {
     Protected *protected = malloc(sizeof(Protected));
+    assert(protected);
 protected
     ->pKey = pKey;
 protected
@@ -144,7 +158,12 @@ int verify(Protected *pr)
     char *mess = pr->message;
     char *s = decrypt(sgn->tab, sgn->size, pKey->a, pKey->b);
     if (strcmp(mess, s) != 0)
+    {
+        free(mess);
         return 0;
+    }
+    free(mess);
+
     return 1;
 }
 
