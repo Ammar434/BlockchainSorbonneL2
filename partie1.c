@@ -199,13 +199,20 @@ long extended_gcd(long s, long t, long *u, long *v)
 // Question 2.1
 void generate_key_values(long p, long q, long *n, long *s, long *u)
 {
-    *n = p * q;
     long t = (p - 1) * (q - 1);
-    *s = rand_long(2, t);
+    *n = p * q;
+    *s = rand_long(2, t - 1);
     long v;
-    while (extended_gcd(*s, t, u, &v) != 1)
+    long pgcd = extended_gcd(*s, t, u, &v);
+    while (pgcd != 1)
     {
-        *s = rand_long(2, t);
+        *s = rand_long(2, t - 1);
+        pgcd = extended_gcd(*s, t, u, &v);
+    }
+    long test = (*s) * (*u) + t * v;
+    if (test != 1)
+    {
+        fprintf(stderr, "Erreur generate_key_values : %ld\n", test);
     }
 }
 

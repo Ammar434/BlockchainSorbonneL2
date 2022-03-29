@@ -11,11 +11,21 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
 {
     long p = random_prime_number(low_size, up_size, 5000);
     long q = random_prime_number(low_size, up_size, 5000);
-    generate_key_values(
-        p, q, &(pKey->b),
-        &(pKey->a),
-        &(sKey->a));
-    sKey->b = pKey->b;
+    while (p == q)
+    {
+        q = random_prime_number(3, 7, 5000);
+    }
+    long n, s, u;
+    generate_key_values(p, q, &n, &s, &u);
+
+    if (u < 0)
+    {
+        long t = (p - 1) * (q - 1);
+        u = u + t;
+    }
+
+    init_key(pKey, s, n);
+    init_key(sKey, u, n);
 }
 
 // Question 3.4
@@ -332,7 +342,7 @@ void generer_declaration_vote(char *filename, char *filename2, char *filename3, 
 
         printf("Message %s\n", mess);
         printf("privee %s\n", sKey);
-        // sgn = sign(mess, secureKey);
+        sgn = sign(mess, secureKey);
 
         // pr = init_protected(publicKey, mess, sgn);
 
@@ -358,7 +368,7 @@ void generate_random_data(int nv, int nc)
     char *filename = "election_donnee/keys.txt";
     char *filename2 = "election_donnee/candidates.txt";
     char *filename3 = "election_donnee/declaration.txt";
-    // generer_all_data(filename, nv);
-    // generer_selection_candidat(filename, filename2, nv, nc);
+    generer_all_data(filename, nv);
+    generer_selection_candidat(filename, filename2, nv, nc);
     generer_declaration_vote(filename, filename2, filename3, nc);
 }
