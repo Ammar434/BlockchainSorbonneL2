@@ -60,7 +60,6 @@ void jeu_test_exercice_3()
     printf("keytostr: %s\n", chaine);
     Key *k = str_to_key(chaine);
     printf("strtokey: %lx, %lx\n", k->a, k->b);
-    free(chaine);
 
     // Testing signature
     // Candidate keys:
