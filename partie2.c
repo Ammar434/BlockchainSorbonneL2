@@ -60,6 +60,7 @@ Signature *sign(char *mess, Key *sKey)
     return init_signature(content, size);
 }
 
+// Question 3.8
 char *signature_to_str(Signature *sgn)
 {
     char *result = malloc(10 * sgn->size * sizeof(char));
@@ -112,6 +113,7 @@ Signature *str_to_signature(char *str)
     return init_signature(content, num);
 }
 
+// Question 3.10
 Protected *init_protected(Key *pKey, char *mess, Signature *sgn)
 {
     Protected *protected = malloc(sizeof(Protected));
@@ -124,6 +126,7 @@ protected
     return protected;
 }
 
+// Question 3.11
 int verify(Protected *pr)
 {
     Signature *sgn = pr->signature;
@@ -135,6 +138,7 @@ int verify(Protected *pr)
     return 1;
 }
 
+// Question 3.12
 char *protected_to_str(Protected *protected)
 {
     int i = 0;
