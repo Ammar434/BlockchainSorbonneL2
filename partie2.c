@@ -310,7 +310,6 @@ void generer_declaration_vote(char *filename, char *filename2, char *filename3, 
     char *mess;
     Signature *sgn;
     Protected *pr;
-    char *chaine;
 
     // Generer tab candidat
     while (fgets(buff, BUFFER_SIZE, f2) != 0)
@@ -344,13 +343,13 @@ void generer_declaration_vote(char *filename, char *filename2, char *filename3, 
         printf("privee %s\n", sKey);
         sgn = sign(mess, secureKey);
 
-        // pr = init_protected(publicKey, mess, sgn);
-
-        // chaine = protected_to_str(pr);
-
-        // fprintf(f3, "%s\n", chaine);
+        pr = init_protected(publicKey, mess, sgn);
+        printf("%s\n", protected_to_str(pr));
+        // fprintf(f3, "%s\n", protected_to_str(pr));
         free(publicKey);
         free(secureKey);
+        free(sgn);
+        free(pr);
     }
 
     for (int i = 0; i < nbCandidates; i++)
