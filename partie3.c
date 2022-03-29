@@ -145,3 +145,17 @@ void delete_list_protected(CellProtected *c)
         delete_cell_protect(tmp);
     }
 }
+
+// CellProtected *supprimer_fausse_signature(CellProtected *cellProtected)
+// {
+//     CellProtected *tmp = cellProtected;
+//     while (tmp != NULL)
+//     {
+//         int i = verify(tmp);
+//         if (i == 0)
+//         {
+//             CellProtected *a_supprimer = tmp;
+//             tmp = tmp->next;
+//         }
+//     }
+// }
