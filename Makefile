@@ -1,4 +1,4 @@
-CFLAGS = -g -Wall -Wextra -pedantic -ggdb3 -fsanitize=address
+CFLAGS = -g -Wall -Wextra -pedantic -ggdb3 
 CC = gcc
 
 PROGRAMS = main

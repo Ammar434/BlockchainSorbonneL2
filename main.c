@@ -58,11 +58,15 @@ int main()
     //     }
     // } while (rep != 0);
     // printf("Merci , et au revoir.\n");
-    jeu_test_exercice_3();
+    // jeu_test_exercice_3();
+    // generate_random_data(2000, 20);
+
     // CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
-    // // print_list_protected(cp);
-    // // delete_list_protected(cp);
+    // print_list_protected(cp);
     // cp = supprimer_fausse_signature(cp);
-    // // verify(cp->data);
+    CellKey *ck = read_public_keys("election_donnee/keys.txt");
+    HashTable *hash = create_hashtable(ck, 2100);
+    delete_hashtable(hash);
+    delete_list_keys(ck);
     return 0;
 }

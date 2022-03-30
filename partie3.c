@@ -131,7 +131,7 @@ CellProtected *read_protected_from_file(char *filename)
     }
     while (fgets(buff, BUFFER_SIZE, f) != 0)
     {
-        if (sscanf(buff, "%[^\t\n]", protected_text) != 1)
+        if (sscanf(buff, "%[^\n]", protected_text) != 1)
         {
             printf("erreur lecture\n");
             return NULL;
@@ -168,22 +168,21 @@ void delete_cell_protect(CellProtected *cp)
         free(cp->data->pKey);
         free((cp->data->signature)->tab);
         free(cp->data->signature);
-        free((cp->data)->message);
         free(cp->data);
     }
     free(cp);
 }
 
-void delete_list_protected(CellProtected *c)
-{
-    CellProtected *cell = c;
-    while (cell != NULL)
-    {
-        CellProtected *tmp = cell;
-        cell = cell->next;
-        delete_cell_protect(tmp);
-    }
-}
+// void delete_list_protected(CellProtected *c)
+// {
+//     CellProtected *cell = c;
+//     while (cell != NULL)
+//     {
+//         CellProtected *tmp = cell;
+//         cell = cell->next;
+//         delete_cell_protect(tmp);
+//     }
+// }
 
 // Exercice 6
 // Question 6.1
@@ -194,9 +193,9 @@ CellProtected *supprimer_fausse_signature(CellProtected *cellProtected)
     {
         if (verify(cellProtected->data) == 0)
         { // si premier
-            n = cellProtected;
-            cellProtected = cellProtected->next;
-            delete_cell_protect(n);
+          // n = cellProtected;
+          // cellProtected = cellProtected->next;
+          // delete_cell_protect(n);
         }
         else
         { // sinon voir les autres
@@ -204,16 +203,145 @@ CellProtected *supprimer_fausse_signature(CellProtected *cellProtected)
             n = cellProtected->next;
             while (n != NULL)
             {
-                if (verify(n->data) == 0)
-                {
-                    prec->next = n->next;
-                    delete_cell_protect(n);
-                    break;
-                }
+                // if (verify(n->data) == 0)
+                // {
+                //     prec->next = n->next;
+                //     delete_cell_protect(n);
+                //     break;
+                // }
                 prec = n;
                 n = n->next;
             }
         }
     }
     return cellProtected;
+}
+
+void check_signature(CellProtected **LCP)
+{
+    CellProtected *tmp = *LCP;
+    CellProtected *prec = NULL;
+    CellProtected *dlt = NULL;
+    while (tmp)
+    {
+        if (verify((tmp)->data) != 1)
+        {
+            char *sgn_str = signature_to_str((*LCP)->data->signature);
+            printf("cette declaration n'est pas valide\n");
+            free(sgn_str);
+
+            if (prec)
+                prec->next = tmp->next;
+
+            else
+                *LCP = (*LCP)->next;
+
+            dlt = tmp;
+            tmp = tmp->next;
+            delete_cell_protect(dlt);
+        }
+        else
+        {
+            printf("cette declaration est valide\n");
+            prec = tmp;
+            tmp = tmp->next;
+        }
+    }
+}
+
+// Question 6.2
+HashCell *create_hashcell(Key *key)
+{
+    HashCell *hash = (HashCell *)(malloc(sizeof(HashCell)));
+    hash->val = 0;
+    hash->key = key;
+    return hash;
+}
+
+// Question 6.3
+int hash_function(Key *key, int size)
+{
+    long cle = (key->a) + (key->b);
+    // return (int)(size * (cle * NOMBRE_OR - (int)(cle * NOMBRE_OR)));
+    return (int)(cle % size);
+}
+
+// Question 6.4
+int find_position(HashTable *t, Key *key)
+{
+    int position = hash_function(key, t->size);
+    while (position < t->size)
+    {
+        if (((t->tab)[position]->key->a == key->a) && ((t->tab)[position]->key->b == key->b))
+        {
+            return 1;
+        }
+        position = position + 1;
+    }
+    return 0;
+}
+
+// Question 6.5
+HashTable *create_hashtable(CellKey *keys, int size)
+{
+    HashTable *hashTable = (HashTable *)(malloc(sizeof(HashTable)));
+    hashTable->tab = malloc(sizeof(Key) * size);
+    hashTable->size = size;
+    for (int i = 0; i < size; i++)
+    {
+        hashTable->tab[i] = NULL;
+    }
+
+    while (keys != NULL)
+    {
+        int position = hash_function(keys, size);
+        printf("%d\n", position);
+        while (hashTable->tab[position] != NULL && position < size)
+        {
+            position++;
+        }
+        hashTable->tab[position];
+        keys = keys->next;
+    }
+    return hashTable;
+}
+HashtableCandidat *create_hashtable_candidat(CellKey *keys, int size)
+{
+    HashtableCandidat *hashTable = malloc(sizeof(HashtableCandidat));
+    hashTable->tab = malloc(sizeof(Candidat) * size);
+    (hashTable->tab)->key = malloc(sizof)
+                                hashTable->size = size;
+    for (int i = 0; i < size; i++)
+    {
+        hashTable->tab[i] = NULL;
+    }
+
+    while (keys != NULL)
+    {
+        int position = hash_function(keys, size);
+        printf("%d\n", position);
+        while (hashTable->tab[position] != NULL && position < size)
+        {
+            position++;
+        }
+        hashTable->tab[position];
+        keys = keys->next;
+    }
+    return hashTable;
+}
+// Question 6.6
+void delete_hashtable(HashTable *t)
+{
+    for (int i = 0; i < t->size; i++)
+    {
+        free(t->tab[i]);
+    }
+    free(t->tab);
+    free(t);
+}
+
+// Question 6.7
+Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
+{
+    HashTable *candidatsHashTable = create_hashtable(candidates, )
 }
