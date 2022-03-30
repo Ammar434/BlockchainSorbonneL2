@@ -50,5 +50,6 @@ void delete_hashtable(HashTable *t);
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV);
 void afficher_hashtable(HashTable *hashtable);
 void count_element_hashtable(HashTable *hashtable);
+int compare_cle(Key *key1, Key *key2);
 
 #endif // PARTIE3_H

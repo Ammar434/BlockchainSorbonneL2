@@ -59,7 +59,7 @@ int main()
     // } while (rep != 0);
     // printf("Merci , et au revoir.\n");
     // jeu_test_exercice_3();
-    generate_random_data(100000, 500);
+    generate_random_data(1000, 5);
 
     // CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
     // print_list_protected(cp);
@@ -74,6 +74,11 @@ int main()
     // Key *k = malloc(sizeof(Key));
     // init_key(k, 4181, 13511);
     // find_position(hash, k);
-    compute_winner(cp, lc, lp, 550, 100500);
+    Key *vainqueur = compute_winner(cp, lc, lp, 10, 1500);
+    delete_list_protected(cp);
+    delete_list_keys(lc);
+    delete_list_keys(lp);
+    free(vainqueur);
+
     return 0;
 }

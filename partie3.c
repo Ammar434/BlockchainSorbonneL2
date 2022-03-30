@@ -49,8 +49,7 @@ CellKey *read_public_keys(char *filename)
             printf("erreur lecture\n");
             return NULL;
         }
-        Key *publicKey = malloc(sizeof(Key));
-        publicKey = str_to_key(pKey);
+        Key *publicKey = str_to_key(pKey);
         cell = add_key_to_head(cell, publicKey);
     }
 
@@ -80,13 +79,13 @@ void delete_cell_key(CellKey *c)
 
 void delete_list_keys(CellKey *c)
 {
-    CellKey *cell = c;
-    while (cell != NULL)
+    while (c != NULL)
     {
-        CellKey *tmp = cell;
-        cell = cell->next;
+        CellKey *tmp = c;
+        c = c->next;
         delete_cell_key(tmp);
     }
+    free(c);
 }
 
 // Question 5.6
@@ -166,21 +165,24 @@ void delete_cell_protect(CellProtected *cp)
         free(cp->data->pKey);
         free((cp->data->signature)->tab);
         free(cp->data->signature);
+        free(cp->data->message);
+
         free(cp->data);
     }
     free(cp);
 }
 
-// void delete_list_protected(CellProtected *c)
-// {
-//     CellProtected *cell = c;
-//     while (cell != NULL)
-//     {
-//         CellProtected *tmp = cell;
-//         cell = cell->next;
-//         delete_cell_protect(tmp);
-//     }
-// }
+void delete_list_protected(CellProtected *c)
+{
+
+    while (c != NULL)
+    {
+        CellProtected *tmp = c;
+        c = c->next;
+        delete_cell_protect(tmp);
+    }
+    free(c);
+}
 
 // Exercice 6
 // Question 6.1
@@ -272,24 +274,24 @@ int find_position(HashTable *t, Key *key)
         return 0;
     }
     int position = hash_function(key, t->size);
-    while (position < t->size)
+    while (position <= t->size)
     {
         if (((t->tab)[position]->key->a == key->a) && ((t->tab)[position]->key->b == key->b))
         {
-            // printf("Element trouvé\n");
-            return 1;
+            // printf("Element  trouvé\n");
+            return position;
         }
         position = position + 1;
     }
-    // printf("Element non trouvé\n");
-    return 0;
+    printf("Element non trouvé\n");
+    return hash_function(key, t->size);
 }
 
 // Question 6.5
 HashTable *create_hashtable(CellKey *keys, int size)
 {
     HashTable *hashTable = (HashTable *)(malloc(sizeof(HashTable)));
-    hashTable->tab = malloc(sizeof(HashCell) * size);
+    hashTable->tab = malloc(sizeof(HashCell *) * size);
     hashTable->size = size;
     for (int i = 0; i < size; i++)
     {
@@ -340,37 +342,46 @@ void count_element_hashtable(HashTable *hashtable)
 
 void delete_hashtable(HashTable *t)
 {
+
     for (int i = 0; i < t->size; i++)
     {
         free(t->tab[i]);
     }
+
     free(t->tab);
     free(t);
 }
 
+int compare_cle(Key *key1, Key *key2)
+{
+    if (key1->a == key2->a && key1->b == key2->b)
+        return 1;
+    return 0;
+}
 // Question 6.7
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
 {
-    HashCell *actuelVainqueur = malloc(sizeof(HashCell));
-    actuelVainqueur = NULL;
+    HashCell *actuelVainqueur = NULL;
 
     HashTable *votantHashTable = create_hashtable(voters, sizeV);
     count_element_hashtable(votantHashTable);
     HashTable *candidatsHashTable = create_hashtable(candidates, sizeC);
     count_element_hashtable(candidatsHashTable);
-
     CellProtected *tmpDecl = decl;
     while (tmpDecl != NULL)
     {
 
         Key *messageKey = str_to_key(tmpDecl->data->message);
-        int hashValueVotant = hash_function(tmpDecl->data->pKey, sizeV);
-        int hashValueCandidate = hash_function(messageKey, sizeC);
-        if (find_position(votantHashTable, votantHashTable->tab[hashValueVotant]->key) == 1)
+        int hashValueVotant = find_position(votantHashTable, tmpDecl->data->pKey);
+        int hashValueCandidate = find_position(candidatsHashTable, messageKey);
+        // On regarde si clé da,s table de hachage pour voir si la personne peut voter
+        if (compare_cle(votantHashTable->tab[hashValueVotant]->key, tmpDecl->data->pKey))
         {
-            if (votantHashTable->tab[hashValueVotant]->val >= 0)
+            // On regarde  dans table de hachage pour voir si la personne a deja voter
+
+            if (votantHashTable->tab[hashValueVotant]->val == 0)
             {
-                if (find_position(candidatsHashTable, candidatsHashTable->tab[hashValueCandidate]->key) == 1)
+                if (compare_cle(candidatsHashTable->tab[hashValueCandidate]->key, messageKey))
                 {
                     (candidatsHashTable->tab[hashValueCandidate])->val = (candidatsHashTable->tab[hashValueCandidate])->val + 1;
                     if (actuelVainqueur == NULL || actuelVainqueur->val < candidatsHashTable->tab[hashValueCandidate]->val)
@@ -378,16 +389,15 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
                         actuelVainqueur = candidatsHashTable->tab[hashValueCandidate];
                     }
                 }
-                // On met à -1 pour dire que la personne a deja voté
-                votantHashTable->tab[hashValueVotant]->val = -1;
             }
+            // On met à -1 pour dire que la personne a deja voté
+            votantHashTable->tab[hashValueVotant]->val = -1;
         }
 
         tmpDecl = tmpDecl->next;
         free(messageKey);
     }
-    Key *keyVainqueur = malloc(sizeof(Key));
-    keyVainqueur = NULL;
+    Key *keyVainqueur;
     if (actuelVainqueur != NULL)
     {
         keyVainqueur = actuelVainqueur->key;
@@ -396,11 +406,18 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
     for (int i = 0; i < candidatsHashTable->size; i++)
     {
         if (candidatsHashTable->tab[i] != NULL)
-            printf("Le candidat %s a %d votes\n", key_to_str(candidatsHashTable->tab[i]->key), candidatsHashTable->tab[i]->val);
+        {
+            char *mess = key_to_str(candidatsHashTable->tab[i]->key);
+            printf("Le candidat %s a %d votes\n", mess, candidatsHashTable->tab[i]->val);
+            free(mess);
+        }
     }
-
-    printf("Le vainqueur des élections est le candidat %s avec %d votes\n", key_to_str(keyVainqueur), actuelVainqueur->val);
-
+    char *messageVainqueur = key_to_str(keyVainqueur);
+    printf("Le vainqueur des élections est le candidat %s avec %d votes\n", messageVainqueur, actuelVainqueur->val);
     free(actuelVainqueur);
+    free(messageVainqueur);
+    delete_hashtable(votantHashTable);
+    delete_hashtable(candidatsHashTable);
+
     return keyVainqueur;
 }

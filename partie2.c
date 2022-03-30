@@ -38,7 +38,7 @@ char *key_to_str(Key *key)
 {
     int len;
     char *str;
-    len = getLenNum(key->a) + 1 + getLenNum(key->b) + 2;
+    len = getLenNum(key->a) + 1 + getLenNum(key->b) + 2 + 1;
     str = malloc(sizeof(char) * len);
     if (str == NULL)
     {
@@ -58,7 +58,6 @@ Key *str_to_key(char *str)
     if (res == NULL)
     {
         printf("Erreur lors de l'allocation\n");
-
         return NULL;
     }
     init_key(res, a, b);
@@ -277,8 +276,13 @@ void generer_all_data(char *filename, int nv)
     {
         Key *pKey = malloc(sizeof(Key));
         Key *sKey = malloc(sizeof(Key));
+
         init_pair_keys(pKey, sKey, 3, 7);
-        fprintf(f, "%s %s\n", key_to_str(pKey), key_to_str(sKey));
+        char *strPKey = key_to_str(pKey);
+        char *strSKey = key_to_str(sKey);
+        fprintf(f, "%s %s\n", strPKey, strSKey);
+        free(strPKey);
+        free(strSKey);
         free(pKey);
         free(sKey);
     }
@@ -325,10 +329,6 @@ void generer_selection_candidat(char *filename, char *filename2, int nv, int nc)
 void generer_declaration_vote(char *filename, char *filename2, char *filename3, int nbCandidates)
 {
     Key **tabCandidates = malloc(sizeof(Key *) * nbCandidates);
-    for (int i = 0; i < nbCandidates; i++)
-    {
-        tabCandidates[i] = malloc(sizeof(Key));
-    }
 
     char buff[BUFFER_SIZE];
     char pKey[BUFFER_SIZE];
@@ -357,8 +357,7 @@ void generer_declaration_vote(char *filename, char *filename2, char *filename3, 
         {
             printf("erreur lecture\n");
         }
-        Key *candidatKey = malloc(sizeof(Key));
-        candidatKey = str_to_key(pKey);
+        Key *candidatKey = str_to_key(pKey);
         tabCandidates[elemAtTabCandidates] = candidatKey;
         elemAtTabCandidates++;
     }
@@ -376,17 +375,24 @@ void generer_declaration_vote(char *filename, char *filename2, char *filename3, 
         secureKey = str_to_key(sKey);
         int votePour = rand() % nbCandidates;
         mess = key_to_str(tabCandidates[votePour]);
-        printf("%s vote pour %s \n", key_to_str(publicKey), mess);
+        char *messageKeyToStr = key_to_str(publicKey);
+        printf("%s vote pour %s \n", messageKeyToStr, mess);
 
         sgn = sign(mess, secureKey);
 
         pr = init_protected(publicKey, mess, sgn);
         // printf("%s\n", protected_to_str(pr));
-        fprintf(f3, "%s\n", protected_to_str(pr));
+        char *chaineDeProtected = protected_to_str(pr);
+        fprintf(f3, "%s\n", chaineDeProtected);
         free(publicKey);
+        free(chaineDeProtected);
         free(secureKey);
+        free(messageKeyToStr);
+        free(sgn->tab);
         free(sgn);
+        free(pr->message);
         free(pr);
+        free(mess);
     }
 
     for (int i = 0; i < nbCandidates; i++)

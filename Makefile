@@ -2,6 +2,7 @@ CFLAGS = -g -Wall -Wextra -pedantic -ggdb3
 CC = gcc
 
 PROGRAMS = main
+TXT = 
 .PHONY:	all clean
 
 all: $(PROGRAMS)
