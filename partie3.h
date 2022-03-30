@@ -27,18 +27,6 @@ typedef struct hashtable
     int size;
 } HashTable;
 
-typedef struct candidat
-{
-    Key *key;
-    long nb;
-} Candidat;
-
-typedef struct hashtableCandidat
-{
-    Candidat **tab;
-    int size;
-} HashtableCandidat;
-
 CellKey *create_cell_key(Key *key);
 CellKey *add_key_to_head(CellKey *cellKey, Key *key);
 
@@ -60,5 +48,7 @@ int find_position(HashTable *t, Key *key);
 HashTable *create_hashtable(CellKey *keys, int size);
 void delete_hashtable(HashTable *t);
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV);
+void afficher_hashtable(HashTable *hashtable);
+void count_element_hashtable(HashTable *hashtable);
 
 #endif // PARTIE3_H

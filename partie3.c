@@ -92,7 +92,7 @@ void delete_list_keys(CellKey *c)
 // Question 5.6
 CellProtected *create_cell_protected(Protected *pr)
 {
-    CellProtected *cell = (CellProtected *)malloc(sizeof(CellProtected));
+    CellProtected *cell = malloc(sizeof(CellProtected));
     if (cell == NULL)
     {
         printf("Erreur lors de l'allocation\n");
@@ -104,23 +104,24 @@ CellProtected *create_cell_protected(Protected *pr)
 }
 
 // Question 5.7
-CellProtected *add_cell_prototected_to_head(CellProtected *cellProtected, Protected *pr)
+void *add_cell_prototected_to_head(CellProtected **cellProtected, Protected *pr)
 {
+
     CellProtected *new = create_cell_protected(pr);
     if (new == NULL)
     {
         printf("Erreur lors de l'allocation\n");
         return NULL;
     }
-    new->next = cellProtected;
-    cellProtected = new;
-    return cellProtected;
+    new->next = *cellProtected;
+    *cellProtected = new;
 }
 
 // Question 5.8
 CellProtected *read_protected_from_file(char *filename)
 {
     CellProtected *cell = NULL;
+
     char buff[BUFFER_SIZE];
     char protected_text[BUFFER_SIZE];
     FILE *f = fopen(filename, "r");
@@ -136,14 +137,11 @@ CellProtected *read_protected_from_file(char *filename)
             printf("erreur lecture\n");
             return NULL;
         }
-        Protected *protected = malloc(sizeof(Protected));
-        if (!protected)
-            return NULL;
-    protected
-        = str_to_protected(protected_text);
-        cell = add_cell_prototected_to_head(cell, protected);
+        Protected *protected = str_to_protected(protected_text);
+        add_cell_prototected_to_head(&cell, protected);
     }
     fclose(f);
+
     return cell;
 }
 
@@ -153,7 +151,7 @@ void print_list_protected(CellProtected *cellProtected)
     if (!cellProtected)
         return;
     CellProtected *cell = cellProtected;
-    while (cell->next != NULL)
+    while (cell != NULL)
     {
         printf("%s\n", protected_to_str(cell->data));
         cell = cell->next;
@@ -269,15 +267,21 @@ int hash_function(Key *key, int size)
 // Question 6.4
 int find_position(HashTable *t, Key *key)
 {
+    if (t == NULL || key == NULL)
+    {
+        return 0;
+    }
     int position = hash_function(key, t->size);
     while (position < t->size)
     {
         if (((t->tab)[position]->key->a == key->a) && ((t->tab)[position]->key->b == key->b))
         {
+            // printf("Element trouvé\n");
             return 1;
         }
         position = position + 1;
     }
+    // printf("Element non trouvé\n");
     return 0;
 }
 
@@ -285,7 +289,7 @@ int find_position(HashTable *t, Key *key)
 HashTable *create_hashtable(CellKey *keys, int size)
 {
     HashTable *hashTable = (HashTable *)(malloc(sizeof(HashTable)));
-    hashTable->tab = malloc(sizeof(Key) * size);
+    hashTable->tab = malloc(sizeof(HashCell) * size);
     hashTable->size = size;
     for (int i = 0; i < size; i++)
     {
@@ -294,42 +298,46 @@ HashTable *create_hashtable(CellKey *keys, int size)
 
     while (keys != NULL)
     {
-        int position = hash_function(keys, size);
-        printf("%d\n", position);
+        int position = hash_function(keys->key, size);
         while (hashTable->tab[position] != NULL && position < size)
         {
             position++;
         }
-        hashTable->tab[position];
+        HashCell *newCell = create_hashcell(keys->key);
+        hashTable->tab[position] = newCell;
         keys = keys->next;
     }
     return hashTable;
-}
-HashtableCandidat *create_hashtable_candidat(CellKey *keys, int size)
-{
-    HashtableCandidat *hashTable = malloc(sizeof(HashtableCandidat));
-    hashTable->tab = malloc(sizeof(Candidat) * size);
-    (hashTable->tab)->key = malloc(sizof)
-                                hashTable->size = size;
-    for (int i = 0; i < size; i++)
-    {
-        hashTable->tab[i] = NULL;
-    }
+} // Question 6.6
 
-    while (keys != NULL)
+void afficher_hashtable(HashTable *hashtable)
+{
+    for (int i = 0; i < hashtable->size; i++)
     {
-        int position = hash_function(keys, size);
-        printf("%d\n", position);
-        while (hashTable->tab[position] != NULL && position < size)
+        if (hashtable->tab[i] == NULL)
         {
-            position++;
+            printf("%d------------------------\n", i);
         }
-        hashTable->tab[position];
-        keys = keys->next;
+        else
+        {
+            printf("%d Personne %s a voté: %d\n", i, key_to_str(hashtable->tab[i]->key), hashtable->tab[i]->val);
+        }
     }
-    return hashTable;
 }
-// Question 6.6
+
+void count_element_hashtable(HashTable *hashtable)
+{
+    int j = 0;
+    for (int i = 0; i < hashtable->size; i++)
+    {
+        if (hashtable->tab[i] != NULL)
+        {
+            j++;
+        }
+    }
+    printf("La table de hashage possede %d elements\n", j);
+}
+
 void delete_hashtable(HashTable *t)
 {
     for (int i = 0; i < t->size; i++)
@@ -343,5 +351,56 @@ void delete_hashtable(HashTable *t)
 // Question 6.7
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
 {
-    HashTable *candidatsHashTable = create_hashtable(candidates, )
+    HashCell *actuelVainqueur = malloc(sizeof(HashCell));
+    actuelVainqueur = NULL;
+
+    HashTable *votantHashTable = create_hashtable(voters, sizeV);
+    count_element_hashtable(votantHashTable);
+    HashTable *candidatsHashTable = create_hashtable(candidates, sizeC);
+    count_element_hashtable(candidatsHashTable);
+
+    CellProtected *tmpDecl = decl;
+    while (tmpDecl != NULL)
+    {
+
+        Key *messageKey = str_to_key(tmpDecl->data->message);
+        int hashValueVotant = hash_function(tmpDecl->data->pKey, sizeV);
+        int hashValueCandidate = hash_function(messageKey, sizeC);
+        if (find_position(votantHashTable, votantHashTable->tab[hashValueVotant]->key) == 1)
+        {
+            if (votantHashTable->tab[hashValueVotant]->val >= 0)
+            {
+                if (find_position(candidatsHashTable, candidatsHashTable->tab[hashValueCandidate]->key) == 1)
+                {
+                    (candidatsHashTable->tab[hashValueCandidate])->val = (candidatsHashTable->tab[hashValueCandidate])->val + 1;
+                    if (actuelVainqueur == NULL || actuelVainqueur->val < candidatsHashTable->tab[hashValueCandidate]->val)
+                    {
+                        actuelVainqueur = candidatsHashTable->tab[hashValueCandidate];
+                    }
+                }
+                // On met à -1 pour dire que la personne a deja voté
+                votantHashTable->tab[hashValueVotant]->val = -1;
+            }
+        }
+
+        tmpDecl = tmpDecl->next;
+        free(messageKey);
+    }
+    Key *keyVainqueur = malloc(sizeof(Key));
+    keyVainqueur = NULL;
+    if (actuelVainqueur != NULL)
+    {
+        keyVainqueur = actuelVainqueur->key;
+    }
+
+    for (int i = 0; i < candidatsHashTable->size; i++)
+    {
+        if (candidatsHashTable->tab[i] != NULL)
+            printf("Le candidat %s a %d votes\n", key_to_str(candidatsHashTable->tab[i]->key), candidatsHashTable->tab[i]->val);
+    }
+
+    printf("Le vainqueur des élections est le candidat %s avec %d votes\n", key_to_str(keyVainqueur), actuelVainqueur->val);
+
+    free(actuelVainqueur);
+    return keyVainqueur;
 }

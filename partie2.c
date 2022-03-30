@@ -147,10 +147,11 @@ Protected *init_protected(Key *pKey, char *mess, Signature *sgn)
 {
     Protected *protected = malloc(sizeof(Protected));
     assert(protected);
+
 protected
     ->pKey = pKey;
 protected
-    ->message = mess;
+    ->message = strdup(mess);
 protected
     ->signature = sgn;
     return protected;
@@ -224,20 +225,6 @@ char *protected_to_str(Protected *protected)
     return mess_str;
 }
 
-// Protected *str_to_protected(char *str)
-// {
-//     char c[256];
-//     char s[256];
-//     char mess[256];
-
-//     sscanf(str, "%s %s %s", c, mess, s);
-//     Key *cle = str_to_key(c);
-//     Signature *sign = str_to_signature(s);
-//     Protected *pr = init_protected(cle, mess, sign);
-
-//     return pr;
-// }
-
 Protected *str_to_protected(char *str)
 {
     int i = 0;
@@ -276,20 +263,6 @@ Protected *str_to_protected(char *str)
     Protected *protected = init_protected(pKey, mess_str, sgn);
     return protected;
 }
-
-// char *protected_to_str(Protected *pr)
-// {
-//     char *cle = key_to_str(pr->pKey);
-//     char *sign = signature_to_str(pr->signature);
-
-//     strcat(cle, " ");
-//     strcat(cle, pr->message);
-//     strcat(cle, " ");
-//     strcat(cle, sign);
-//     free(sign);
-
-//     return cle;
-// }
 
 void generer_all_data(char *filename, int nv)
 {

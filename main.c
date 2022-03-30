@@ -9,7 +9,7 @@ void menu()
 
 int main()
 {
-    // srand(time(NULL));
+    srand(time(NULL));
     // int rep;
     // char buff[BUFFER_SIZE];
     // int nv, nc, cpt;
@@ -59,14 +59,21 @@ int main()
     // } while (rep != 0);
     // printf("Merci , et au revoir.\n");
     // jeu_test_exercice_3();
-    // generate_random_data(2000, 20);
+    generate_random_data(100000, 500);
 
     // CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
     // print_list_protected(cp);
     // cp = supprimer_fausse_signature(cp);
-    CellKey *ck = read_public_keys("election_donnee/keys.txt");
-    HashTable *hash = create_hashtable(ck, 2100);
-    delete_hashtable(hash);
-    delete_list_keys(ck);
+    CellKey *lc = read_public_keys("election_donnee/candidates.txt");
+    CellKey *lp = read_public_keys("election_donnee/keys.txt");
+    CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
+
+    // print_list_protected(cp);
+    // HashTable *hash = create_hashtable(lp, 100);
+    // afficher_hashtable(hash);
+    // Key *k = malloc(sizeof(Key));
+    // init_key(k, 4181, 13511);
+    // find_position(hash, k);
+    compute_winner(cp, lc, lp, 550, 100500);
     return 0;
 }
