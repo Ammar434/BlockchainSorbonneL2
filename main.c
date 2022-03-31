@@ -1,4 +1,4 @@
-#include "jeuDeTest.h"
+#include "src/jeuDeTest.h"
 void menu()
 {
     printf("0 - Sortie du programme\n");
@@ -58,6 +58,7 @@ int main()
     //     }
     // } while (rep != 0);
     // printf("Merci , et au revoir.\n");
+
     // jeu_test_exercice_3();
     generate_random_data(1000, 5);
 
