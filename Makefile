@@ -7,38 +7,38 @@ OUTDIR = ./bin
 SRCDIR = ./src
 DATADIR = ./election_donnee
 
-REQUIREMENT = exercice1.o  exercice2.o  exercice3.o  exercice4.o  exercice5.o  exercice6.o
+REQUIREMENT = exercice1.o  exercice2.o  exercice3.o  exercice4.o  exercice5.o  exercice6.o jeuDeTest.o
 
 .PHONY:	all clean
 
 all: $(PROGRAMS)
 
-main: main.o $(REQUIREMENT) jeuDeTest.o -lm
-	$(CC) -o $@ $(CFLAGS) $^
+main: main.o $(REQUIREMENT) -lm
+	$(CC) -o $@ $(CFLAGS) $(addprefix $(OUTDIR)/,$<) $(addprefix $(OUTDIR)/,$(REQUIREMENT)) -lm
 
 main.o: main.c
-	$(CC) -c $(CFLAGS) main.c 
+	$(CC) -c $(CFLAGS) main.c -o $(OUTDIR)/$@
 
 jeuDeTest.o: $(SRCDIR)/jeuDeTest.c 
-	$(CC) -c $(CFLAGS) $(SRCDIR)/jeuDeTest.c 
+	$(CC) -c $(CFLAGS) $(SRCDIR)/jeuDeTest.c -o $(OUTDIR)/$@
 
 exercice1.o: $(SRCDIR)/partie1/exercice1/exercice1.c
-	$(CC) -c $(CFLAGS) $(SRCDIR)/partie1/exercice1/exercice1.c  
+	$(CC) -c $(CFLAGS) $(SRCDIR)/partie1/exercice1/exercice1.c  -o $(OUTDIR)/$@
 
 exercice2.o: $(SRCDIR)/partie1/exercice2/exercice2.c
-	$(CC) -c $(CFLAGS) $(SRCDIR)/partie1/exercice2/exercice2.c 
+	$(CC) -c $(CFLAGS) $(SRCDIR)/partie1/exercice2/exercice2.c -o $(OUTDIR)/$@
 	
 exercice3.o: $(SRCDIR)/partie2/exercice3/exercice3.c
-	$(CC) -c $(CFLAGS) $(SRCDIR)/partie2/exercice3/exercice3.c 
+	$(CC) -c $(CFLAGS) $(SRCDIR)/partie2/exercice3/exercice3.c -o $(OUTDIR)/$@
 
 exercice4.o: $(SRCDIR)/partie2/exercice4/exercice4.c
-	$(CC) -c $(CFLAGS) $(SRCDIR)/partie2/exercice4/exercice4.c 
+	$(CC) -c $(CFLAGS) $(SRCDIR)/partie2/exercice4/exercice4.c -o $(OUTDIR)/$@
 
 exercice5.o: $(SRCDIR)/partie3/exercice5/exercice5.c
-	$(CC) -c $(CFLAGS) $(SRCDIR)/partie3/exercice5/exercice5.c 
+	$(CC) -c $(CFLAGS) $(SRCDIR)/partie3/exercice5/exercice5.c -o $(OUTDIR)/$@
 
 exercice6.o: $(SRCDIR)/partie3/exercice6/exercice6.c
-	$(CC) -c $(CFLAGS) $(SRCDIR)/partie3/exercice6/exercice6.c 
+	$(CC) -c $(CFLAGS) $(SRCDIR)/partie3/exercice6/exercice6.c -o $(OUTDIR)/$@
 
 clean:
 	rm -f $(OUTDIR)/*.o
