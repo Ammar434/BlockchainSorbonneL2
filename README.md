@@ -37,8 +37,8 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-Nous considérons dans ce projet l'organisation d'un processus électoral par scrutin uninominal majoritaire à deux tours (comme ici en France).
-<br>Partie 1 : Implementation d'outils de cryptographie.</br>
+<br>Nous considérons dans ce projet l'organisation d'un processus électoral par scrutin uninominal majoritaire à deux tours (comme ici en France).</br>
+<br>Partie 1: Implementation d'outils de cryptographie.</br>
 <br>Partie 2: Création d'un système de déclarations sécurisés par chiffrement asymétrique.</br>
 <br>Partie 3 : Manipulation d'une base centralisée de déclarations.</br>
 <br>Partie 4 : Implémentation d'un mécanisme de consensus.</br>
