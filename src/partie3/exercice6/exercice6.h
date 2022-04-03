@@ -14,11 +14,12 @@ typedef struct hashtable
     int size;
 } HashTable;
 
-CellProtected *supprimer_fausse_signature(CellProtected *cellProtected);
-void check_signature(CellProtected **LCP);
+void supprimer_fausse_signature(CellProtected **cellProtected);
 
 HashCell *create_hashcell(Key *key);
 int hash_function(Key *key, int size);
+int quadratic_hash_function(Key *key, int size, int pow);
+
 int find_position(HashTable *t, Key *key);
 HashTable *create_hashtable(CellKey *keys, int size);
 void delete_hashtable(HashTable *t);

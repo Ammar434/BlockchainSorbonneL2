@@ -1,5 +1,50 @@
 #include "jeuDeTest.h"
 
+void jeu_test_exercice_1()
+{
+    printf("Q.1.1\n");
+    if (is_prime_naive(2))
+    {
+        printf("2 est premier\n");
+    }
+    else
+    {
+        printf("2 n'est pas premier\n");
+    }
+
+    if (is_prime_naive(53))
+    {
+        printf("53 est premier\n");
+    }
+    else
+    {
+        printf("53 n'est pas premier\n");
+    }
+
+    if (is_prime_naive(4))
+    {
+        printf("4 est premier\n");
+    }
+    else
+    {
+        printf("4 n'est pas premier\n");
+    }
+    printf("\n");
+
+    printf("Q.1.3\n");
+    printf("2^2 mod 2 = %ld\n", modpow_naive(2, 2, 2));
+    printf("5^5 mod 4 = %ld\n", modpow_naive(5, 5, 4));
+    printf("\n");
+
+    printf("Q.1.4\n");
+    printf("2^2 mod 2 = %ld\n", modpow(2, 2, 2));
+    printf("5^5 mod 4 = %ld\n", modpow(5, 5, 4));
+    printf("\n");
+
+    printf("Q.1.8\n");
+    printf("low : 10, up : 100, k : 5 -> random_prime_number(10,100,5) = %ld\n", random_prime_number(10, 100, 5));
+}
+
 void jeu_test_exercice_2()
 {
     // Exercice 2
@@ -60,6 +105,7 @@ void jeu_test_exercice_3()
     printf("keytostr: %s\n", chaine);
     Key *k = str_to_key(chaine);
     printf("strtokey: %lx, %lx\n", k->a, k->b);
+    free(chaine);
 
     // Testing signature
     // Candidate keys:
@@ -69,6 +115,7 @@ void jeu_test_exercice_3()
 
     // Declaration:
     char *mess = key_to_str(pKeyC);
+
     char *mess2 = key_to_str(pKey);
     printf("%s vote pour %s \n", mess2, mess);
     free(mess2);
@@ -77,10 +124,10 @@ void jeu_test_exercice_3()
     printf("signature ");
     print_long_vector(sgn->tab, sgn->size);
     chaine = signature_to_str(sgn);
+    printf("signature to str: %s \n", chaine);
     free(sgn->tab);
     free(sgn);
 
-    printf("signature to str: %s \n", chaine);
     sgn = str_to_signature(chaine);
     printf("str to signature ");
     print_long_vector(sgn->tab, sgn->size);
@@ -122,9 +169,46 @@ void jeu_test_exercice_3()
     free(sgn->tab);
     free(sgn);
     free(pr->pKey);
+    free(pr->signature->tab);
+    free(pr->signature);
+    free(pr->message);
+    free(pr);
+}
 
-    // free(pr->signature->tab);
-    // free(pr->signature);
-    // free(pr->message);
-    // free(pr);
+void jeu_test_exercice_4(int nv, int nc)
+{
+    generate_random_data(nv, nc);
+}
+
+void jeu_test_exercice_5()
+{
+    generate_random_data(1000, 15);
+    CellKey *lc = read_public_keys("election_donnee/candidates.txt");
+    print_list_keys(lc);
+    CellKey *lp = read_public_keys("election_donnee/keys.txt");
+    print_list_keys(lc);
+    CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
+    print_list_protected(cp);
+    delete_list_keys(lc);
+    delete_list_keys(lp);
+    delete_list_protected(cp);
+}
+void jeu_test_exercice_6(int nv, int nc)
+{
+
+    generate_random_data(nv, nc);
+    CellKey *lc = read_public_keys("election_donnee/candidates.txt");
+    CellKey *lp = read_public_keys("election_donnee/keys.txt");
+    CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
+    supprimer_fausse_signature(&cp);
+    print_list_protected(cp);
+    // HashTable *hash = create_hashtable(lp, 20);
+    // afficher_hashtable(hash);
+
+    Key *vainqueur = compute_winner(cp, lc, lp, nc + 100, nv + 10);
+
+    delete_list_keys(lc);
+    delete_list_keys(lp);
+    delete_list_protected(cp);
+    free(vainqueur);
 }

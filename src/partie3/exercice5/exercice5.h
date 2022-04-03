@@ -15,7 +15,7 @@ typedef struct cellProtected
 } CellProtected;
 
 CellKey *create_cell_key(Key *key);
-CellKey *add_key_to_head(CellKey *cellKey, Key *key);
+void add_cell_prototected_to_head(CellProtected **cellProtected, Protected *pr);
 
 CellKey *read_public_keys(char *filename);
 void print_list_keys(CellKey *LCK);

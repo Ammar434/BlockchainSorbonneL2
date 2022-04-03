@@ -10,7 +10,9 @@ CellKey *create_cell_key(Key *key)
         printf("Erreur lors de l'allocation\n");
         return NULL;
     }
-    cell->key = key;
+    cell->key = malloc(sizeof(Key));
+    cell->key->a = key->a;
+    cell->key->b = key->b;
     cell->next = NULL;
     return cell;
 }
@@ -50,6 +52,7 @@ CellKey *read_public_keys(char *filename)
         }
         Key *publicKey = str_to_key(pKey);
         cell = add_key_to_head(cell, publicKey);
+        free(publicKey);
     }
 
     fclose(f);
@@ -59,12 +62,15 @@ CellKey *read_public_keys(char *filename)
 // Question 5.4
 void print_list_keys(CellKey *LCK)
 {
+    char *tmp = NULL;
     if (!LCK)
         return;
     CellKey *cell = LCK;
-    while (cell->next != NULL)
+    while (cell != NULL)
     {
-        printf("%s\n", key_to_str(cell->key));
+        tmp = key_to_str(cell->key);
+        printf("%s\n", tmp);
+        free(tmp);
         cell = cell->next;
     }
 }
@@ -72,7 +78,7 @@ void print_list_keys(CellKey *LCK)
 // Question 5.5
 void delete_cell_key(CellKey *c)
 {
-    // free(c->key);
+    free(c->key);
     free(c);
 }
 
@@ -102,14 +108,14 @@ CellProtected *create_cell_protected(Protected *pr)
 }
 
 // Question 5.7
-void *add_cell_prototected_to_head(CellProtected **cellProtected, Protected *pr)
+void add_cell_prototected_to_head(CellProtected **cellProtected, Protected *pr)
 {
 
     CellProtected *new = create_cell_protected(pr);
     if (new == NULL)
     {
         printf("Erreur lors de l'allocation\n");
-        return NULL;
+        return;
     }
     new->next = *cellProtected;
     *cellProtected = new;
@@ -146,13 +152,16 @@ CellProtected *read_protected_from_file(char *filename)
 // Question 5.9
 void print_list_protected(CellProtected *cellProtected)
 {
+    char *tmp = NULL;
     if (!cellProtected)
         return;
     CellProtected *cell = cellProtected;
     while (cell != NULL)
     {
-        printf("%s\n", protected_to_str(cell->data));
+        tmp = protected_to_str(cell->data);
+        printf("%s\n", tmp);
         cell = cell->next;
+        free(tmp);
     }
 }
 

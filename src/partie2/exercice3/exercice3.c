@@ -13,7 +13,7 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
     long q = random_prime_number(low_size, up_size, 5000);
     while (p == q)
     {
-        q = random_prime_number(3, 7, 5000);
+        q = random_prime_number(low_size, up_size, 5000);
     }
     long n, s, u;
     generate_key_values(p, q, &n, &s, &u);
@@ -29,17 +29,10 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
 }
 
 // Question 3.4
-int getLenNum(long a)
-{
-    return floor(log10(labs(a))) + 1;
-}
 
 char *key_to_str(Key *key)
 {
-    int len;
-    char *str;
-    len = getLenNum(key->a) + 1 + getLenNum(key->b) + 2 + 1;
-    str = malloc(sizeof(char) * len);
+    char *str = malloc(sizeof(char) * BUFFER_SIZE);
     if (str == NULL)
     {
         printf("Erreur lors de l'allocation\n");
@@ -58,6 +51,7 @@ Key *str_to_key(char *str)
     if (res == NULL)
     {
         printf("Erreur lors de l'allocation\n");
+
         return NULL;
     }
     init_key(res, a, b);
@@ -88,10 +82,10 @@ char *signature_to_str(Signature *sgn)
     char *result = malloc(10 * sgn->size * sizeof(char));
     result[0] = '#';
     int pos = 1;
-    char buffer[156];
+    char buffer[BUFFER_SIZE];
     for (int i = 0; i < sgn->size; i++)
     {
-        sprintf(buffer, "%lx ", sgn->tab[i]);
+        sprintf(buffer, "%lx", sgn->tab[i]);
         for (int j = 0; j < (int)strlen(buffer); j++)
         {
             result[pos] = buffer[j];
@@ -100,7 +94,7 @@ char *signature_to_str(Signature *sgn)
         result[pos] = '#';
         pos = pos + 1;
     }
-    result[pos] = '0';
+    result[pos] = '\0';
     result = realloc(result, (pos + 1) * sizeof(char));
     return result;
 }
@@ -109,14 +103,8 @@ Signature *str_to_signature(char *str)
 {
     int len = strlen(str);
     long *content = (long *)(malloc(sizeof(long) * len));
-    if (content == NULL)
-    {
-        printf("Erreur d'allocation\n");
-        return NULL;
-    }
-
     int num = 0;
-    char buffer[256];
+    char buffer[BUFFER_SIZE];
     int pos = 0;
 
     for (int i = 0; i < len; i++)
@@ -131,7 +119,7 @@ Signature *str_to_signature(char *str)
             if (pos != 0)
             {
                 buffer[pos] = '\0';
-                sscanf(buffer, "%lx", &(content[num]));
+                sscanf(buffer, "%ld", &(content[num]));
                 num++;
                 pos = 0;
             }
@@ -145,7 +133,11 @@ Signature *str_to_signature(char *str)
 Protected *init_protected(Key *pKey, char *mess, Signature *sgn)
 {
     Protected *protected = malloc(sizeof(Protected));
-    assert(protected);
+    if (protected == NULL)
+    {
+        printf("Erreur lors de l'allocation\n");
+        return NULL;
+    }
 
 protected
     ->pKey = pKey;
@@ -159,6 +151,11 @@ protected
 // Question 3.11
 int verify(Protected *pr)
 {
+    if (pr == NULL)
+    {
+        return 0;
+    }
+
     Signature *sgn = pr->signature;
     Key *pKey = pr->pKey;
     char *mess = pr->message;
@@ -172,17 +169,6 @@ int verify(Protected *pr)
     return 1;
 }
 
-// int verify(Protected *pr)
-// {
-//     char *mess = decrypt(pr->sgn->content, pr->sgn->size, pr->pKey->val, pr->pKey->n);
-//     if (strcmp(mess, pr->mess) != 0)
-//     {
-//         free(mess);
-//         return 0;
-//     }
-//     free(mess);
-//     return 1;
-// }
 // Question 3.12
 char *protected_to_str(Protected *protected)
 {
