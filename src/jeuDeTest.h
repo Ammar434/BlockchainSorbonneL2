@@ -9,7 +9,6 @@
 void jeu_test_exercice_1();
 void jeu_test_exercice_2();
 void jeu_test_exercice_3();
-void jeu_test_exercice_4(int nv, int nc);
 void jeu_test_exercice_5();
-void jeu_test_exercice_6(int nv, int nc);
+void jeu_test_exercice_6();
 #endif

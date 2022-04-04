@@ -4,32 +4,33 @@
 // Question 6.1
 void supprimer_fausse_signature(CellProtected **cellProtected)
 {
-    CellProtected *n, *prec;
-    if (cellProtected != NULL)
+    CellProtected *ptr = NULL;
+    CellProtected *tmp = *cellProtected;
+    CellProtected *prec = NULL;
+
+    while (tmp)
     {
-        if (verify((*cellProtected)->data) == 0)
-        { // si premier
-            printf("Fausse signature!!!\n");
-            n = *cellProtected;
-            *cellProtected = (*cellProtected)->next;
-            delete_cell_protect(n);
+        if (verify((tmp)->data) != 1)
+        {
+            char *sgn_str = signature_to_str((*cellProtected)->data->signature);
+            free(sgn_str);
+
+            if (prec)
+            {
+                prec->next = tmp->next;
+            }
+            else
+            {
+                *cellProtected = (*cellProtected)->next;
+            }
+            ptr = tmp;
+            tmp = tmp->next;
+            delete_cell_protect(ptr);
         }
         else
-        { // sinon voir les autres
-            prec = *cellProtected;
-            n = (*cellProtected)->next;
-            while (n != NULL)
-            {
-                if (verify(n->data) == 0)
-                {
-                    printf("Fausse signature!!!");
-                    prec->next = n->next;
-                    delete_cell_protect(n);
-                    break;
-                }
-                prec = n;
-                n = n->next;
-            }
+        {
+            prec = tmp;
+            tmp = tmp->next;
         }
     }
 }

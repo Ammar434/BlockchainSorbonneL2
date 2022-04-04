@@ -55,7 +55,7 @@ long *encrypt(char *chaine, long s, long n)
 // Question 2.3
 char *decrypt(long *crypted, int size, long u, long n)
 {
-    char *tab = (char *)malloc(sizeof(char) * size + 1);
+    char *tab = (char *)malloc(sizeof(char) * (size + 1));
     assert(tab);
     for (int i = 0; i < size; i++)
     {

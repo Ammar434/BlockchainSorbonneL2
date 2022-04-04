@@ -5,19 +5,14 @@
 // Question 1.1
 int is_prime_naive(long p)
 {
-    if ((p == 0) || (p == 1))
+    for (int i = 2; i <= (p / 2); i++)
     {
-        return 1;
-    }
-    else
-    {
-        for (int i = 2; i <= (p / 2); i++)
+        if (p % i == 0)
         {
-            if (p % i == 0)
-                return 0;
+            return 0;
         }
-        return 1;
     }
+    return 1;
 }
 
 // Question 1.2

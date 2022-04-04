@@ -1,5 +1,7 @@
 #include "jeuDeTest.h"
 
+#include "jeuDeTest.h"
+
 void jeu_test_exercice_1()
 {
     printf("Q.1.1\n");
@@ -115,7 +117,6 @@ void jeu_test_exercice_3()
 
     // Declaration:
     char *mess = key_to_str(pKeyC);
-
     char *mess2 = key_to_str(pKey);
     printf("%s vote pour %s \n", mess2, mess);
     free(mess2);
@@ -124,10 +125,10 @@ void jeu_test_exercice_3()
     printf("signature ");
     print_long_vector(sgn->tab, sgn->size);
     chaine = signature_to_str(sgn);
-    printf("signature to str: %s \n", chaine);
     free(sgn->tab);
     free(sgn);
 
+    printf("signature to str: %s \n", chaine);
     sgn = str_to_signature(chaine);
     printf("str to signature ");
     print_long_vector(sgn->tab, sgn->size);
@@ -175,40 +176,97 @@ void jeu_test_exercice_3()
     free(pr);
 }
 
-void jeu_test_exercice_4(int nv, int nc)
-{
-    generate_random_data(nv, nc);
-}
-
 void jeu_test_exercice_5()
 {
-    generate_random_data(1000, 15);
-    CellKey *lc = read_public_keys("election_donnee/candidates.txt");
-    print_list_keys(lc);
-    CellKey *lp = read_public_keys("election_donnee/keys.txt");
-    print_list_keys(lc);
-    CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
-    print_list_protected(cp);
-    delete_list_keys(lc);
-    delete_list_keys(lp);
-    delete_list_protected(cp);
-}
-void jeu_test_exercice_6(int nv, int nc)
-{
+    // Creation de la clé
+    Key *k = (Key *)(malloc(sizeof(Key)));
+    k->a = 1;
+    k->b = 2;
 
-    generate_random_data(nv, nc);
-    CellKey *lc = read_public_keys("election_donnee/candidates.txt");
-    CellKey *lp = read_public_keys("election_donnee/keys.txt");
+    // Ajout à une CellKey
+    CellKey *c = create_cell_key(NULL);
+    add_key_to_head(&c, k);
+
+    // Affichage de la liste
+    print_list_keys(c);
+
+    // Suppresion de la liste de cle
+    delete_list_keys(c);
+
+    // Lecture d'un fichier
+    CellKey *c2 = read_public_keys("election_donnee/candidates.txt");
+
+    // Lecture et suppression de la liste
+    print_list_keys(c2);
+    delete_list_keys(c2);
+
+    // Creation d'une clé
+    Key *k3 = (Key *)(malloc(sizeof(Key)));
+    k3->a = 1;
+    k3->b = 2;
+    Key *k4 = (Key *)(malloc(sizeof(Key)));
+    k4->a = 1;
+    k4->b = 2;
+
+    char *tmp = key_to_str(k3);
+
+    // variable Signature
+    Signature *signature = sign(tmp, k4);
+
+    // variable Protected
+    Protected *p = init_protected(k3, tmp, signature);
+
+    // Ajout à une liste de Protected
+    CellProtected *p2 = create_cell_protected(NULL);
+    add_cell_protected_to_head(&p2, p);
+
+    // Affichage de la liste Protected
+    print_list_protected(p2);
+
+    free(tmp);
+    // Suppresion de la liste Protected
+    delete_list_protected(p2);
+
+    // free
+    free(k4);
+
+    // Lecture d'un fichier
+    CellProtected *p3 = read_protected_from_file("election_donnee/declaration.txt");
+
+    // Lecture et suppression de la liste
+    print_list_protected(p3);
+    delete_list_protected(p3);
+}
+
+void jeu_test_exercice_6()
+{
     CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
+    printf("Liste avant supprimer_fausse_signature\n");
+    print_list_protected(cp);
+
+    printf("Liste apres supprimer_fausse_signature\n");
     supprimer_fausse_signature(&cp);
     print_list_protected(cp);
-    // HashTable *hash = create_hashtable(lp, 20);
-    // afficher_hashtable(hash);
 
-    Key *vainqueur = compute_winner(cp, lc, lp, nc + 100, nv + 10);
-
-    delete_list_keys(lc);
-    delete_list_keys(lp);
     delete_list_protected(cp);
-    free(vainqueur);
 }
+
+// void jeu_test_exercice_6(int nv, int nc)
+// {
+
+//     generate_random_data(nv, nc);
+//     CellKey *lc = read_public_keys("election_donnee/candidates.txt");
+//     CellKey *lp = read_public_keys("election_donnee/keys.txt");
+//     CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
+//     supprimer_fausse_signature(&cp);
+//     print_list_protected(cp);
+//     // HashTable *hash = create_hashtable(lp, 20);
+//     // afficher_hashtable(hash);
+
+//     Key *vainqueur = compute_winner(cp, lc, lp, nc + 100, nv + 10);
+
+//     delete_list_keys(lc);
+//     delete_list_keys(lp);
+//     delete_list_protected(cp);
+//     free(vainqueur);
+// }

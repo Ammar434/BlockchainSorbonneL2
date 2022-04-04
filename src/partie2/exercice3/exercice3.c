@@ -29,17 +29,16 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
 }
 
 // Question 3.4
-
 char *key_to_str(Key *key)
 {
-    char *str = malloc(sizeof(char) * BUFFER_SIZE);
-    if (str == NULL)
+    char *buffer = (char *)malloc(sizeof(char) * 156);
+    if (buffer == NULL)
     {
         printf("Erreur lors de l'allocation\n");
         return NULL;
     }
-    sprintf(str, "(%lx,%lx)", key->a, key->b);
-    return str;
+    sprintf(buffer, "(%lx,%lx)", key->a, key->b);
+    return buffer;
 }
 
 Key *str_to_key(char *str)
@@ -82,7 +81,7 @@ char *signature_to_str(Signature *sgn)
     char *result = malloc(10 * sgn->size * sizeof(char));
     result[0] = '#';
     int pos = 1;
-    char buffer[BUFFER_SIZE];
+    char buffer[156];
     for (int i = 0; i < sgn->size; i++)
     {
         sprintf(buffer, "%lx", sgn->tab[i]);
@@ -104,7 +103,7 @@ Signature *str_to_signature(char *str)
     int len = strlen(str);
     long *content = (long *)(malloc(sizeof(long) * len));
     int num = 0;
-    char buffer[BUFFER_SIZE];
+    char buffer[256];
     int pos = 0;
 
     for (int i = 0; i < len; i++)
@@ -119,7 +118,7 @@ Signature *str_to_signature(char *str)
             if (pos != 0)
             {
                 buffer[pos] = '\0';
-                sscanf(buffer, "%ld", &(content[num]));
+                sscanf(buffer, "%lx", &(content[num]));
                 num++;
                 pos = 0;
             }
@@ -170,81 +169,26 @@ int verify(Protected *pr)
 }
 
 // Question 3.12
-char *protected_to_str(Protected *protected)
+char *protected_to_str(Protected *pr)
 {
-    int i = 0;
-    int j = 0;
-    char *key_str = key_to_str(protected->pKey);
-    char *sgn_str = signature_to_str(protected->signature);
-    int len = strlen(key_str) + strlen(sgn_str) + strlen(protected->message) + 3;
-
-    char *mess_str = malloc(len * sizeof(char));
-
-    while (key_str[j] != '\0')
-    {
-        mess_str[i] = key_str[i];
-        i = i + 1;
-        j = j + 1;
-    }
-    mess_str[i] = ';';
-    i = i + 1;
-    j = 0;
-    while (protected->message[j] != '\0')
-    {
-        mess_str[i] = protected->message[j];
-        i = i + 1;
-        j = j + 1;
-    }
-    mess_str[i] = ';';
-    i = i + 1;
-    j = 0;
-    while (sgn_str[j] != '\0')
-    {
-        mess_str[i] = sgn_str[j];
-        i = i + 1;
-        j = j + 1;
-    }
-    mess_str[i] = '\0';
-    free(key_str);
-    free(sgn_str);
-    return mess_str;
+    char *ptr = signature_to_str(pr->signature);
+    char *tmp = key_to_str(pr->pKey);
+    strcat(tmp, " ");
+    strcat(tmp, pr->message);
+    strcat(tmp, " ");
+    strcat(tmp, ptr);
+    free(ptr);
+    return tmp;
 }
 
 Protected *str_to_protected(char *str)
 {
-    int i = 0;
-    int j = 0;
-    char key_str[BUFFER_SIZE];
-    char sgn_str[BUFFER_SIZE];
-    char mess_str[BUFFER_SIZE];
-    while (str[i] != ';')
-    {
-        key_str[j] = str[i];
-        i = i + 1;
-        j = j + 1;
-    }
-    key_str[j] = '\0';
-    i = i + 1;
-    j = 0;
-    while (str[i] != ';')
-    {
-        mess_str[j] = str[i];
-        i = i + 1;
-        j = j + 1;
-    }
-    mess_str[j] = '\0';
-    i = i + 1;
-    j = 0;
-    while (str[i] != '\0')
-    {
-        sgn_str[j] = str[i];
-        i = i + 1;
-        j = j + 1;
-    }
-    sgn_str[j] = '\0';
-
-    Key *pKey = str_to_key(key_str);
-    Signature *sgn = str_to_signature(sgn_str);
-    Protected *protected = init_protected(pKey, mess_str, sgn);
-    return protected;
+    char a[256];
+    char b[256];
+    char c[256];
+    sscanf(str, "%s %s %s", a, c, b);
+    Key *cle = str_to_key(a);
+    Signature *s = str_to_signature(b);
+    Protected *p = init_protected(cle, c, s);
+    return p;
 }
