@@ -40,9 +40,7 @@ HashCell *create_hashcell(Key *key)
 {
     HashCell *hash = (HashCell *)(malloc(sizeof(HashCell)));
     hash->val = 0;
-    hash->key = malloc(sizeof(Key));
-    hash->key->a = key->a;
-    hash->key->b = key->b;
+    hash->key = key;
     return hash;
 }
 
@@ -60,6 +58,13 @@ int quadratic_hash_function(Key *key, int size, int pow)
     return (int)(cle);
 }
 // Question 6.4
+int compare_cle(Key *key1, Key *key2)
+{
+    if (key1->a == key2->a && key1->b == key2->b)
+        return 1;
+    return 0;
+}
+
 int find_position(HashTable *t, Key *key)
 {
     if (t == NULL || key == NULL)
@@ -153,7 +158,6 @@ void count_element_hashtable(HashTable *hashtable)
 
 void delete_hashtable(HashTable *t)
 {
-
     for (int i = 0; i < t->size; i++)
     {
         if (t->tab[i] != NULL)
@@ -167,12 +171,6 @@ void delete_hashtable(HashTable *t)
     free(t);
 }
 
-int compare_cle(Key *key1, Key *key2)
-{
-    if (key1->a == key2->a && key1->b == key2->b)
-        return 1;
-    return 0;
-}
 // Question 6.7
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
 {
