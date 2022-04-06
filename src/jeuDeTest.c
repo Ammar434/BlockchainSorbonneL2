@@ -1,4 +1,5 @@
 #include "jeuDeTest.h"
+
 #include "jeuDeTest.h"
 
 void jeu_test_exercice_1()
@@ -175,66 +176,67 @@ void jeu_test_exercice_3()
     free(pr);
 }
 
-// void jeu_test_exercice_5()
-// {
-//     // Creation de la clé
-//     Key *k = (Key *)(malloc(sizeof(Key)));
-//     k->a = 1;
-//     k->b = 2;
-//     // Ajout à une CellKey
-//     CellKey *c = create_cell_key(NULL);
-//     add_key_to_head(&c, k);
+void jeu_test_exercice_5()
+{
+    // Creation de la clé
+    Key *k = (Key *)(malloc(sizeof(Key)));
+    k->a = 1;
+    k->b = 2;
 
-//     // Affichage de la liste
-//     print_list_keys(c);
+    // Ajout à une CellKey
+    CellKey *c = create_cell_key(NULL);
+    add_key_to_head(&c, k);
 
-//     // Suppresion de la liste de cle
-//     delete_list_keys(c);
+    // Affichage de la liste
+    print_list_keys(c);
 
-//     // Lecture d'un fichier
-//     CellKey *c2 = read_public_keys("election_donnee/candidates.txt");
+    // Suppresion de la liste de cle
+    delete_list_keys(c);
 
-//     // Lecture et suppression de la liste
-//     print_list_keys(c2);
-//     delete_list_keys(c2);
+    // Lecture d'un fichier
+    CellKey *c2 = read_public_keys("election_donnee/candidates.txt");
 
-//     // Creation d'une clé
-//     Key *k3 = (Key *)(malloc(sizeof(Key)));
-//     k3->a = 1;
-//     k3->b = 2;
-//     Key *k4 = (Key *)(malloc(sizeof(Key)));
-//     k4->a = 1;
-//     k4->b = 2;
+    // Lecture et suppression de la liste
+    print_list_keys(c2);
+    delete_list_keys(c2);
 
-//     char *tmp = key_to_str(k3);
+    // Creation d'une clé
+    Key *k3 = (Key *)(malloc(sizeof(Key)));
+    k3->a = 1;
+    k3->b = 2;
+    Key *k4 = (Key *)(malloc(sizeof(Key)));
+    k4->a = 1;
+    k4->b = 2;
 
-//     // variable Signature
-//     Signature *signature = sign(tmp, k4);
+    char *tmp = key_to_str(k3);
 
-//     // variable Protected
-//     Protected *p = init_protected(k3, tmp, signature);
+    // variable Signature
+    Signature *signature = sign(tmp, k4);
 
-//     // Ajout à une liste de Protected
-//     CellProtected *p2 = create_cell_protected(NULL);
-//     add_cell_protected_to_head(&p2, p);
+    // variable Protected
+    Protected *p = init_protected(k3, tmp, signature);
 
-//     // Affichage de la liste Protected
-//     print_list_protected(p2);
+    // Ajout à une liste de Protected
+    CellProtected *p2 = create_cell_protected(NULL);
+    add_cell_protected_to_head(&p2, p);
 
-//     free(tmp);
-//     // Suppresion de la liste Protected
-//     delete_list_protected(p2);
+    // Affichage de la liste Protected
+    print_list_protected(p2);
 
-//     // free
-//     free(k4);
+    free(tmp);
+    // Suppresion de la liste Protected
+    delete_list_protected(p2);
 
-//     // Lecture d'un fichier
-//     CellProtected *p3 = read_protected_from_file("election_donnee/declaration.txt");
+    // free
+    free(k4);
 
-//     // Lecture et suppression de la liste
-//     print_list_protected(p3);
-//     delete_list_protected(p3);
-// }
+    // Lecture d'un fichier
+    CellProtected *p3 = read_protected_from_file("election_donnee/declaration.txt");
+
+    // Lecture et suppression de la liste
+    print_list_protected(p3);
+    delete_list_protected(p3);
+}
 
 void jeu_test_exercice_6()
 {
@@ -251,8 +253,83 @@ void jeu_test_exercice_6()
 
 void jeu_test_exercice_6bis()
 {
+    // Q.6.2
+    // Creation de 2 clés
+    Key *k1 = (Key *)(malloc(sizeof(Key)));
+    k1->a = 1;
+    k1->b = 2;
+    Key *k2 = (Key *)(malloc(sizeof(Key)));
+    k2->a = 3;
+    k2->b = 4;
+
+    // Creation de 2 HashCell
+    printf("Q.6.2\n");
+    HashCell *hc = create_hashcell(k1);
+    HashCell *hc2 = create_hashcell(k2);
+    printf("hc de valeur %d et de cle a = %ld et b = %ld\n", hc->val, hc->key->a, hc->key->b);
+    printf("hc2 de valeur %d et de cle a = %ld et b = %ld\n", hc->val, hc2->key->a, hc2->key->b);
+    printf("\n");
+
+    // Q.6.3
+    // Position des clé k1 et k2 dans la table de hachage
+    printf("Q.6.3\n");
+    int pos1 = hash_function(k1, 10);
+    int pos2 = hash_function(k2, 10);
+    printf("pos1 a pour position %d. C'est hc de valeur %d et de cle a = %ld et b = %ld\n", pos1, hc->val, hc->key->a, hc->key->b);
+    printf("pos2 a pour position %d. C'est hc2 de valeur %d et de cle a = %ld et b = %ld\n", pos2, hc2->val, hc2->key->a, hc2->key->b);
+    printf("\n");
+    free(hc);
+    free(hc2);
+
+    // Q.6.4 et 6.5
+    printf("Q.6.4 et Q.6.5\n");
+    // Creation d'une CellKey
+    CellKey *ck = create_cell_key(k2);
+    CellKey **liste = &ck;
+    add_key_to_head(liste, k1);
+
+    CellKey *tmp = *liste;
+    int cpt = 1;
+    while (tmp)
+    {
+        printf("Element %d de la liste : a = %ld et b = %ld\n", cpt, tmp->key->a, tmp->key->b);
+        tmp = tmp->next;
+        cpt++;
+    }
+    printf("\n");
+
+    // Creation d'une Hashtable et cherchons la position de k1 et k2 dans la Hashtable
+    HashTable *ht = create_hashtable(*liste, 10);
+    printf("\n");
+
+    // Cherchons la position de k3 non present dans la Hashtable
+    printf("Cherchons la position de k3 non present dans la Hashtable\n");
+    Key *k3 = (Key *)(malloc(sizeof(Key)));
+    k3->a = 5;
+    k3->b = 6;
+    printf("Position de k3 (non present dans la HashTable) : %d\n", find_position(ht, k3));
+    printf("\n");
+
+    // Q.6.6
+    // Affichage de la Hashtable
+    afficher_hashtable(ht);
+    printf("\n");
+
+    // Comptons le nombre d'element dans la Hashtable
+    count_element_hashtable(ht);
+    printf("\n");
+
+    // Suppression de la HashTable
+    delete_hashtable(ht);
+
+    // free
+    free(k3);
+    free(ck->next);
+    free(ck);
+
+    // Q.6.7
     int nc = 10;
-    int nv = 11;
+    int nv = 1000;
 
     generate_random_data(nv, nc);
     CellKey *lc = read_public_keys("election_donnee/candidates.txt");
@@ -269,90 +346,6 @@ void jeu_test_exercice_6bis()
     delete_list_keys(lp);
     delete_list_protected(cp);
     free(vainqueur);
-
-    // // Creation de la table de hachage
-    // HashCell *h = create_hashcell(k1);
-
-    // // Lecture d'un fichier candidates.txt
-    // CellKey *ck = read_public_keys("election_donnee/candidates.txt");
-
-    // // Creation d'une HashTable
-    // HashTable *hash = create_hashtable(ck, 20);
-
-    // // Q.6.2
-    // // Creation de 2 clés
-    // Key *k1 = (Key *)(malloc(sizeof(Key)));
-    // k1->a = 1;
-    // k1->b = 2;
-    // Key *k2 = (Key *)(malloc(sizeof(Key)));
-    // k2->a = 3;
-    // k2->b = 4;
-
-    // // Creation de 2 HashCell
-    // printf("Q.6.2\n");
-    // HashCell *hc = create_hashcell(k1);
-    // HashCell *hc2 = create_hashcell(k2);
-    // printf("hc de valeur %d et de cle a = %ld et b = %ld\n", hc->val, hc->key->a, hc->key->b);
-    // printf("hc2 de valeur %d et de cle a = %ld et b = %ld\n", hc->val, hc2->key->a, hc2->key->b);
-    // printf("\n");
-
-    // // Q.6.3
-    // // Position des clé k1 et k2 dans la table de hachage
-    // printf("Q.6.3\n");
-    // int pos1 = hash_function(k1, 10);
-    // int pos2 = hash_function(k2, 10);
-    // printf("pos1 a pour position %d. C'est hc de valeur %d et de cle a = %ld et b = %ld\n", pos1, hc->val, hc->key->a, hc->key->b);
-    // printf("pos2 a pour position %d. C'est hc2 de valeur %d et de cle a = %ld et b = %ld\n", pos2, hc2->val, hc2->key->a, hc2->key->b);
-    // printf("\n");
-
-    // // Q.6.4 et 6.5
-    // printf("Q.6.4 et Q.6.5\n");
-    // // Creation d'une CellKey
-    // CellKey *ck = create_cell_key(k2);
-    // CellKey **liste = &ck;
-    // add_key_to_head(liste, k1);
-
-    // CellKey *tmp = *liste;
-    // int cpt = 1;
-    // while (tmp)
-    // {
-    //     printf("Element %d de la liste : a = %ld et b = %ld\n", cpt, tmp->key->a, tmp->key->b);
-    //     tmp = tmp->next;
-    //     cpt++;
-    // }
-    // printf("\n");
-
-    // // Creation d'une Hashtable et cherchons la position de k1 et k2 dans la Hashtable
-    // HashTable *ht = create_hashtable(*liste, 10);
-    // printf("\n");
-
-    // // Cherchons la position de k3 non present dans la Hashtable
-    // printf("Cherchons la position de k3 non present dans la Hashtable\n");
-    // Key *k3 = (Key *)(malloc(sizeof(Key)));
-    // k3->a = 5;
-    // k3->b = 6;
-    // printf("Position de k3 (non present dans la HashTable) : %d\n", find_position(ht, k3));
-    // printf("\n");
-
-    // // Q.6.6
-    // // Affichage de la Hashtable
-    // afficher_hashtable(ht);
-    // printf("\n");
-
-    // // Comptons le nombre d'element dans la Hashtable
-    // count_element_hashtable(ht);
-    // printf("\n");
-    // // Suppression de la HashTable
-    // delete_hashtable(ht);
-    // if (ht == NULL)
-    // {
-    //     printf("Suppression de la HashTable avec succes\n");
-    // }
-
-    // // free
-    // free(k3);
-    // free(hc);
-    // free(hc2);
 }
 
 void jeu_test_exercice_7()

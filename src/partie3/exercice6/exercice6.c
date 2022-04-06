@@ -4,32 +4,33 @@
 // Question 6.1
 void supprimer_fausse_signature(CellProtected **cellProtected)
 {
-    CellProtected *n, *prec;
-    if (cellProtected != NULL)
+    CellProtected *ptr = NULL;
+    CellProtected *tmp = *cellProtected;
+    CellProtected *prec = NULL;
+
+    while (tmp)
     {
-        if (verify((*cellProtected)->data) == 0)
-        { // si premier
-            printf("Fausse signature!!!\n");
-            n = *cellProtected;
-            *cellProtected = (*cellProtected)->next;
-            delete_cell_protect(n);
+        if (verify((tmp)->data) != 1)
+        {
+            char *sgn_str = signature_to_str((*cellProtected)->data->signature);
+            free(sgn_str);
+
+            if (prec)
+            {
+                prec->next = tmp->next;
+            }
+            else
+            {
+                *cellProtected = (*cellProtected)->next;
+            }
+            ptr = tmp;
+            tmp = tmp->next;
+            delete_cell_protect(ptr);
         }
         else
-        { // sinon voir les autres
-            prec = *cellProtected;
-            n = (*cellProtected)->next;
-            while (n != NULL)
-            {
-                if (verify(n->data) == 0)
-                {
-                    printf("Fausse signature!!!");
-                    prec->next = n->next;
-                    delete_cell_protect(n);
-                    break;
-                }
-                prec = n;
-                n = n->next;
-            }
+        {
+            prec = tmp;
+            tmp = tmp->next;
         }
     }
 }
@@ -39,9 +40,7 @@ HashCell *create_hashcell(Key *key)
 {
     HashCell *hash = (HashCell *)(malloc(sizeof(HashCell)));
     hash->val = 0;
-    hash->key = malloc(sizeof(Key));
-    hash->key->a = key->a;
-    hash->key->b = key->b;
+    hash->key = key;
     return hash;
 }
 
@@ -59,6 +58,13 @@ int quadratic_hash_function(Key *key, int size, int pow)
     return (int)(cle);
 }
 // Question 6.4
+int compare_cle(Key *key1, Key *key2)
+{
+    if (key1->a == key2->a && key1->b == key2->b)
+        return 1;
+    return 0;
+}
+
 int find_position(HashTable *t, Key *key)
 {
     if (t == NULL || key == NULL)
@@ -86,7 +92,7 @@ HashTable *create_hashtable(CellKey *keys, int size)
 {
     char *tmp = NULL;
     HashTable *hashTable = (HashTable *)(malloc(sizeof(HashTable)));
-    hashTable->tab = malloc(sizeof(HashCell) * size);
+    hashTable->tab = malloc(sizeof(HashCell *) * size);
     hashTable->size = size;
     for (int i = 0; i < size; i++)
     {
@@ -152,7 +158,6 @@ void count_element_hashtable(HashTable *hashtable)
 
 void delete_hashtable(HashTable *t)
 {
-
     for (int i = 0; i < t->size; i++)
     {
         if (t->tab[i] != NULL)
@@ -166,12 +171,6 @@ void delete_hashtable(HashTable *t)
     free(t);
 }
 
-int compare_cle(Key *key1, Key *key2)
-{
-    if (key1->a == key2->a && key1->b == key2->b)
-        return 1;
-    return 0;
-}
 // Question 6.7
 Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
 {
