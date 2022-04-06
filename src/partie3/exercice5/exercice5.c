@@ -10,29 +10,31 @@ CellKey *create_cell_key(Key *key)
         printf("Erreur lors de l'allocation\n");
         return NULL;
     }
-    cell->key = key;
+    cell->key = malloc(sizeof(Key));
+    cell->key->a = key->a;
+    cell->key->b = key->b;
     cell->next = NULL;
     return cell;
 }
 
 // Question 5.2
-void add_key_to_head(CellKey **cellKey, Key *key)
+CellKey *add_key_to_head(CellKey *cellKey, Key *key)
 {
     CellKey *newCell = create_cell_key(key);
     if (newCell == NULL)
     {
         printf("Erreur lors de l'allocation\n");
-        return;
+        return NULL;
     }
-    newCell->next = *cellKey;
-    *cellKey = newCell;
+    newCell->next = cellKey;
+    cellKey = newCell;
+    return cellKey;
 }
 
 // Question 5.3
 CellKey *read_public_keys(char *filename)
 {
-    CellKey *cell = create_cell_key(NULL);
-    Key *publicKey;
+    CellKey *cell = NULL;
     char buff[BUFFER_SIZE];
     char pKey[BUFFER_SIZE];
     FILE *f = fopen(filename, "r");
@@ -41,18 +43,18 @@ CellKey *read_public_keys(char *filename)
         printf("erreur lors de la lecture\n");
         return NULL;
     }
-
     while (fgets(buff, BUFFER_SIZE, f) != 0)
     {
-        if (sscanf(buff, "%s", pKey) != 1)
+        if (sscanf(buff, "%s ", pKey) != 1)
         {
             printf("erreur lecture\n");
             return NULL;
         }
-        publicKey = str_to_key(pKey);
-        add_key_to_head(&cell, publicKey);
-        // free(publicKey);
+        Key *publicKey = str_to_key(pKey);
+        cell = add_key_to_head(cell, publicKey);
+        free(publicKey);
     }
+
     fclose(f);
     return cell;
 }
@@ -60,14 +62,15 @@ CellKey *read_public_keys(char *filename)
 // Question 5.4
 void print_list_keys(CellKey *LCK)
 {
+    char *tmp = NULL;
     if (!LCK)
-    {
         return;
-    }
     CellKey *cell = LCK;
-    while (cell->next != NULL)
+    while (cell != NULL)
     {
-        printf("(%lx,%lx)\n", LCK->key->a, LCK->key->b);
+        tmp = key_to_str(cell->key);
+        printf("%s\n", tmp);
+        free(tmp);
         cell = cell->next;
     }
 }
@@ -81,19 +84,19 @@ void delete_cell_key(CellKey *c)
 
 void delete_list_keys(CellKey *c)
 {
-    CellKey *cell = c;
-    while (cell != NULL)
+    while (c != NULL)
     {
-        CellKey *tmp = cell;
-        cell = cell->next;
+        CellKey *tmp = c;
+        c = c->next;
         delete_cell_key(tmp);
     }
+    free(c);
 }
 
 // Question 5.6
 CellProtected *create_cell_protected(Protected *pr)
 {
-    CellProtected *cell = (CellProtected *)malloc(sizeof(CellProtected));
+    CellProtected *cell = malloc(sizeof(CellProtected));
     if (cell == NULL)
     {
         printf("Erreur lors de l'allocation\n");
@@ -105,8 +108,9 @@ CellProtected *create_cell_protected(Protected *pr)
 }
 
 // Question 5.7
-void add_cell_protected_to_head(CellProtected **cellProtected, Protected *pr)
+void add_cell_prototected_to_head(CellProtected **cellProtected, Protected *pr)
 {
+
     CellProtected *new = create_cell_protected(pr);
     if (new == NULL)
     {
@@ -118,18 +122,6 @@ void add_cell_protected_to_head(CellProtected **cellProtected, Protected *pr)
 }
 
 // Question 5.8
-Protected *temporaire(char *str)
-{
-    char a[256];
-    char b[256];
-    char c[256];
-    sscanf(str, "%s %s %s", a, c, b);
-    Key *cle = str_to_key(a);
-    Signature *s = str_to_signature(b);
-    Protected *p = init_protected(cle, c, s);
-    return p;
-}
-
 CellProtected *read_protected_from_file(char *filename)
 {
     CellProtected *cell = NULL;
@@ -149,8 +141,8 @@ CellProtected *read_protected_from_file(char *filename)
             printf("erreur lecture\n");
             return NULL;
         }
-        Protected *protected = temporaire(protected_text);
-        add_cell_protected_to_head(&cell, protected);
+        Protected *protected = str_to_protected(protected_text);
+        add_cell_prototected_to_head(&cell, protected);
     }
     fclose(f);
 
@@ -160,54 +152,42 @@ CellProtected *read_protected_from_file(char *filename)
 // Question 5.9
 void print_list_protected(CellProtected *cellProtected)
 {
+    char *tmp = NULL;
     if (!cellProtected)
-    {
         return;
-    }
     CellProtected *cell = cellProtected;
-    Protected *protect = cell->data;
-
-    while (cell)
+    while (cell != NULL)
     {
-        if (cell->data == NULL || cell == NULL)
-        {
-            return;
-        }
-        protect = cell->data;
-        if (protect)
-        {
-            char *key = key_to_str(protect->pKey);
-            char *sign = signature_to_str(protect->signature);
-            printf("%s %s %s\n", key, protect->message, sign);
-            free(key);
-            free(sign);
-        }
+        tmp = protected_to_str(cell->data);
+        printf("%s\n", tmp);
         cell = cell->next;
+        free(tmp);
     }
 }
 
-// Question 5.10
+// Question 5.10 à revoir
 void delete_cell_protect(CellProtected *cp)
 {
-    Protected *pr = cp->data;
-    if (pr)
+    if (cp->data)
     {
-        free(pr->message);
-        free(pr->pKey);
-        free(pr->signature->tab);
-        free(pr->signature);
-        free(pr);
+        free(cp->data->pKey);
+        free((cp->data->signature)->tab);
+        free(cp->data->signature);
+        free(cp->data->message);
+
+        free(cp->data);
     }
     free(cp);
 }
 
 void delete_list_protected(CellProtected *c)
 {
-    CellProtected *cell = c;
-    while (cell != NULL)
+
+    while (c != NULL)
     {
-        CellProtected *tmp = cell;
-        cell = cell->next;
+        CellProtected *tmp = c;
+        c = c->next;
         delete_cell_protect(tmp);
     }
+    free(c);
 }

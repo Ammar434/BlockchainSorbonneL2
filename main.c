@@ -8,6 +8,7 @@ void menu()
     printf("4 - jeu_test_exercice_4\n");
     printf("5 - jeu_test_exercice_5\n");
     printf("6 - jeu_test_exercice_6\n");
+    printf("7 - jeu_test_exercice_7\n");
 }
 
 int main()
@@ -82,7 +83,9 @@ int main()
     //     }
     // } while (rep != 0);
     // printf("Merci , et au revoir.\n");
-    jeu_test_exercice_6bis();
+    // jeu_test_exercice_6();
+    // jeu_test_exercice_6bis();
+    jeu_test_exercice_7();
 
     return 0;
 }

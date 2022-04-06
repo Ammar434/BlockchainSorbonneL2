@@ -5,6 +5,7 @@
         "partie1.h": "c",
         "partie2.h": "c",
         "partie3.h": "c",
-        "jeudetest.h": "c"
+        "jeudetest.h": "c",
+        "exercice5.h": "c"
     }
 }
