@@ -83,9 +83,13 @@ int main()
     //     }
     // } while (rep != 0);
     // printf("Merci , et au revoir.\n");
+
     // jeu_test_exercice_6();
     // jeu_test_exercice_6bis();
     jeu_test_exercice_7();
+    // generate_random_data(100, 2);
+
+    // jeu_test_exercice_5();
 
     return 0;
 }

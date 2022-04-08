@@ -1,6 +1,6 @@
 #ifndef EXERCICE_7_H
 #define EXERCICE_7_H
-#include <openssl/sha.h>
+// #include <openssl/sha.h>
 #include "../exercice6/exercice6.h"
 
 typedef struct block

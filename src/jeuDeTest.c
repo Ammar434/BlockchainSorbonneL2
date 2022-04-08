@@ -222,8 +222,8 @@ void jeu_test_exercice_5()
 
     // Affichage de la liste Protected
     print_list_protected(p2);
-
     free(tmp);
+
     // Suppresion de la liste Protected
     delete_list_protected(p2);
 
@@ -327,18 +327,16 @@ void jeu_test_exercice_6bis()
     free(ck->next);
     free(ck);
 
-    // Q.6.7
-    int nc = 10;
-    int nv = 1000;
+    // // Q.6.7
+    // Il y a un problème de segmentation que je ne trouve pas
+    int nc = 3;
+    int nv = 100;
 
     generate_random_data(nv, nc);
     CellKey *lc = read_public_keys("election_donnee/candidates.txt");
     CellKey *lp = read_public_keys("election_donnee/keys.txt");
     CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
-    // supprimer_fausse_signature(&cp);
     print_list_protected(cp);
-    // HashTable *hash = create_hashtable(lp, 20);
-    // afficher_hashtable(hash);
 
     Key *vainqueur = compute_winner(cp, lc, lp, nc + 10, nv * 1.2);
 
@@ -350,13 +348,76 @@ void jeu_test_exercice_6bis()
 
 void jeu_test_exercice_7()
 {
-    const char *s = "0MAthias";
-    unsigned char *d = SHA256(s, strlen(s), 0);
-    int i;
-    for (i = 0; i < SHA256_DIGEST_LENGTH; i++)
-        printf("%02x", d[i]);
-    putchar('\n');
+    // Q.7.1
+    //  Initialisation d'un block :
+    //  ->Creation d'une clé
+    Key *k1 = (Key *)(malloc(sizeof(Key)));
+    k1->a = 7;
+    k1->b = 8;
 
-    str_to_SHA256(s);
-    // Block *b = read_block_from_file("election_donnee/test.txt");
+    // ->Creation d'une liste de CellProtected
+    // --Creation de 2 clés pour creer la liste CellProtected
+    Key *k2 = (Key *)(malloc(sizeof(Key)));
+    k2->a = 1;
+    k2->b = 2;
+    Key *k3 = (Key *)(malloc(sizeof(Key)));
+    k3->a = 3;
+    k3->b = 4;
+    // --Creation de la variable Signature
+    char *tmp = key_to_str(k2);
+    Signature *signature = sign(tmp, k3);
+    // --Creation de la variable Protected
+    Protected *p = init_protected(k2, tmp, signature);
+    // --Ajout à une liste de Protected
+    CellProtected *p2 = create_cell_protected(NULL);
+    add_cell_protected_to_head(&p2, p);
+
+    // ->Initialisation de la valeur hachée du bloc précédent
+    Key *k4 = (Key *)(malloc(sizeof(Key)));
+    k4->a = 5;
+    k4->b = 6;
+    unsigned char *previous_hash = (unsigned char *)key_to_str(k4);
+
+    // ->Initialisation de la valeur hachée du bloc
+    Key *k5 = (Key *)(malloc(sizeof(Key)));
+    k5->a = 6;
+    k5->b = 5;
+    unsigned char *hash = (unsigned char *)key_to_str(k5);
+
+    // ->Initialisation de la valeur hachée du bloc
+    int nonce = 1;
+
+    // Creation du block
+    Block *b = (Block *)(malloc(sizeof(Block)));
+    b->author = k1;
+    b->votes = p2;
+    b->hash = hash;
+    b->previous_hash = previous_hash;
+    b->nonce = nonce;
+
+    // Ecriture dans un fichier
+    write_block_to_file(*b);
+
+    // Suppresion de la liste CellProtected
+    delete_list_protected(p2);
+
+    // free
+    free(k1);
+    free(k3);
+    free(k4);
+    free(k5);
+    free(tmp);
+    free(hash);
+    free(previous_hash);
+    free(b);
+
+    // const char *s = "0MAthias";
+    // unsigned char *d = SHA256(s, strlen(s), 0);
+    // int i;
+    // for (i = 0; i < SHA256_DIGEST_LENGTH; i++)
+    //     printf("%02x", d[i]);
+    // putchar('\n');
+
+    // str_to_SHA256(s);
+    // // Block *b = read_block_from_file("election_donnee/test.txt");
 }

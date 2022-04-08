@@ -1,27 +1,37 @@
 #include "exercice7.h"
 
 // Question 7.1
-// void write_block_to_file(Block b)
-// {
-//     char *filename = "election_donnee/block_from_";
-//     FILE *f = fopen(strcat(filename, b.author), "w");
-//     if (f == NULL)
-//     {
-//         printf("erreur lors de l'ouverture");
-//         return;
-//     }
+void write_block_to_file(Block b)
+{
+    char *filename = "election_donnee/block";
+    char *author = key_to_str(b.author);
+    // printf("%s", strcat(filename, author));
 
-//     fprintf(f, "%s %c %c %d ", b.author, b.hash, b.previous_hash, b.nonce);
-//     CellProtected *tmp = b.votes;
-//     while (tmp)
-//     {
-//         char *chaine = protected_to_str()
-//             fprintf(f, "%s ", tmp->data);
-//         tmp = tmp->next;
-//     }
-//     fprintf(f, "\n");
-//     fclose(f);
-// }
+    // FILE *f = fopen(strcat(filename, author), "w");
+    FILE *f = fopen(filename, "w");
+
+    if (f == NULL)
+    {
+        printf("erreur lors de l'ouverture");
+        return;
+    }
+
+    // Ecriture de l’auteur du bloc, sa valeur hachee, la valeur hachee du bloc precedent, sa preuve de travail
+    fprintf(f, "%s %s %s %d ", author, (unsigned char *)b.hash, (unsigned char *)b.previous_hash, b.nonce);
+    free(author);
+
+    // Ecriture de toutes les declarations de votes
+    // Je n'arrive pas à faire, il ya une erreur de segmentation
+    CellProtected *tmp = b.votes;
+    while (tmp)
+    {
+        char *ptr = protected_to_str(tmp->data);
+        fprintf(f, "%s ", ptr);
+        tmp = tmp->next;
+    }
+    fprintf(f, "\n");
+    fclose(f);
+}
 
 // // Question 7.2
 // Block *read_block_from_file(char *filename)
@@ -94,17 +104,18 @@
 //     }
 // }
 
-// Question 7.4
-unsigned char *str_to_SHA256(char *chaine)
-{
-    unsigned char *d = SHA256(chaine, strlen(chaine), 0);
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-        printf("%02x", d[i]);
-    printf("\n");
-    return d;
-}
+// // Question 7.4
+// unsigned char *str_to_SHA256(char *chaine)
+// {
+//     unsigned char *d = SHA256(chaine, strlen(chaine), 0);
+//     for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+//         printf("%02x", d[i]);
+//     printf("\n");
+//     return d;
+// }
 
-int compute_proof_of_work(Block *B, int d)
-{
-}
-// Question
+// int compute_proof_of_work(Block *B, int d)
+// {
+// }
+
+// // Question

@@ -158,6 +158,10 @@ void count_element_hashtable(HashTable *hashtable)
 
 void delete_hashtable(HashTable *t)
 {
+    if (t == NULL)
+    {
+        return;
+    }
     for (int i = 0; i < t->size; i++)
     {
         if (t->tab[i] != NULL)
@@ -226,7 +230,7 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
         }
     }
     char *messageVainqueur = key_to_str(keyVainqueur);
-    printf("Le vainqueur des élections est le candidat %s avec %d votes\n", messageVainqueur, actuelVainqueur->val);
+    printf("Le vainqueur des elections est le candidat %s avec %d votes\n", messageVainqueur, actuelVainqueur->val);
     free(messageVainqueur);
     delete_hashtable(votantHashTable);
     delete_hashtable(candidatsHashTable);

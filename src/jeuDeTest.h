@@ -6,7 +6,7 @@
 #include "partie1/partie1.h"
 #include "partie2/partie2.h"
 #include "partie3/partie3.h"
-#include <openssl/sha.h>
+// #include <openssl/sha.h>
 
 void jeu_test_exercice_1();
 void jeu_test_exercice_2();

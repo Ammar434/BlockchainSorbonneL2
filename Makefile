@@ -13,9 +13,9 @@ REQUIREMENT = exercice1.o  exercice2.o  exercice3.o  exercice4.o  exercice5.o  e
 
 all: $(PROGRAMS)
 
-main: main.o $(REQUIREMENT) -lm -lssl -lcrypto
-	$(CC) -o $@ $(CFLAGS) $(addprefix $(OUTDIR)/,$<) $(addprefix $(OUTDIR)/,$(REQUIREMENT)) -lm -lssl -lcrypto
-
+main: main.o $(REQUIREMENT) #-lm -lssl -lcrypto
+	$(CC) -o $@ $(CFLAGS) $(addprefix $(OUTDIR)/,$<) $(addprefix $(OUTDIR)/,$(REQUIREMENT)) 
+	
 main.o: main.c
 	$(CC) -c $(CFLAGS) main.c -o $(OUTDIR)/$@
 
