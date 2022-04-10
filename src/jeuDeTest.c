@@ -323,22 +323,22 @@ void jeu_test_exercice_6bis()
     delete_hashtable(ht);
 
     // free
+    free(k2);
     free(k3);
     free(ck->next);
     free(ck);
 
-    // // Q.6.7
+    // Q.6.7
     // Il y a un problème de segmentation que je ne trouve pas
-    int nc = 3;
-    int nv = 100;
 
-    generate_random_data(nv, nc);
+    generate_random_data(NB_VOTANT, NB_CANDIDAT);
     CellKey *lc = read_public_keys("election_donnee/candidates.txt");
     CellKey *lp = read_public_keys("election_donnee/keys.txt");
     CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
-    print_list_protected(cp);
 
-    Key *vainqueur = compute_winner(cp, lc, lp, nc + 10, nv * 1.2);
+    // print_list_protected(cp);
+
+    Key *vainqueur = compute_winner(cp, lc, lp, NB_CANDIDAT * 2, NB_VOTANT * 1.2);
 
     delete_list_keys(lc);
     delete_list_keys(lp);
@@ -348,6 +348,9 @@ void jeu_test_exercice_6bis()
 
 void jeu_test_exercice_7()
 {
+
+    generate_random_data(NB_VOTANT, NB_CANDIDAT);
+
     // Q.7.1
     //  Initialisation d'un block :
     //  ->Creation d'une clé
@@ -390,16 +393,30 @@ void jeu_test_exercice_7()
     // Creation du block
     Block *b = (Block *)(malloc(sizeof(Block)));
     b->author = k1;
-    b->votes = p2;
+    b->votes = read_protected_from_file("election_donnee/declaration.txt");
     b->hash = hash;
     b->previous_hash = previous_hash;
     b->nonce = nonce;
 
     // Ecriture dans un fichier
-    write_block_to_file(*b);
-
+    write_block_to_file(b);
+    // Lecture depuis fichier
+    Block *blockFromFile = read_block_from_file("election_donnee/blocks/(7,8).txt");
+    // affichage blocks
+    char *chaine_block = block_to_str(b);
+    printf("%s\n", chaine_block);
     // Suppresion de la liste CellProtected
     delete_list_protected(p2);
+
+    const char *s = "0MAthias";
+    unsigned char *d = SHA256((unsigned char *)s, strlen(s), 0);
+    int i;
+    for (i = 0; i < SHA256_DIGEST_LENGTH; i++)
+        printf("%02x", d[i]);
+    putchar('\n');
+    str_to_SHA256((char *)s);
+    printf("----------------------------------------------\n");
+    compute_proof_of_work(blockFromFile, 8);
 
     // free
     free(k1);
@@ -409,15 +426,8 @@ void jeu_test_exercice_7()
     free(tmp);
     free(hash);
     free(previous_hash);
+    free(chaine_block);
+    delete_list_protected(b->votes);
     free(b);
-
-    // const char *s = "0MAthias";
-    // unsigned char *d = SHA256(s, strlen(s), 0);
-    // int i;
-    // for (i = 0; i < SHA256_DIGEST_LENGTH; i++)
-    //     printf("%02x", d[i]);
-    // putchar('\n');
-
-    // str_to_SHA256(s);
-    // // Block *b = read_block_from_file("election_donnee/test.txt");
+    delete_block(blockFromFile);
 }

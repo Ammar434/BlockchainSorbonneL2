@@ -83,7 +83,9 @@ int find_position(HashTable *t, Key *key)
             }
         }
     }
-    printf("Element non trouvé\n");
+    char *tmp = key_to_str(key);
+    printf("Element non trouvé %s \n", tmp);
+    free(tmp);
     return hash_function(key, t->size);
 }
 
@@ -98,7 +100,7 @@ HashTable *create_hashtable(CellKey *keys, int size)
     {
         hashTable->tab[i] = NULL;
     }
-    while (keys != NULL)
+    while (keys->next != NULL)
     {
         for (int p = 0; p < hashTable->size; p++)
         {
@@ -112,7 +114,6 @@ HashTable *create_hashtable(CellKey *keys, int size)
                 if (tmp != NULL)
                 {
                     free(tmp);
-
                     tmp = NULL;
                 }
                 break;

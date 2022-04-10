@@ -75,7 +75,7 @@ void print_list_keys(CellKey *LCK)
 // Question 5.5
 void delete_cell_key(CellKey *c)
 {
-    free(c->key);
+    // free(c->key);
     free(c);
 }
 
@@ -142,6 +142,7 @@ CellProtected *read_protected_from_file(char *filename)
         printf("erreur lors de la lecture\n");
         return NULL;
     }
+
     while (fgets(buff, BUFFER_SIZE, f) != 0)
     {
         if (sscanf(buff, "%[^\n]", protected_text) != 1)
