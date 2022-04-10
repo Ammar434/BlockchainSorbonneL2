@@ -385,7 +385,7 @@ void simulation_compute_proof_of_work()
     char *nom_fichier = "courbe_donnee/generer_data_compute_proof_of_work.txt";
     long long somme_temps = 0;
     FILE *file = fopen(nom_fichier, "w");
-    for (int d = 1; d < 8; d++)
+    for (int d = 1; d < 12; d++)
     {
 
         somme_temps = 0;
