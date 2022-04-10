@@ -89,13 +89,13 @@ Block *read_block_from_file(char *filename)
     return newBlock;
 }
 
-int len_block(Block *block)
+long int len_block(Block *block)
 {
-    int len = 0;
+    long int len = 0;
     char *auteur = key_to_str(block->author);
-    int nDigits = floor(log10(abs(block->nonce))) + 1;
+    int nDigits = (block->nonce == 0) ? 1 : floor(log10(abs(block->nonce))) + 1;
+    len = strlen(auteur) + strlen((char *)block->previous_hash) + nDigits + 1 + 1 + 1;
 
-    len = strlen(auteur) + strlen((const char *)block->hash) + strlen((const char *)block->previous_hash) + nDigits + 1 + 1 + 1;
     CellProtected *tmp = block->votes;
     while (tmp != NULL)
     {
@@ -111,21 +111,31 @@ int len_block(Block *block)
 char *block_to_str(Block *block)
 {
     int len = 0;
-    if (block != NULL)
+    if (block == NULL)
     {
-        len = len_block(block);
+        return NULL;
     }
+    len = len_block(block);
+
     char *res = malloc(sizeof(char) * (len));
+    // printf("%d hgd\n", len);
+
+    if (res == NULL)
+    {
+
+        return NULL;
+    }
+
     memset(res, 0, len);
+
     char *auteur = key_to_str(block->author);
+
     strcat(res, auteur);
-    strcat(res, (char *)block->hash);
     strcat(res, (char *)block->previous_hash);
     char nonce_to_str[BUFFER_SIZE];
     snprintf(nonce_to_str, sizeof(nonce_to_str), "%d", block->nonce);
     strcat(res, nonce_to_str);
     strcat(res, "\n");
-
     CellProtected *tmp = block->votes;
     while (tmp != NULL)
     {
@@ -144,7 +154,7 @@ void delete_block(Block *block)
 {
     delete_list_protected(block->votes);
     free(block->hash);
-    free(block->previous_hash);
+    // free(block->previous_hash);
     free(block->author);
     free(block);
 }
@@ -155,7 +165,7 @@ unsigned char *str_to_SHA256(char *chaine)
     unsigned char *d = SHA256((unsigned char *)chaine, strlen(chaine), 0);
     // for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
     //     printf("%02x", d[i]);
-    // printf("\n");
+    printf("\n");
     return d;
 }
 
@@ -314,7 +324,8 @@ void compute_proof_of_work(Block *block, int d)
             sprintf(buffer, "%02x", block_hash[i]);
             strcat((char *)hexadecimal, buffer);
         }
-
+        hexadecimal[i] = '\0';
+        i = 0;
         printf("\nReprensentation binaire hash block :\n");
         binary = hex_to_bin(hexadecimal);
         printf("%s\n", binary);
@@ -373,29 +384,35 @@ void simulation_compute_proof_of_work()
     float temps_cpu;
     char *nom_fichier = "courbe_donnee/generer_data_compute_proof_of_work.txt";
     long long somme_temps = 0;
-    Block *blockFromFile = NULL;
     FILE *file = fopen(nom_fichier, "w");
-    for (int d = 1; d < 2; d++)
+    for (int d = 1; d < 8; d++)
     {
+
         somme_temps = 0;
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 1000; i++)
         {
-            blockFromFile = read_block_from_file("election_donnee/blocks/(7,8).txt");
+            generate_random_data(100, 10);
+            Key *pKey = malloc(sizeof(Key));
+            Key *sKey = malloc(sizeof(Key));
+            Block *block = (Block *)(malloc(sizeof(Block)));
+            init_pair_keys(pKey, sKey, 7, 3);
+            block->votes = read_protected_from_file("election_donnee/declaration.txt");
+            block->nonce = 0;
+            block->author = pKey;
+            block->previous_hash = str_to_SHA256("");
+            printf("%s\n", block_to_str(block));
             temps_initial = clock();
-            compute_proof_of_work(blockFromFile, d);
+            compute_proof_of_work(block, d);
             temps_final = clock();
             temps_cpu = (temps_final - temps_initial) * pow(10, -6);
             somme_temps = somme_temps + temps_cpu;
             printf("Iteration %d pour %d nb zero Duree %f\n", i, d, temps_cpu);
-            delete_block(blockFromFile);
-            blockFromFile = NULL;
+            delete_block(block);
+            // free(pKey);
+            free(sKey);
+            block = NULL;
+            printf("Iteration %d pour %d nb zero Duree %f\n", d, d, temps_cpu);
         }
-        printf("---------------------------------------\n");
-        printf("---------------------------------------\n");
-        printf("---------------------------------------\n");
-        printf("---------------------------------------\n");
-        printf("Iteration %d pour %d nb zero Duree %f\n", d, d, temps_cpu);
-
         fprintf(file, "%d %lld\n", d, (somme_temps / 1000));
     }
     fclose(file);

@@ -17,7 +17,7 @@ typedef struct block
 void write_block_to_file(Block *b);
 Block *read_block_from_file(char *filename);
 char *block_to_str(Block *block);
-int len_block(Block *block);
+long int len_block(Block *block);
 void delete_block(Block *block);
 unsigned char *str_to_SHA256(char *chaine);
 void compute_proof_of_work(Block *B, int d);
