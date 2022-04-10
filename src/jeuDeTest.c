@@ -349,7 +349,7 @@ void jeu_test_exercice_6bis()
 void jeu_test_exercice_7()
 {
 
-    generate_random_data(NB_VOTANT, NB_CANDIDAT);
+    // generate_random_data(NB_VOTANT, NB_CANDIDAT);
 
     // Q.7.1
     //  Initialisation d'un block :
@@ -400,23 +400,51 @@ void jeu_test_exercice_7()
 
     // Ecriture dans un fichier
     write_block_to_file(b);
+
+    // Q.7.2
     // Lecture depuis fichier
     Block *blockFromFile = read_block_from_file("election_donnee/blocks/(7,8).txt");
+
+    // Q.7.3
     // affichage blocks
+    printf("Q.7.3\n");
     char *chaine_block = block_to_str(b);
     printf("%s\n", chaine_block);
-    // Suppresion de la liste CellProtected
-    delete_list_protected(p2);
 
-    const char *s = "0MAthias";
+    // Q.7.4
+    printf("Q.7.4\n");
+    const char *s = "Rosetta code";
     unsigned char *d = SHA256((unsigned char *)s, strlen(s), 0);
     int i;
     for (i = 0; i < SHA256_DIGEST_LENGTH; i++)
         printf("%02x", d[i]);
     putchar('\n');
+    printf("\n");
+
+    // Q.7.5
+    printf("Q.7.5\n");
     str_to_SHA256((char *)s);
-    printf("----------------------------------------------\n");
+    printf("\n");
+
+    // Q.7.6
+    printf("Q.7.6\n");
     compute_proof_of_work(blockFromFile, 8);
+    printf("\n");
+
+    // Q.7.7
+    printf("Q.7.7\n");
+    int v = verify_block(blockFromFile, 1);
+    if (v == 1)
+    {
+        printf("Le block est valide\n");
+    }
+    else
+    {
+        printf("Le block n'est pas valide\n");
+    }
+
+    // Suppresion de la liste CellProtected
+    delete_list_protected(p2);
 
     // free
     free(k1);
@@ -429,5 +457,7 @@ void jeu_test_exercice_7()
     free(chaine_block);
     delete_list_protected(b->votes);
     free(b);
+
+    // Suppression du block
     delete_block(blockFromFile);
 }

@@ -25,7 +25,6 @@ void write_block_to_file(Block *b)
     fprintf(f, "%s %s %s %d\n", author, (unsigned char *)b->hash, (unsigned char *)b->previous_hash, b->nonce);
 
     // Ecriture de toutes les declarations de votes
-    // Je n'arrive pas à faire, il ya une erreur de segmentation
     CellProtected *tmp = b->votes;
     while (tmp != NULL)
     {
@@ -154,17 +153,17 @@ void delete_block(Block *block)
 {
     delete_list_protected(block->votes);
     free(block->hash);
-    // free(block->previous_hash);
+    free(block->previous_hash);
     free(block->author);
     free(block);
 }
 
-// Question 7.4
+// Question 7.5
 unsigned char *str_to_SHA256(char *chaine)
 {
     unsigned char *d = SHA256((unsigned char *)chaine, strlen(chaine), 0);
-    // for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-    //     printf("%02x", d[i]);
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+        printf("%02x", d[i]);
     printf("\n");
     return d;
 }
@@ -278,6 +277,7 @@ char *hex_to_bin(unsigned char *hexdec)
     return chaine;
 }
 
+// Question 7.6
 void compute_proof_of_work(Block *block, int d)
 {
     int i = 0;
@@ -341,7 +341,6 @@ void compute_proof_of_work(Block *block, int d)
         }
 
         nonce++;
-
         free(block_str);
         free(block_str_with_nonce);
         // free(block_hash);
@@ -349,7 +348,9 @@ void compute_proof_of_work(Block *block, int d)
         free(binary);
     }
     block->nonce = nonce;
-    block->hash = (unsigned char *)(strdup((char *)hexadecimal));
+    // Quand je mets la ligne ci-dessous en // ya de fuite, est-ce normal?
+    // il faudrait trouver une alternative à la place de strdup?
+    // block->hash = (unsigned char *)(strdup((char *)hexadecimal));
     free(hexadecimal);
     free(block_str);
     free(block_str_with_nonce);
@@ -357,6 +358,7 @@ void compute_proof_of_work(Block *block, int d)
     free(chaine_a_comparer);
 }
 
+// Question 7.7
 // Pas sur que verify marche
 int verify_block(Block *block, int d)
 {
@@ -377,6 +379,7 @@ int verify_block(Block *block, int d)
     return 0;
 }
 
+// Question 7.8
 void simulation_compute_proof_of_work()
 {
     clock_t temps_initial;
