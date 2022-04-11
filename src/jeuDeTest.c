@@ -323,27 +323,26 @@ void jeu_test_exercice_6bis()
     delete_hashtable(ht);
 
     // free
-    free(k2);
     free(k3);
     free(ck->next);
     free(ck);
 
-    // Q.6.7
-    // Il y a un problème de segmentation que je ne trouve pas
+    // // Q.6.7
+    // // Il y a un problème de segmentation que je ne trouve pas
 
-    generate_random_data(NB_VOTANT, NB_CANDIDAT);
-    CellKey *lc = read_public_keys("election_donnee/candidates.txt");
-    CellKey *lp = read_public_keys("election_donnee/keys.txt");
-    CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
+    // generate_random_data(NB_VOTANT, NB_CANDIDAT);
+    // CellKey *lc = read_public_keys("election_donnee/candidates.txt");
+    // CellKey *lp = read_public_keys("election_donnee/keys.txt");
+    // CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
 
-    // print_list_protected(cp);
+    // // print_list_protected(cp);
 
-    Key *vainqueur = compute_winner(cp, lc, lp, NB_CANDIDAT * 2, NB_VOTANT * 1.2);
+    // Key *vainqueur = compute_winner(cp, lc, lp, NB_CANDIDAT * 2, NB_VOTANT * 1.2);
 
-    delete_list_keys(lc);
-    delete_list_keys(lp);
-    delete_list_protected(cp);
-    free(vainqueur);
+    // delete_list_keys(lc);
+    // delete_list_keys(lp);
+    // delete_list_protected(cp);
+    // free(vainqueur);
 }
 
 void jeu_test_exercice_7()
