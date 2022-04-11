@@ -100,7 +100,7 @@ HashTable *create_hashtable(CellKey *keys, int size)
     {
         hashTable->tab[i] = NULL;
     }
-    while (keys->next != NULL)
+    while (keys != NULL)
     {
         for (int p = 0; p < hashTable->size; p++)
         {

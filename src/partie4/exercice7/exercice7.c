@@ -350,7 +350,7 @@ void compute_proof_of_work(Block *block, int d)
     block->nonce = nonce;
     // Quand je mets la ligne ci-dessous en // ya de fuite, est-ce normal?
     // il faudrait trouver une alternative à la place de strdup?
-    // block->hash = (unsigned char *)(strdup((char *)hexadecimal));
+    block->hash = (unsigned char *)(strdup((char *)hexadecimal));
     free(hexadecimal);
     free(block_str);
     free(block_str_with_nonce);

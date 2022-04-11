@@ -75,7 +75,10 @@ void print_list_keys(CellKey *LCK)
 // Question 5.5
 void delete_cell_key(CellKey *c)
 {
-    // free(c->key);
+    if (c->key)
+    {
+        free(c->key);
+    }
     free(c);
 }
 
