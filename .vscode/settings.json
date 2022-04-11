@@ -7,6 +7,7 @@
         "partie3.h": "c",
         "jeudetest.h": "c",
         "exercice5.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "exercice7.h": "c"
     }
 }

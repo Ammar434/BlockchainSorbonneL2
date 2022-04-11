@@ -8,85 +8,108 @@ void menu()
     printf("4 - jeu_test_exercice_4\n");
     printf("5 - jeu_test_exercice_5\n");
     printf("6 - jeu_test_exercice_6\n");
-    printf("7 - jeu_test_exercice_7\n");
+    printf("7 - jeu_test_exercice_6bis\n");
+    printf("8 - jeu_test_exercice_7\n");
+    printf("9 - jeu_test_exercice_8\n");
 }
 
 int main()
 {
     srand(time(NULL));
-    // int rep;
-    // char buff[BUFFER_SIZE];
-    // int nv, nc, cpt;
-    // do
-    // {
-    //     printf("--------------------------------Que voulez-vous faire ?------------------------------------\n");
-    //     menu();
-    //     fgets(buff, BUFFER_SIZE, stdin);
-    //     sscanf(buff, "%d\n", &rep);
-    //     printf("\n");
-    //     switch (rep)
-    //     {
-    //     case 1:
-    //         jeu_test_exercice_1();
-    //         printf("\n");
-    //         printf("-------------------------------------------------------------------------------------------\n");
-    //         printf("\n");
-    //         break;
+    int rep;
+    char buff[BUFFER_SIZE];
+    int nv, nc, cpt;
+    do
+    {
+        printf("--------------------------------Que voulez-vous faire ?------------------------------------\n");
+        menu();
+        fgets(buff, BUFFER_SIZE, stdin);
+        sscanf(buff, "%d\n", &rep);
+        printf("\n");
+        switch (rep)
+        {
+        case 1:
+            jeu_test_exercice_1();
+            printf("\n");
+            printf("-------------------------------------------------------------------------------------------\n");
+            printf("\n");
+            break;
 
-    //     case 2:
-    //         jeu_test_exercice_2();
-    //         printf("\n");
-    //         printf("-------------------------------------------------------------------------------------------\n");
-    //         printf("\n");
-    //         break;
+        case 2:
+            jeu_test_exercice_2();
+            printf("\n");
+            printf("-------------------------------------------------------------------------------------------\n");
+            printf("\n");
+            break;
 
-    //     case 3:
-    //         jeu_test_exercice_3();
-    //         printf("\n");
-    //         printf("-------------------------------------------------------------------------------------------\n");
-    //         printf("\n");
-    //         break;
+        case 3:
+            jeu_test_exercice_3();
+            printf("\n");
+            printf("-------------------------------------------------------------------------------------------\n");
+            printf("\n");
+            break;
 
-    //     case 4:
-    //         printf("Veuillez ecrire le nv et le nc de la fonction generate_random_data\n");
-    //         fgets(buff, BUFFER_SIZE, stdin);
-    //         cpt = sscanf(buff, "%d %d\n", &nv, &nc);
-    //         if (cpt == 2)
-    //         {
-    //             generate_random_data(nv, nc);
-    //             printf("\n");
-    //             printf("-------------------------------------------------------------------------------------------\n");
-    //             printf("\n");
-    //         }
-    //         else
-    //         {
-    //             printf("Erreur format\n");
-    //             printf("\n");
-    //             printf("-------------------------------------------------------------------------------------------\n");
-    //             printf("\n");
-    //         }
-    //         break;
+        case 4:
+            printf("Veuillez ecrire le nv et le nc de la fonction generate_random_data\n");
+            fgets(buff, BUFFER_SIZE, stdin);
+            cpt = sscanf(buff, "%d %d\n", &nv, &nc);
+            if (cpt == 2)
+            {
+                generate_random_data(nv, nc);
+                printf("\n");
+                printf("-------------------------------------------------------------------------------------------\n");
+                printf("\n");
+            }
+            else
+            {
+                printf("Erreur format\n");
+                printf("\n");
+                printf("-------------------------------------------------------------------------------------------\n");
+                printf("\n");
+            }
+            break;
 
-    //     case 5:
-    //         jeu_test_exercice_5();
-    //         printf("\n");
-    //         printf("-------------------------------------------------------------------------------------------\n");
-    //         printf("\n");
-    //         break;
+        case 5:
+            jeu_test_exercice_5();
+            printf("\n");
+            printf("-------------------------------------------------------------------------------------------\n");
+            printf("\n");
+            break;
 
-    //     case 6:
-    //         jeu_test_exercice_6();
-    //         printf("\n");
-    //         printf("-------------------------------------------------------------------------------------------\n");
-    //         printf("\n");
-    //         break;
-    //     }
-    // } while (rep != 0);
-    // printf("Merci , et au revoir.\n");
+        case 6:
+            jeu_test_exercice_6();
+            printf("\n");
+            printf("-------------------------------------------------------------------------------------------\n");
+            printf("\n");
+            break;
+
+        case 7:
+            jeu_test_exercice_6bis();
+            printf("\n");
+            printf("-------------------------------------------------------------------------------------------\n");
+            printf("\n");
+            break;
+
+        case 8:
+            jeu_test_exercice_7();
+            printf("\n");
+            printf("-------------------------------------------------------------------------------------------\n");
+            printf("\n");
+            break;
+
+        case 9:
+            jeu_test_exercice_8();
+            printf("\n");
+            printf("-------------------------------------------------------------------------------------------\n");
+            printf("\n");
+            break;
+        }
+    } while (rep != 0);
+    printf("Merci , et au revoir.\n");
 
     // jeu_test_exercice_6();
     // jeu_test_exercice_6bis();
-    jeu_test_exercice_7();
+    // jeu_test_exercice_7();
     // simulation_compute_proof_of_work();
 
     // int i = strncmp("0011011110111110111010100000111011010101001011110111100011001010010111101110100110100010100100001100000010001110111001111000000101111111011100010111110101111110010001011011110001100101011100010011011000001110011101100101011000111001111101100000011000111111", "00", 1);

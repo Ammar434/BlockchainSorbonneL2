@@ -7,7 +7,7 @@ OUTDIR = ./bin
 SRCDIR = ./src
 DATADIR = ./election_donnee
 
-REQUIREMENT = exercice1.o  exercice2.o  exercice3.o  exercice4.o  exercice5.o  exercice6.o exercice7.o jeuDeTest.o
+REQUIREMENT = exercice1.o  exercice2.o  exercice3.o  exercice4.o  exercice5.o  exercice6.o exercice7.o exercice8.o jeuDeTest.o
 
 .PHONY:	all clean
 
@@ -42,6 +42,9 @@ exercice6.o: $(SRCDIR)/partie3/exercice6/exercice6.c
 
 exercice7.o: $(SRCDIR)/partie4/exercice7/exercice7.c
 	$(CC) -c $(CFLAGS) $(SRCDIR)/partie4/exercice7/exercice7.c -o $(OUTDIR)/$@	
+
+exercice8.o: $(SRCDIR)/partie4/exercice8/exercice8.c
+	$(CC) -c $(CFLAGS) $(SRCDIR)/partie4/exercice8/exercice8.c -o $(OUTDIR)/$@	
 
 clean:
 	rm -f $(OUTDIR)/*.o

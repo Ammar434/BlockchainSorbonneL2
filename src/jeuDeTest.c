@@ -433,15 +433,15 @@ void jeu_test_exercice_7()
 
     // Q.7.7
     printf("Q.7.7\n");
-    int v = verify_block(blockFromFile, 1);
-    if (v == 1)
-    {
-        printf("Le block est valide\n");
-    }
-    else
-    {
-        printf("Le block n'est pas valide\n");
-    }
+    // int v = verify_block(blockFromFile, 1);
+    // if (v == 1)
+    // {
+    //     printf("Le block est valide\n");
+    // }
+    // else
+    // {
+    //     printf("Le block n'est pas valide\n");
+    // }
 
     // Suppresion de la liste CellProtected
     delete_list_protected(p2);
@@ -460,4 +460,8 @@ void jeu_test_exercice_7()
 
     // Suppression du block
     delete_block(blockFromFile);
+}
+
+void jeu_test_exercice_8()
+{
 }

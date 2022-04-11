@@ -2,4 +2,5 @@
 #define PARTIE4_H
 
 #include "exercice7/exercice7.h"
+#include "exercice8/exercice8.h"
 #endif // PARTIE3_H
