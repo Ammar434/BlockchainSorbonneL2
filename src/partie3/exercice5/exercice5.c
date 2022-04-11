@@ -2,15 +2,23 @@
 // Exercice 5
 
 // Question 5.1
+
 CellKey *create_cell_key(Key *key)
 {
     CellKey *cell = malloc(sizeof(CellKey));
+    cell->key = malloc(sizeof(Key));
     if (cell == NULL)
     {
         printf("Erreur lors de l'allocation\n");
         return NULL;
     }
-    cell->key = key;
+    if (key == NULL)
+    {
+        printf("Erreur lors de l'allocation\n");
+        return NULL;
+    }
+    cell->key->a = key->a;
+    cell->key->b = key->b;
     cell->next = NULL;
     return cell;
 }
@@ -31,7 +39,7 @@ void add_key_to_head(CellKey **cellKey, Key *key)
 // Question 5.3
 CellKey *read_public_keys(char *filename)
 {
-    CellKey *cell = create_cell_key(NULL);
+    CellKey *cell = NULL;
     Key *publicKey;
     char buff[BUFFER_SIZE];
     char pKey[BUFFER_SIZE];
@@ -51,7 +59,7 @@ CellKey *read_public_keys(char *filename)
         }
         publicKey = str_to_key(pKey);
         add_key_to_head(&cell, publicKey);
-        // free(publicKey);
+        free(publicKey);
     }
     fclose(f);
     return cell;

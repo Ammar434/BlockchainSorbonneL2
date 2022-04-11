@@ -39,14 +39,17 @@ void supprimer_fausse_signature(CellProtected **cellProtected)
 HashCell *create_hashcell(Key *key)
 {
     HashCell *hash = (HashCell *)(malloc(sizeof(HashCell)));
+    hash->key = malloc(sizeof(Key));
     hash->val = 0;
-    hash->key = key;
+    hash->key->a = key->a;
+    hash->key->b = key->b;
     return hash;
 }
 
 // Question 6.3
 int hash_function(Key *key, int size)
 {
+
     long cle = (key->a) + (key->b);
     return (int)(cle % size);
 }
@@ -100,7 +103,7 @@ HashTable *create_hashtable(CellKey *keys, int size)
     {
         hashTable->tab[i] = NULL;
     }
-    while (keys != NULL)
+    while (keys->next != NULL)
     {
         for (int p = 0; p < hashTable->size; p++)
         {
@@ -122,7 +125,6 @@ HashTable *create_hashtable(CellKey *keys, int size)
         printf("-----------------------------------------------------------------------------------\n");
         keys = keys->next;
     }
-
     return hashTable;
 }
 // Question 6.6
@@ -198,6 +200,7 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
             // On regarde  dans table de hachage pour voir si la personne a deja voter
             if (votantHashTable->tab[hashValueVotant]->val == 0)
             {
+                printf("cle %s\n", key_to_str(candidatsHashTable->tab[hashValueCandidate]->key));
                 if (compare_cle(candidatsHashTable->tab[hashValueCandidate]->key, messageKey))
                 {
                     (candidatsHashTable->tab[hashValueCandidate])->val = (candidatsHashTable->tab[hashValueCandidate])->val + 1;

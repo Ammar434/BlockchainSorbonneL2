@@ -184,7 +184,7 @@ void jeu_test_exercice_5()
     k->b = 2;
 
     // Ajout à une CellKey
-    CellKey *c = create_cell_key(NULL);
+    CellKey *c = NULL;
     add_key_to_head(&c, k);
 
     // Affichage de la liste
@@ -228,6 +228,7 @@ void jeu_test_exercice_5()
     delete_list_protected(p2);
 
     // free
+    free(k);
     free(k4);
 
     // Lecture d'un fichier
@@ -278,7 +279,10 @@ void jeu_test_exercice_6bis()
     printf("pos1 a pour position %d. C'est hc de valeur %d et de cle a = %ld et b = %ld\n", pos1, hc->val, hc->key->a, hc->key->b);
     printf("pos2 a pour position %d. C'est hc2 de valeur %d et de cle a = %ld et b = %ld\n", pos2, hc2->val, hc2->key->a, hc2->key->b);
     printf("\n");
+
+    free(hc->key);
     free(hc);
+    free(hc2->key);
     free(hc2);
 
     // Q.6.4 et 6.5
@@ -323,20 +327,21 @@ void jeu_test_exercice_6bis()
     delete_hashtable(ht);
 
     // free
+    free(k1);
+    free(k2);
     free(k3);
-    free(ck->next);
-    free(ck);
+    delete_list_keys(ck);
 
-    // // Q.6.7
-    // // Il y a un problème de segmentation que je ne trouve pas
+    // Q.6.7
+    // Il y a un problème de segmentation que je ne trouve pas
 
-    // generate_random_data(NB_VOTANT, NB_CANDIDAT);
+    generate_random_data(NB_VOTANT, NB_CANDIDAT);
     CellKey *lc = read_public_keys("election_donnee/candidates.txt");
     CellKey *lp = read_public_keys("election_donnee/keys.txt");
     CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
 
     // print_list_protected(cp);
-
+    supprimer_fausse_signature(&cp);
     Key *vainqueur = compute_winner(cp, lc, lp, NB_CANDIDAT * 2, NB_VOTANT * 1.2);
 
     delete_list_keys(lc);
