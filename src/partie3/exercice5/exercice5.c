@@ -131,9 +131,9 @@ void add_cell_protected_to_head(CellProtected **cellProtected, Protected *pr)
 // Question 5.8
 Protected *temporaire(char *str)
 {
-    char a[256];
-    char b[256];
-    char c[256];
+    char a[BUFFER_SIZE];
+    char b[BUFFER_SIZE];
+    char c[BUFFER_SIZE];
     sscanf(str, "%s %s %s", a, c, b);
     Key *cle = str_to_key(a);
     Signature *s = str_to_signature(b);

@@ -1,5 +1,14 @@
 #include "exercice7.h"
 
+void print_hash(unsigned char *hash)
+{
+    printf("Hash : ");
+
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+        printf("%02x", hash[i]);
+    printf("\n");
+}
+
 // Question 7.1
 void write_block_to_file(Block *b)
 {
@@ -12,7 +21,6 @@ void write_block_to_file(Block *b)
     strcat(strcat(strcat(filename, path), author), extension);
     printf("%s\n", filename);
 
-    // FILE *f = fopen(strcat(filename, author), "w");
     FILE *f = fopen(filename, "w");
 
     if (f == NULL)
@@ -22,7 +30,16 @@ void write_block_to_file(Block *b)
     }
 
     // Ecriture de l’auteur du bloc, sa valeur hachee, la valeur hachee du bloc precedent, sa preuve de travail
-    fprintf(f, "%s %s %s %d\n", author, (unsigned char *)b->hash, (unsigned char *)b->previous_hash, b->nonce);
+    // fprintf(f, "%s %d %02x %02x", author, b->nonce, b->hash, b->previous_hash);
+
+    fprintf(f, "%s %d ", author, b->nonce);
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+        // fputc((b->hash)[i], f);
+        fprintf(f, "%02x", (b->hash)[i]);
+    fprintf(f, " ");
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+        fprintf(f, "%02x", b->previous_hash[i]);
+    fprintf(f, "\n");
 
     // Ecriture de toutes les declarations de votes
     CellProtected *tmp = b->votes;
@@ -39,6 +56,29 @@ void write_block_to_file(Block *b)
     fclose(f);
 }
 
+unsigned char *unsigned_strdup(char *chaine)
+{
+    int i = 0;
+    int len = strlen(chaine);
+    printf("Len chaine %d\n", len);
+    unsigned char *unsigned_chaine = malloc(sizeof(unsigned char) * (len + 1));
+
+    // memcpy(unsigned_chaine, chaine, SHA256_DIGEST_LENGTH);
+    for (i = 0; i < len; i++)
+    {
+        unsigned_chaine[i] = (unsigned char)(chaine[i]);
+        //     // printf("%s", chaine);
+        //     // sprintf(unsigned_chaine, "%s", chaine);
+        //     // unsigned_chaine[i] = chaine[i];
+    }
+    unsigned_chaine[i] = '\0';
+    printf("%s\n", unsigned_chaine);
+
+    // print_hash(unsigned_chaine);
+    // printf("\n");
+
+    return unsigned_chaine;
+}
 // Question 7.2
 Block *read_block_from_file(char *filename)
 {
@@ -51,10 +91,11 @@ Block *read_block_from_file(char *filename)
 
     char buff[BUFFER_SIZE];
     char auteur[BUFFER_SIZE];
-    char hash[BUFFER_SIZE];
-    char previous_hash[BUFFER_SIZE];
+    unsigned char hash[BUFFER_SIZE];
+    unsigned char previous_hash[BUFFER_SIZE];
     char protected_text[BUFFER_SIZE];
     int nonce = 0;
+    size_t n = 0;
 
     FILE *f = fopen(filename, "r");
     if (f == NULL)
@@ -63,14 +104,24 @@ Block *read_block_from_file(char *filename)
         return NULL;
     }
     fgets(buff, BUFFER_SIZE, f);
-    if (sscanf(buff, "%s %s %s %d\n", auteur, hash, previous_hash, &nonce) != 4)
+
+    if (sscanf(buff, "%s %d %s %s", auteur, &nonce, hash, previous_hash) != 4)
     {
         printf("erreur lecture\n");
         return NULL;
     }
+
+    print_hash(hash);
+
     newBlock->author = str_to_key(auteur);
-    newBlock->previous_hash = (unsigned char *)(strdup(previous_hash));
-    newBlock->hash = (unsigned char *)(strdup(hash));
+    newBlock->hash = unsigned_strdup(hash);
+    newBlock->previous_hash = unsigned_strdup(previous_hash);
+
+    // printf("%s\n", newBlock->hash);
+    // print_hash(newBlock->hash);
+    // print_hash(newBlock->hash);
+    // print_hash(newBlock->previous_hash);
+
     newBlock->nonce = nonce;
 
     while (fgets(buff, BUFFER_SIZE, f) != 0)
@@ -93,7 +144,7 @@ long int len_block(Block *block)
     long int len = 0;
     char *auteur = key_to_str(block->author);
     int nDigits = (block->nonce == 0) ? 1 : floor(log10(abs(block->nonce))) + 1;
-    len = strlen(auteur) + strlen((char *)block->previous_hash) + nDigits + 1 + 1 + 1;
+    len = strlen(auteur) + SHA256_DIGEST_LENGTH + nDigits + 1 + 1 + 1;
 
     CellProtected *tmp = block->votes;
     while (tmp != NULL)
@@ -110,18 +161,20 @@ long int len_block(Block *block)
 char *block_to_str(Block *block)
 {
     int len = 0;
+    char *res = NULL;
     if (block == NULL)
     {
-        return NULL;
+        printf("Block null\n");
+        // res = strdup("Premier block");
+        return res;
     }
+
     len = len_block(block);
 
-    char *res = malloc(sizeof(char) * (len));
-    // printf("%d hgd\n", len);
+    res = malloc(sizeof(char) * (len));
 
     if (res == NULL)
     {
-
         return NULL;
     }
 
@@ -129,8 +182,11 @@ char *block_to_str(Block *block)
 
     char *auteur = key_to_str(block->author);
 
-    strcat(res, auteur);
-    strcat(res, (char *)block->previous_hash);
+    // strcat(res, auteur);
+    memcpy(res, auteur, strlen(auteur));
+    memcpy(res + strlen(auteur), block->previous_hash, SHA256_DIGEST_LENGTH);
+
+    // strcat(res, (char *)block->previous_hash);
     char nonce_to_str[BUFFER_SIZE];
     snprintf(nonce_to_str, sizeof(nonce_to_str), "%d", block->nonce);
     strcat(res, nonce_to_str);
@@ -161,10 +217,11 @@ void delete_block(Block *block)
 // Question 7.5
 unsigned char *str_to_SHA256(char *chaine)
 {
-    unsigned char *d = SHA256((unsigned char *)chaine, strlen(chaine), 0);
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-        printf("%02x", d[i]);
-    printf("\n");
+    // unsigned char *d = SHA256((unsigned char *)chaine, sizeof(chaine), 0);
+
+    unsigned char *d = malloc(sizeof(unsigned char) * SHA256_DIGEST_LENGTH);
+    d = SHA256((unsigned char *)chaine, strlen(chaine), d);
+    print_hash(d);
     return d;
 }
 
@@ -299,12 +356,11 @@ void compute_proof_of_work(Block *block, int d)
     char *block_str_with_nonce = NULL;
 
     unsigned char *block_hash = NULL;
-    unsigned char *hexadecimal = NULL;
-
+    char *hexadecimal = NULL;
     char buffer[BUFFER_SIZE];
-
     char *binary = NULL;
     // sleep(2);
+    int h = 0;
     while (1)
     {
         snprintf(nonce_to_str, sizeof(int), "%d", nonce);
@@ -312,26 +368,28 @@ void compute_proof_of_work(Block *block, int d)
         len_block_str = strlen(block_str);
         block_str_with_nonce = malloc(sizeof(char) * (len_block_str + strlen(nonce_to_str) + 1));
         memset(block_str_with_nonce, 0, len_block_str + strlen(nonce_to_str) + 1);
-        memcpy(block_str_with_nonce, block_str, len_block_str);
-        memcpy(block_str_with_nonce + len_block_str, nonce_to_str, strlen(nonce_to_str));
+        strcat(strcat(block_str_with_nonce, block_str), nonce_to_str);
         block_hash = str_to_SHA256(block_str_with_nonce);
-        hexadecimal = malloc(sizeof(unsigned char) * BUFFER_SIZE);
+
+        // printf("%s\n", block_str_with_nonce);
+        print_hash(block_hash);
+        hexadecimal = malloc(sizeof(char) * BUFFER_SIZE);
         memset(hexadecimal, 0, BUFFER_SIZE);
         printf("Reprensentation hexadecimal hash block : ");
         for (i = 0; i < SHA256_DIGEST_LENGTH; i++)
         {
             printf("%02x", block_hash[i]);
             sprintf(buffer, "%02x", block_hash[i]);
-            strcat((char *)hexadecimal, buffer);
+            strcat(hexadecimal, buffer);
         }
-        hexadecimal[i] = '\0';
-        i = 0;
+
         printf("\nReprensentation binaire hash block :\n");
         binary = hex_to_bin(hexadecimal);
         printf("%s\n", binary);
 
         printf("\n");
         // Si commence par n zero alors on a completer preuve de travail
+
         if (strncmp(chaine_a_comparer, binary, d) == 0)
         {
             printf("---------------------------------------\n");
@@ -340,22 +398,26 @@ void compute_proof_of_work(Block *block, int d)
             break;
         }
 
-        nonce++;
+        free(binary);
         free(block_str);
         free(block_str_with_nonce);
-        // free(block_hash);
+        free(block_hash);
         free(hexadecimal);
-        free(binary);
+        nonce++;
     }
-    block->nonce = nonce;
-    // Quand je mets la ligne ci-dessous en // ya de fuite, est-ce normal?
-    // il faudrait trouver une alternative à la place de strdup?
-    block->hash = (unsigned char *)(strdup((char *)hexadecimal));
-    free(hexadecimal);
-    free(block_str);
-    free(block_str_with_nonce);
+    block->nonce = d;
+    block->hash = unsigned_strdup(hexadecimal);
+    // free(block_hash);
+
+    // // free(hexadecimal);
+    // free(block_str);
+    // free(block_str_with_nonce);
     free(binary);
     free(chaine_a_comparer);
+    free(block_str);
+    free(block_str_with_nonce);
+    free(block_hash);
+    free(hexadecimal);
 }
 
 // Question 7.7
@@ -376,6 +438,8 @@ int verify_block(Block *block, int d)
         printf("Block valide\n");
         return 1;
     }
+    free(chaine_a_comparer);
+    free(binary);
     return 0;
 }
 

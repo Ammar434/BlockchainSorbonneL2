@@ -23,6 +23,7 @@ void supprimer_fausse_signature(CellProtected **cellProtected)
             {
                 *cellProtected = (*cellProtected)->next;
             }
+
             ptr = tmp;
             tmp = tmp->next;
             delete_cell_protect(ptr);
@@ -86,6 +87,8 @@ int find_position(HashTable *t, Key *key)
             }
         }
     }
+    afficher_hashtable(t);
+
     char *tmp = key_to_str(key);
     printf("Element non trouvé %s \n", tmp);
     free(tmp);
@@ -103,7 +106,7 @@ HashTable *create_hashtable(CellKey *keys, int size)
     {
         hashTable->tab[i] = NULL;
     }
-    while (keys->next != NULL)
+    while (keys != NULL)
     {
         for (int p = 0; p < hashTable->size; p++)
         {
@@ -188,6 +191,8 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
     HashTable *candidatsHashTable = create_hashtable(candidates, sizeC);
     count_element_hashtable(candidatsHashTable);
     CellProtected *tmpDecl = decl;
+    Key *keyVainqueur = malloc(sizeof(Key));
+
     while (tmpDecl != NULL)
     {
 
@@ -200,7 +205,6 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
             // On regarde  dans table de hachage pour voir si la personne a deja voter
             if (votantHashTable->tab[hashValueVotant]->val == 0)
             {
-                printf("cle %s\n", key_to_str(candidatsHashTable->tab[hashValueCandidate]->key));
                 if (compare_cle(candidatsHashTable->tab[hashValueCandidate]->key, messageKey))
                 {
                     (candidatsHashTable->tab[hashValueCandidate])->val = (candidatsHashTable->tab[hashValueCandidate])->val + 1;
@@ -217,7 +221,6 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
 
         tmpDecl = tmpDecl->next;
     }
-    Key *keyVainqueur = malloc(sizeof(Key));
     if (actuelVainqueur != NULL)
     {
         keyVainqueur->a = actuelVainqueur->key->a;

@@ -342,7 +342,7 @@ void jeu_test_exercice_6bis()
 
     // print_list_protected(cp);
     supprimer_fausse_signature(&cp);
-    Key *vainqueur = compute_winner(cp, lc, lp, NB_CANDIDAT * 2, NB_VOTANT * 1.2);
+    Key *vainqueur = compute_winner(cp, lc, lp, NB_CANDIDAT * 2, NB_VOTANT * 2);
 
     delete_list_keys(lc);
     delete_list_keys(lp);
@@ -353,8 +353,7 @@ void jeu_test_exercice_6bis()
 void jeu_test_exercice_7()
 {
 
-    // generate_random_data(NB_VOTANT, NB_CANDIDAT);
-
+    generate_random_data(NB_VOTANT, NB_CANDIDAT);
     // Q.7.1
     //  Initialisation d'un block :
     //  ->Creation d'une clé
@@ -379,29 +378,18 @@ void jeu_test_exercice_7()
     CellProtected *p2 = create_cell_protected(NULL);
     add_cell_protected_to_head(&p2, p);
 
-    // ->Initialisation de la valeur hachée du bloc précédent
-    Key *k4 = (Key *)(malloc(sizeof(Key)));
-    k4->a = 5;
-    k4->b = 6;
-    unsigned char *previous_hash = (unsigned char *)key_to_str(k4);
-
-    // ->Initialisation de la valeur hachée du bloc
-    Key *k5 = (Key *)(malloc(sizeof(Key)));
-    k5->a = 6;
-    k5->b = 5;
-    unsigned char *hash = (unsigned char *)key_to_str(k5);
-
     // ->Initialisation de la valeur hachée du bloc
     int nonce = 1;
 
     // Creation du block
-    Block *b = (Block *)(malloc(sizeof(Block)));
+    Block *b = malloc(sizeof(Block));
     b->author = k1;
     b->votes = read_protected_from_file("election_donnee/declaration.txt");
-    b->hash = hash;
-    b->previous_hash = previous_hash;
+    b->hash = str_to_SHA256("Matthias");
+    b->previous_hash = str_to_SHA256("Ammar");
     b->nonce = nonce;
-
+    print_hash(b->hash);
+    print_hash(b->previous_hash);
     // Ecriture dans un fichier
     write_block_to_file(b);
 
@@ -425,19 +413,20 @@ void jeu_test_exercice_7()
     putchar('\n');
     printf("\n");
 
-    // Q.7.5
+    // // Q.7.5
     printf("Q.7.5\n");
-    str_to_SHA256((char *)s);
+    unsigned char *c = str_to_SHA256((char *)s);
+    free(c);
     printf("\n");
 
     // Q.7.6
     printf("Q.7.6\n");
-    compute_proof_of_work(blockFromFile, 8);
+    compute_proof_of_work(blockFromFile, 7);
     printf("\n");
 
     // Q.7.7
-    printf("Q.7.7\n");
-    // int v = verify_block(blockFromFile, 1);
+    // printf("Q.7.7\n");
+    // int v = verify_block(blockFromFile, blockFromFile->nonce);
     // if (v == 1)
     // {
     //     printf("Le block est valide\n");
@@ -447,22 +436,18 @@ void jeu_test_exercice_7()
     //     printf("Le block n'est pas valide\n");
     // }
 
-    // Suppresion de la liste CellProtected
+    // // Suppresion de la liste CellProtected
     delete_list_protected(p2);
 
     // free
-    free(k1);
+    // free(k1);
     free(k3);
-    free(k4);
-    free(k5);
     free(tmp);
-    free(hash);
-    free(previous_hash);
+    // free(hash);
+    // free(previous_hash);
     free(chaine_block);
-    delete_list_protected(b->votes);
-    free(b);
-
     // Suppression du block
+    delete_block(b);
     delete_block(blockFromFile);
 }
 

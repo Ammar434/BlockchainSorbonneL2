@@ -14,6 +14,8 @@ typedef struct block
     int nonce;
 } Block;
 
+void print_hash(unsigned char *hash);
+
 void write_block_to_file(Block *b);
 Block *read_block_from_file(char *filename);
 char *block_to_str(Block *block);
@@ -22,6 +24,8 @@ void delete_block(Block *block);
 unsigned char *str_to_SHA256(char *chaine);
 void compute_proof_of_work(Block *B, int d);
 char *hex_to_bin(unsigned char *hexdec);
+unsigned char *unsigned_strdup(char *chaine);
+
 char *random_string(int length);
 int verify_block(Block *block, int d);
 void simulation_compute_proof_of_work();

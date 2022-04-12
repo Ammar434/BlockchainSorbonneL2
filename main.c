@@ -15,7 +15,7 @@ void menu()
 
 int main()
 {
-    srand(time(NULL));
+    // srand(time(NULL));
     // int rep;
     // char buff[BUFFER_SIZE];
     // int nv, nc, cpt;
@@ -106,10 +106,13 @@ int main()
     //     }
     // } while (rep != 0);
     // printf("Merci , et au revoir.\n");
+    // jeu_test_exercice_1();
+    // jeu_test_exercice_2();
+    // jeu_test_exercice_3();
     // jeu_test_exercice_5();
     // jeu_test_exercice_6();
-    jeu_test_exercice_6bis();
-    // jeu_test_exercice_7();
+    // jeu_test_exercice_6bis();
+    jeu_test_exercice_7();
     // simulation_compute_proof_of_work();
 
     // int i = strncmp("0011011110111110111010100000111011010101001011110111100011001010010111101110100110100010100100001100000010001110111001111000000101111111011100010111110101111110010001011011110001100101011100010011011000001110011101100101011000111001111101100000011000111111", "00", 1);
