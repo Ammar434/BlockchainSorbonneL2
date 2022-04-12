@@ -421,7 +421,7 @@ void jeu_test_exercice_7()
 
     // Q.7.6
     printf("Q.7.6\n");
-    compute_proof_of_work(blockFromFile, 7);
+    compute_proof_of_work(blockFromFile, 9);
     printf("\n");
 
     // Q.7.7

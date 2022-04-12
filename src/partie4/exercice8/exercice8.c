@@ -9,7 +9,8 @@ CellTree *create_node(Block *b)
         printf("Erreur lors de l'allocation\n");
         return NULL;
     }
-    ct->block = b;
+    ct->block = malloc(sizeof(Block));
+    memcpy(ct->block, b, sizeof(b));
     ct->father = NULL,
     ct->firstChild = NULL;
     ct->nextBro = NULL;
