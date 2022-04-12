@@ -450,37 +450,37 @@ void simulation_compute_proof_of_work()
     clock_t temps_final;
     float temps_cpu;
     char *nom_fichier = "courbe_donnee/generer_data_compute_proof_of_work.txt";
-    long long somme_temps = 0;
+    float somme_temps = 0;
     FILE *file = fopen(nom_fichier, "w");
     for (int d = 1; d < 12; d++)
     {
-
+        generate_random_data(100, 10);
+        Key *pKey = malloc(sizeof(Key));
+        Key *sKey = malloc(sizeof(Key));
+        Block *block = (Block *)(malloc(sizeof(Block)));
+        init_pair_keys(pKey, sKey, 7, 3);
+        block->votes = read_protected_from_file("election_donnee/declaration.txt");
+        block->nonce = 0;
+        block->author = pKey;
+        block->previous_hash = str_to_SHA256("");
         somme_temps = 0;
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 10; i++)
         {
-            generate_random_data(100, 10);
-            Key *pKey = malloc(sizeof(Key));
-            Key *sKey = malloc(sizeof(Key));
-            Block *block = (Block *)(malloc(sizeof(Block)));
-            init_pair_keys(pKey, sKey, 7, 3);
-            block->votes = read_protected_from_file("election_donnee/declaration.txt");
-            block->nonce = 0;
-            block->author = pKey;
-            block->previous_hash = str_to_SHA256("");
-            printf("%s\n", block_to_str(block));
+            // printf("%s\n", block_to_str(block));
             temps_initial = clock();
             compute_proof_of_work(block, d);
             temps_final = clock();
             temps_cpu = (temps_final - temps_initial) * pow(10, -6);
             somme_temps = somme_temps + temps_cpu;
             printf("Iteration %d pour %d nb zero Duree %f\n", i, d, temps_cpu);
-            delete_block(block);
             // free(pKey);
-            free(sKey);
-            block = NULL;
-            printf("Iteration %d pour %d nb zero Duree %f\n", d, d, temps_cpu);
         }
-        fprintf(file, "%d %lld\n", d, (somme_temps / 1000));
+        delete_block(block);
+        free(sKey);
+        block = NULL;
+        somme_temps = somme_temps / 10;
+        printf("%lf\n", somme_temps);
+        fprintf(file, "%d %f\n", d, (somme_temps));
     }
     fclose(file);
 }
