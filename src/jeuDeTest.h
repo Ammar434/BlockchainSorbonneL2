@@ -20,5 +20,6 @@ void jeu_test_exercice_6();
 void jeu_test_exercice_6bis();
 void jeu_test_exercice_7();
 void jeu_test_exercice_8();
+void jeu_test_exercice_9();
 
 #endif

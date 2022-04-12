@@ -39,14 +39,14 @@ int update_height(CellTree *father, CellTree *child)
     }
 }
 
-// Question 8.3
+// Question 8.3 à revoir
 void add_child(CellTree *father, CellTree *child)
 {
     father->firstChild = child;
     update_height(father, child);
 }
 
-// Question 8.4
+// Question 8.4 à revoir
 void print_tree(CellTree *ct)
 {
     if (ct)
@@ -57,7 +57,7 @@ void print_tree(CellTree *ct)
     }
 }
 
-// Question 8.5
+// Question 8.5 à revoir
 void delete_node(CellTree *node)
 {
     if (node)
@@ -67,3 +67,11 @@ void delete_node(CellTree *node)
         delete_node(node);
     }
 }
+
+// Question 8.6
+
+// Question 8.7
+
+// Question 8.8
+
+// Question 8.9

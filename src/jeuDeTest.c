@@ -454,3 +454,7 @@ void jeu_test_exercice_7()
 void jeu_test_exercice_8()
 {
 }
+
+void jeu_test_exercice_9()
+{
+}
