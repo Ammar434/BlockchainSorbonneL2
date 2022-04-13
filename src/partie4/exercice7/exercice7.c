@@ -1,5 +1,7 @@
 #include "exercice7.h"
 
+// Fonction permettant de printer un tableau d'unsigned char
+// SHA256_DIGEST_LENGTH : longueur du hash, %02 car valeur hexadecimal
 void print_hash(unsigned char *hash)
 {
     printf("Hash : ");
@@ -18,25 +20,23 @@ void write_block_to_file(Block *b)
     int len = (strlen(path) + strlen(author) + strlen(extension) + 1);
     char *filename = malloc(sizeof(char) * len);
     memset(filename, 0, len);
+    // la ligne suivante sert pour le chemin vers le document.txt
     strcat(strcat(strcat(filename, path), author), extension);
     printf("%s\n", filename);
-
     FILE *f = fopen(filename, "w");
-
     if (f == NULL)
     {
         printf("erreur lors de l'ouverture\n");
         return;
     }
 
-    // Ecriture de l’auteur du bloc, sa valeur hachee, la valeur hachee du bloc precedent, sa preuve de travail
-    // fprintf(f, "%s %d %02x %02x", author, b->nonce, b->hash, b->previous_hash);
-
+    // Ecriture de l’auteur du bloc, sa preuve de travail
     fprintf(f, "%s %d ", author, b->nonce);
     for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-        // fputc((b->hash)[i], f);
+        // Ecriture de sa valeur hachee
         fprintf(f, "%02x", (b->hash)[i]);
     fprintf(f, " ");
+    // Ecriture de la valeur hachee du bloc precedent
     for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
         fprintf(f, "%02x", b->previous_hash[i]);
     fprintf(f, "\n");
@@ -52,7 +52,6 @@ void write_block_to_file(Block *b)
     }
     free(author);
     free(filename);
-
     fclose(f);
 }
 
@@ -79,6 +78,7 @@ unsigned char *unsigned_strdup(char *chaine)
 
     return unsigned_chaine;
 }
+
 // Question 7.2
 Block *read_block_from_file(char *filename)
 {
@@ -124,6 +124,7 @@ Block *read_block_from_file(char *filename)
 
     newBlock->nonce = nonce;
 
+    // Lecture de la liste CellProtected depuis un block fichier
     while (fgets(buff, BUFFER_SIZE, f) != 0)
     {
         if (sscanf(buff, "%[^\n]", protected_text) != 1)
@@ -139,13 +140,16 @@ Block *read_block_from_file(char *filename)
     return newBlock;
 }
 
+// Fonction qui renvoie la longueur du block
 long int len_block(Block *block)
 {
     long int len = 0;
     char *auteur = key_to_str(block->author);
+    // Savoir combien il y a de chiffre dans nonce
     int nDigits = (block->nonce == 0) ? 1 : floor(log10(abs(block->nonce))) + 1;
     len = strlen(auteur) + SHA256_DIGEST_LENGTH + nDigits + 1 + 1 + 1;
 
+    // Calcul de la longueur de la CellProtected
     CellProtected *tmp = block->votes;
     while (tmp != NULL)
     {
@@ -157,6 +161,7 @@ long int len_block(Block *block)
     free(auteur);
     return len;
 }
+
 // Question 7.3
 char *block_to_str(Block *block)
 {
@@ -215,6 +220,7 @@ void delete_block(Block *block)
 }
 
 // Question 7.5
+// Fonction qui permet de renvoyer la valeur hachee
 unsigned char *str_to_SHA256(char *chaine)
 {
     // unsigned char *d = SHA256((unsigned char *)chaine, sizeof(chaine), 0);

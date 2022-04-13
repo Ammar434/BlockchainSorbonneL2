@@ -425,16 +425,16 @@ void jeu_test_exercice_7()
     printf("\n");
 
     // Q.7.7
-    // printf("Q.7.7\n");
-    // int v = verify_block(blockFromFile, blockFromFile->nonce);
-    // if (v == 1)
-    // {
-    //     printf("Le block est valide\n");
-    // }
-    // else
-    // {
-    //     printf("Le block n'est pas valide\n");
-    // }
+    printf("Q.7.7\n");
+    int v = verify_block(blockFromFile, blockFromFile->nonce);
+    if (v == 1)
+    {
+        printf("Le block est valide\n");
+    }
+    else
+    {
+        printf("Le block n'est pas valide\n");
+    }
 
     // // Suppresion de la liste CellProtected
     delete_list_protected(p2);
@@ -453,6 +453,30 @@ void jeu_test_exercice_7()
 
 void jeu_test_exercice_8()
 {
+    // Q.8.1
+    Block *blockFromFile = read_block_from_file("election_donnee/blocks/(7,8).txt");
+    CellTree *ct = create_node(blockFromFile);
+    CellTree *ct2 = create_node(blockFromFile);
+    CellTree *ct3 = create_node(blockFromFile);
+    CellTree *ct4 = create_node(blockFromFile);
+    CellTree *ct5 = create_node(blockFromFile);
+    // Q.8.2 et Q.8.3
+    add_child(ct, ct2);
+    add_child(ct, ct3);
+
+    printf("%s\n", block_to_str(ct->firstChild->nextBro->block));
+    // add_child(ct, ct4);
+    // // add_child(ct, NULL);
+    // // ct4->nextBro = NULL;
+
+    // add_child(ct2, ct5);
+
+    // // Q.8.4
+    // // Affichage de l'arbre
+    // print_tree(ct);
+
+    // Q.8.5
+    // Suppression de noeud
 }
 
 void jeu_test_exercice_9()

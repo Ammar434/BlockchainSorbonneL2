@@ -10,7 +10,7 @@ CellTree *create_node(Block *b)
         return NULL;
     }
     ct->block = malloc(sizeof(Block));
-    memcpy(ct->block, b, sizeof(b));
+    ct->block = b;
     ct->father = NULL,
     ct->firstChild = NULL;
     ct->nextBro = NULL;
@@ -18,42 +18,56 @@ CellTree *create_node(Block *b)
     return ct;
 }
 
-// Question 8.2 à revoir
+// Question 8.2
+int max(int a, int b)
+{
+    if (a > b)
+        return a;
+    return b;
+}
+
 int update_height(CellTree *father, CellTree *child)
 {
-    if (father->height == child->height + 1)
+    // La hauteur est modifier?
+    if (father->height != (child->height + 1))
     {
-        return 0;
+        father->height = max(father->height, child->height + 1);
+        return 1;
     }
-    else
-    {
-        if (father->height < child->height + 1)
-        {
-            father->height = father->height + child->height;
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
+    return 0;
 }
 
 // Question 8.3 à revoir
 void add_child(CellTree *father, CellTree *child)
 {
-    father->firstChild = child;
+
+    if (father->firstChild == NULL)
+    {
+        father->firstChild = child;
+        return;
+    }
+    CellTree *cramwler = father->nextBro;
+    while (cramwler)
+    {
+        cramwler = cramwler->nextBro;
+    }
+    cramwler = child;
     update_height(father, child);
 }
 
 // Question 8.4 à revoir
 void print_tree(CellTree *ct)
 {
-    if (ct)
+    if (ct != NULL)
     {
         printf("hauteur du noeud : %d\n", ct->height);
-        print_tree(ct->firstChild);
-        print_tree(ct->nextBro);
+        CellTree *cramwler = ct->firstChild;
+        while (cramwler != NULL)
+        {
+
+            printf("hauteur du noeud : %d\n", ct->height);
+            cramwler = cramwler->nextBro;
+        }
     }
 }
 
@@ -69,7 +83,15 @@ void delete_node(CellTree *node)
 }
 
 // Question 8.6
-
+CellTree *highest_child(CellTree *cell)
+{
+    if (cell == NULL)
+    {
+        return NULL;
+    }
+    return NULL;
+    // cell->
+}
 // Question 8.7
 
 // Question 8.8
