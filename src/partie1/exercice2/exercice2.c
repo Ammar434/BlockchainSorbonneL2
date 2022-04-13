@@ -19,6 +19,7 @@ long extended_gcd(long s, long t, long *u, long *v)
 }
 
 // Question 2.1
+// Creation de cette fonction grâce aux instruction de l'enonce
 void generate_key_values(long p, long q, long *n, long *s, long *u)
 {
     long t = (p - 1) * (q - 1);
@@ -26,12 +27,14 @@ void generate_key_values(long p, long q, long *n, long *s, long *u)
     *s = rand_long(2, t - 1);
     long v;
     long pgcd = extended_gcd(*s, t, u, &v);
+    long test;
+
     while (pgcd != 1)
     {
         *s = rand_long(2, t - 1);
         pgcd = extended_gcd(*s, t, u, &v);
     }
-    long test = (*s) * (*u) + t * v;
+    test = (*s) * (*u) + t * v;
     if (test != 1)
     {
         fprintf(stderr, "Erreur generate_key_values : %ld\n", test);

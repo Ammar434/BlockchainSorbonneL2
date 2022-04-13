@@ -10,6 +10,7 @@ void supprimer_fausse_signature(CellProtected **cellProtected)
 
     while (tmp)
     {
+        // Si la déclaration est valide
         if (verify((tmp)->data) != 1)
         {
             char *sgn_str = signature_to_str((*cellProtected)->data->signature);
@@ -28,6 +29,7 @@ void supprimer_fausse_signature(CellProtected **cellProtected)
             tmp = tmp->next;
             delete_cell_protect(ptr);
         }
+        // Si la déclaration n'est pas valide
         else
         {
             prec = tmp;
@@ -199,7 +201,7 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
         messageKey = str_to_key(tmpDecl->data->message);
         int hashValueVotant = find_position(votantHashTable, tmpDecl->data->pKey);
         int hashValueCandidate = find_position(candidatsHashTable, messageKey);
-        // On regarde si clé da,s table de hachage pour voir si la personne peut voter
+        // On regarde si clé dans table de hachage pour voir si la personne peut voter
         if (compare_cle(votantHashTable->tab[hashValueVotant]->key, tmpDecl->data->pKey))
         {
             // On regarde  dans table de hachage pour voir si la personne a deja voter
@@ -244,76 +246,3 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
 
     return keyVainqueur;
 }
-
-// int nb_elem_hashtable(HashTable *t)
-// {
-//     int i, cpt = 0;
-//     for (i = 0; i < t->size; i++)
-//     {
-//         if (t->tab[i])
-//             cpt++;
-//     }
-//     return cpt;
-// }
-
-// int nb_elem_list_protected(CellProtected *LCP)
-// { // utilisee que dans la partie 4 pour compter le nb de decl
-//     int cpt = 0;
-//     while (LCP)
-//     {
-//         cpt++;
-//         LCP = LCP->next;
-//     }
-//     return cpt;
-// }
-
-// Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
-// {
-//     HashTable *tv = create_hashtable(voters, sizeV);
-//     HashTable *tc = create_hashtable(candidates, sizeC);
-//     HashCell *leader = NULL;
-
-//     printf("\n\nApres la verification des declarations, on a:\n");
-//     printf("%d voteurs participants\n", nb_elem_hashtable(tv));
-//     printf("%d candidats participants\n", nb_elem_hashtable(tc));
-//     printf("%d declarations autorisees et valides\n", nb_elem_list_protected(decl));
-
-//     while (decl)
-//     {
-//         Key *vote = str_to_key(decl->data->message);
-//         int voter_index = find_position(tv, decl->data->pKey);
-//         int candidate_index = find_position(tc, vote);
-
-//         if (tv->tab[voter_index]->key == decl->data->pKey)
-//         { // si la personne a le droit de voter
-//             if (!(tv->tab[voter_index]->val))
-//             { // et si cette personne n'a pas encore vote
-//                 if (tc->tab[candidate_index]->key == vote)
-//                 {                                      // et si la personne sur qui porte le vote est un candidat de l'election
-//                     (tc->tab[candidate_index]->val)++; // incrementer le nb de votes pour le candidat vote
-
-//                     // mise a jour du leader actuel de l'election
-//                     if (!leader || leader->val < tc->tab[candidate_index]->val)
-//                         leader = tc->tab[candidate_index];
-//                 }
-//             }
-//             tv->tab[voter_index]->val = 1; // la personne qui vient de voter ne pourra plus voter
-//         }
-//         free(vote);
-//         decl = decl->next;
-//     }
-
-//     // annonce des resultats de l'election
-//     Key *vainqueur = (Key *)malloc(sizeof(Key));
-//     assert(vainqueur);
-//     if (leader)
-//     {
-//         vainqueur->a = leader->key->a;
-//         vainqueur->b = leader->key->b;
-//     }
-
-//     // affiche_resultats(tc);
-//     delete_hashtable(tv);
-//     delete_hashtable(tc);
-//     return vainqueur;
-// }

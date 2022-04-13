@@ -38,10 +38,20 @@ void test_q_1_2()
 long modpow_naive(long a, long m, long n)
 {
     long val = 1;
+
+    // Cas 1
     if (m == 0)
+    {
+        return 1;
+    }
+
+    // Cas 2
+    if (m == 1)
     {
         return a % n;
     }
+
+    // Cas 3
     for (int i = 0; i < m; i++)
     {
         val = ((val * a) % n);
@@ -52,23 +62,31 @@ long modpow_naive(long a, long m, long n)
 // Question 1.4
 long modpow(long a, long m, long n)
 {
+    long x;
+    // 4 cas possibles
+    // Cas 1 (cas de base)
     if (m == 0)
     {
         return 1;
     }
 
+    // Cas 2
     if (m == 1)
     {
         return a % n;
     }
-    long x = modpow(a, m / 2, n);
 
+    // Cas 3 et 4
+    // m impair
     if (m & 1)
     {
+        x = modpow(a, m / 2, n);
         return (a * x * x) % n;
     }
+    // m pair
     else
     {
+        x = modpow(a, m / 2, n);
         return (x * x) % n;
     }
 }
@@ -94,6 +112,7 @@ void generer_data_modpow_naive()
     }
     fclose(file);
 }
+
 void generer_data_modpow()
 {
     clock_t temps_initial;
@@ -186,11 +205,16 @@ long random_prime_number(int low_size, int up_size, int k)
 {
     long low = (long)(power(2, low_size - 1));
     long up = (long)(power(2, up_size) - 1);
+    // On genere un entier long aléatoire entre low et up
     long res = rand_long(low, up);
+
+    // Tant qu'un témoin de Miller est premier, càd que le nombre n'est pas premier
     while (is_prime_miller(res, k) == 0)
     {
         res = rand_long(low, up);
     }
+
+    // Vérification que ce n'est pas premier
     if (is_prime_naive(res) == 0)
     {
         printf("Nombre non premier\n");

@@ -22,7 +22,6 @@ void delete_cell_key(CellKey *c);
 void delete_list_keys(CellKey *c);
 CellProtected *create_cell_protected(Protected *pr);
 void add_cell_protected_to_head(CellProtected **cellProtected, Protected *pr);
-Protected *temporaire(char *str);
 CellProtected *read_protected_from_file(char *filename);
 void print_list_protected(CellProtected *cellProtected);
 void delete_cell_protect(CellProtected *cp);

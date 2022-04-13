@@ -129,18 +129,6 @@ void add_cell_protected_to_head(CellProtected **cellProtected, Protected *pr)
 }
 
 // Question 5.8
-Protected *temporaire(char *str)
-{
-    char a[BUFFER_SIZE];
-    char b[BUFFER_SIZE];
-    char c[BUFFER_SIZE];
-    sscanf(str, "%s %s %s", a, c, b);
-    Key *cle = str_to_key(a);
-    Signature *s = str_to_signature(b);
-    Protected *p = init_protected(cle, c, s);
-    return p;
-}
-
 CellProtected *read_protected_from_file(char *filename)
 {
     CellProtected *cell = NULL;
@@ -161,7 +149,7 @@ CellProtected *read_protected_from_file(char *filename)
             printf("erreur lecture\n");
             return NULL;
         }
-        Protected *protected = temporaire(protected_text);
+        Protected *protected = str_to_protected(protected_text);
         add_cell_protected_to_head(&cell, protected);
     }
     fclose(f);

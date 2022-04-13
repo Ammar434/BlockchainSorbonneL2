@@ -132,7 +132,7 @@ Block *read_block_from_file(char *filename)
             printf("erreur lecture\n");
             return NULL;
         }
-        Protected *protected = temporaire(protected_text);
+        Protected *protected = str_to_protected(protected_text);
         add_cell_protected_to_head(&(newBlock->votes), protected);
     }
 

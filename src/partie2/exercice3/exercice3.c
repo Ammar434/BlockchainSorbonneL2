@@ -11,13 +11,16 @@ void init_pair_keys(Key *pKey, Key *sKey, long low_size, long up_size)
 {
     long p = random_prime_number(low_size, up_size, 5000);
     long q = random_prime_number(low_size, up_size, 5000);
+    long n, s, u;
+
     while (p == q)
     {
         q = random_prime_number(low_size, up_size, 5000);
     }
-    long n, s, u;
+
     generate_key_values(p, q, &n, &s, &u);
 
+    // On veut des cles positives :
     if (u < 0)
     {
         long t = (p - 1) * (q - 1);
@@ -37,6 +40,7 @@ char *key_to_str(Key *key)
         printf("Erreur lors de l'allocation\n");
         return NULL;
     }
+    // conversion de unsigned en chaine de caractere
     sprintf(buffer, "(%lx,%lx)", key->a, key->b);
     return buffer;
 }
@@ -159,6 +163,7 @@ int verify(Protected *pr)
     Key *pKey = pr->pKey;
     char *mess = pr->message;
     char *s = decrypt(sgn->tab, sgn->size, pKey->a, pKey->b);
+
     if (strcmp(mess, s) != 0)
     {
         free(s);
@@ -183,12 +188,16 @@ char *protected_to_str(Protected *pr)
 
 Protected *str_to_protected(char *str)
 {
-    char a[256];
-    char b[256];
-    char c[256];
-    sscanf(str, "%s %s %s", a, c, b);
-    Key *cle = str_to_key(a);
-    Signature *s = str_to_signature(b);
-    Protected *p = init_protected(cle, c, s);
+    char x[256];
+    char y[256];
+    char z[256];
+    Key *cle;
+    Signature *s;
+    Protected *p;
+
+    sscanf(str, "%s %s %s", x, y, z);
+    cle = str_to_key(x);
+    s = str_to_signature(z);
+    p = init_protected(cle, y, s);
     return p;
 }
