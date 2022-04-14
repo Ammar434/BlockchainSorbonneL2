@@ -126,7 +126,7 @@ CellTree *highest_child(CellTree *ct)
         return NULL;
     }
 
-    highestNode = ct;
+    highestNode = ct->firstChild;
     tmp = ct->firstChild;
     while (tmp != NULL)
     {
@@ -145,33 +145,32 @@ CellTree *last_node(CellTree *ct)
     if (ct->firstChild == NULL)
         return ct;
     // printf("%s\n", ct->block->hash);
-    last_node(highest_child(ct->firstChild));
+    return last_node(highest_child(ct));
 }
 
 // Question 8.8
 CellProtected *fusion_cell_protected(CellProtected *c1, CellProtected *c2)
 {
-    CellProtected *fusion = malloc(sizeof(CellProtected));
-
-    while (c1)
+    if (c1 == NULL)
     {
-        fusion->data = c1->data;
+        return c2;
+    }
+
+    if (c2 == NULL)
+    {
+        return c1;
+    }
+
+    while (c1->next != NULL)
+    {
         c1 = c1->next;
-        fusion = fusion->next;
     }
-
-    while (c2)
-    {
-        fusion->data = c2->data;
-        c2 = c2->next;
-        fusion = fusion->next;
-    }
-
-    return fusion;
+    c1->next = c2;
+    return c1;
 }
 
 // Question 8.9
-CellProtected *fusion_cell_protected_from_all_tree(CellTree *ct)
+CellProtected *fusion_cell_protected_from_all_node(CellTree *ct)
 {
     CellProtected *fusion = ct->block->votes;
     CellTree *tmp = ct->firstChild;

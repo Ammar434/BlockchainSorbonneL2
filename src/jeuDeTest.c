@@ -450,10 +450,57 @@ void jeu_test_exercice_7()
     delete_block(blockFromFile);
 }
 
+char *make_random_string()
+{
+    int length = 30;
+    static char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.-#'?!"; // could be const
+    char *randomString;
+
+    if (length)
+    {
+        randomString = malloc(length + 1);
+
+        if (randomString)
+        {
+            int l = (int)(sizeof(charset) - 1); // (static/global, could be const or #define SZ, would be even better)
+            int key;                            // one-time instantiation (static/global would be even better)
+            for (int n = 0; n < length; n++)
+            {
+                key = rand() % l;
+                randomString[n] = charset[key];
+            }
+
+            randomString[length] = '\0';
+        }
+    }
+
+    return randomString;
+}
+void jeu_test_create_random_block()
+{
+    for (int i = 0; i < 10; i++)
+    {
+        Key *pKey = malloc(sizeof(Key));
+        Key *sKey = malloc(sizeof(Key));
+        init_pair_keys(pKey, sKey, 3, 7);
+        generate_random_data(NB_VOTANT, NB_CANDIDAT);
+        Block *b = malloc(sizeof(Block));
+        b->author = pKey;
+        b->votes = read_protected_from_file("election_donnee/declaration.txt");
+        b->previous_hash = str_to_SHA256(make_random_string());
+        b->nonce = 0;
+        compute_proof_of_work(b, 3);
+        write_block_to_file(b);
+        free(pKey);
+        free(sKey);
+        // delete_block(b);
+    }
+}
+
 void jeu_test_exercice_8()
 {
     // Création de plusieurs blocs test
-    jeu_test_create_random_block();
+    // jeu_test_create_random_block();
 
     // Q.8.1
     Block *blockFromFile1 = read_block_from_file("election_donnee/blocks/(1aa7,2a7d).txt");
@@ -475,13 +522,18 @@ void jeu_test_exercice_8()
     add_child(ct4, ct5);
     print_tree(ct1);
 
-    CellTree *high = highest_child(ct2);
-    // printf("%s\n", high->block->hash);
+    // CellTree *high = highest_child(ct1);
+    // printf("Plus grand des bro %s\n", high->block->hash);
 
-    CellTree *lastNode = last_node(ct1);
+    // CellTree *lastNode = last_node(ct3);
     // printf("%s\n", lastNode->block->hash);
 
-    CellProtected *fusion = fusion_cell_protected(ct1->block->votes, ct2->block->votes);
+    // CellProtected *fusion = fusion_cell_protected(ct1->block->votes, ct2->block->votes);
+    // print_list_protected(ct1->block->votes);
+
+    CellProtected *allFusion = fusion_cell_protected_from_all_node(ct1);
+
+    print_list_protected(allFusion);
 }
 
 void jeu_test_exercice_9()

@@ -19,9 +19,10 @@ int max(int a, int b);
 void print_tree(CellTree *ct);
 void print_tabulation(int count);
 void print_tree_tmp(CellTree *ct, int level);
+CellProtected *fusion_cell_protected(CellProtected *c1, CellProtected *c2);
+CellProtected *fusion_cell_protected_from_all_node(CellTree *ct);
 
 CellTree *highest_child(CellTree *cell);
 CellTree *last_node(CellTree *tree);
-CellTree *highest_child(CellTree *cell);
 
 #endif

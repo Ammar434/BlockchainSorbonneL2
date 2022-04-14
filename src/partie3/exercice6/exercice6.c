@@ -63,6 +63,7 @@ int quadratic_hash_function(Key *key, int size, int pow)
 
     return (int)(cle);
 }
+
 // Question 6.4
 int compare_cle(Key *key1, Key *key2)
 {

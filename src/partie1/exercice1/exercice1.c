@@ -206,9 +206,9 @@ long random_prime_number(int low_size, int up_size, int k)
     long low = (long)(power(2, low_size - 1));
     long up = (long)(power(2, up_size) - 1);
     // On genere un entier long aléatoire entre low et up
-    long res = rand_long(low, up);
+    long res = 0;
 
-    // Tant qu'un témoin de Miller est premier, càd que le nombre n'est pas premier
+    // Tant qu'un témoin de Miller est vrai, càd que le nombre n'est pas premier
     while (is_prime_miller(res, k) == 0)
     {
         res = rand_long(low, up);
