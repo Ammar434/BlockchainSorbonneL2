@@ -31,11 +31,11 @@ void write_block_to_file(Block *b)
     }
 
     // Ecriture de l’auteur du bloc, sa preuve de travail
-    fprintf(f, "%s %d ", author, b->nonce);
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-        // Ecriture de sa valeur hachee
-        fprintf(f, "%02x", (b->hash)[i]);
-    fprintf(f, " ");
+    fprintf(f, "%s %d %s ", author, b->nonce, b->hash);
+    // for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+    //     // Ecriture de sa valeur hachee
+    //     fprintf(f, "%02x", (b->hash)[i]);
+    // fprintf(f, " ");
     // Ecriture de la valeur hachee du bloc precedent
     for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
         fprintf(f, "%02x", b->previous_hash[i]);

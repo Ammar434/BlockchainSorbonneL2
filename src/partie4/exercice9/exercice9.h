@@ -1,6 +1,7 @@
 #ifndef EXERCICE_9_H
 #define EXERCICE_9_H
-
+#define PENDING_VOTE_FILE_PATH "Blockchain/Pending_votes.txt"
+#define PENDING_BLOCK_FILE_PATH "election_donnee/blocks/Pending_blocks.txt"
 #include "../exercice8/exercice8.h"
 
 void submit_vote(Protected *p);

@@ -352,7 +352,6 @@ void jeu_test_exercice_6bis()
 
 void jeu_test_exercice_7()
 {
-
     generate_random_data(NB_VOTANT, NB_CANDIDAT);
     // Q.7.1
     //  Initialisation d'un block :
@@ -453,30 +452,36 @@ void jeu_test_exercice_7()
 
 void jeu_test_exercice_8()
 {
+    // Création de plusieurs blocs test
+    jeu_test_create_random_block();
+
     // Q.8.1
-    Block *blockFromFile = read_block_from_file("election_donnee/blocks/(7,8).txt");
-    CellTree *ct = create_node(blockFromFile);
-    CellTree *ct2 = create_node(blockFromFile);
-    CellTree *ct3 = create_node(blockFromFile);
-    CellTree *ct4 = create_node(blockFromFile);
-    CellTree *ct5 = create_node(blockFromFile);
+    Block *blockFromFile1 = read_block_from_file("election_donnee/blocks/(1aa7,2a7d).txt");
+    Block *blockFromFile2 = read_block_from_file("election_donnee/blocks/(1bb,d49).txt");
+    Block *blockFromFile3 = read_block_from_file("election_donnee/blocks/(2b3,8d1).txt");
+    Block *blockFromFile4 = read_block_from_file("election_donnee/blocks/(4a03,5881).txt");
+    Block *blockFromFile5 = read_block_from_file("election_donnee/blocks/(5dd,6029).txt");
+
+    printf("\n\n");
+    CellTree *ct1 = create_node(blockFromFile1);
+    CellTree *ct2 = create_node(blockFromFile2);
+    CellTree *ct3 = create_node(blockFromFile3);
+    CellTree *ct4 = create_node(blockFromFile4);
+    CellTree *ct5 = create_node(blockFromFile5);
     // Q.8.2 et Q.8.3
-    add_child(ct, ct2);
-    add_child(ct, ct3);
+    add_child(ct1, ct2);
+    add_child(ct1, ct3);
+    add_child(ct2, ct4);
+    add_child(ct4, ct5);
+    print_tree(ct1);
 
-    printf("%s\n", block_to_str(ct->firstChild->nextBro->block));
-    // add_child(ct, ct4);
-    // // add_child(ct, NULL);
-    // // ct4->nextBro = NULL;
+    CellTree *high = highest_child(ct2);
+    // printf("%s\n", high->block->hash);
 
-    // add_child(ct2, ct5);
+    CellTree *lastNode = last_node(ct1);
+    // printf("%s\n", lastNode->block->hash);
 
-    // // Q.8.4
-    // // Affichage de l'arbre
-    // print_tree(ct);
-
-    // Q.8.5
-    // Suppression de noeud
+    CellProtected *fusion = fusion_cell_protected(ct1->block->votes, ct2->block->votes);
 }
 
 void jeu_test_exercice_9()
