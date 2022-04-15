@@ -390,7 +390,7 @@ void jeu_test_exercice_7()
     print_hash(b->hash);
     print_hash(b->previous_hash);
     // Ecriture dans un fichier
-    write_block_to_file(b);
+    write_block_to_file(b, PENDING_BLOCK_FILE_PATH);
 
     // Q.7.2
     // Lecture depuis fichier
@@ -476,6 +476,7 @@ char *make_random_string()
 
     return randomString;
 }
+
 void jeu_test_create_random_block()
 {
     for (int i = 0; i < 10; i++)
@@ -490,9 +491,19 @@ void jeu_test_create_random_block()
         b->previous_hash = str_to_SHA256(make_random_string());
         b->nonce = 0;
         compute_proof_of_work(b, 3);
-        write_block_to_file(b);
+        char *author = key_to_str(b->author);
+        char *path = "election_donnee/blocks/";
+        char *extension = ".txt";
+        int len = (strlen(path) + strlen(author) + strlen(extension) + 1);
+        char *filename = malloc(sizeof(char) * len);
+        memset(filename, 0, len);
+        // la ligne suivante sert pour le chemin vers le document.txt
+        strcat(strcat(strcat(filename, path), author), extension);
+        printf("%s\n", filename);
+        write_block_to_file(b, filename);
         free(pKey);
         free(sKey);
+        free(filename);
         // delete_block(b);
     }
 }
@@ -538,4 +549,54 @@ void jeu_test_exercice_8()
 
 void jeu_test_exercice_9()
 {
+    // CellTree *ct1 = create_node(NULL);
+
+    // Key *secureKey = malloc(sizeof(Key));
+    // Key *candidatPublic = malloc(sizeof(Key));
+    // Key *publicKey = malloc(sizeof(Key));
+
+    // init_pair_keys(publicKey, secureKey, 3, 7);
+    // generate_random_data(NB_VOTANT, NB_CANDIDAT);
+
+    // candidatPublic->a = publicKey->a;
+    // candidatPublic->b = publicKey->b;
+    // Signature *sgn = sign(key_to_str(candidatPublic), secureKey);
+    // Protected *pr = init_protected(publicKey, key_to_str(candidatPublic), sgn);
+
+    // submit_vote(pr);
+
+    // create_block(ct1, publicKey, DIFFICULTE);
+
+    // printf("dfgf\n");
+
+    // add_block(4, PENDING_BLOCK_FILE_PATH);
+
+    CellTree *tree = read_tree();
+    print_tree(tree);
+}
+
+void simulationComplete()
+{
+    CellTree *tree = create_node(NULL);
+    generate_random_data(NB_VOTANT, NB_CANDIDAT);
+    CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
+    CellKey *clePopulation = read_public_keys("election_donnee/keys.txt");
+    CellKey *cleCandidat = read_public_keys("election_donnee/candidates.txt");
+    int i = 0;
+    while (cp != NULL)
+    {
+        i++;
+        submit_vote(cp->data);
+        if (i == 10)
+        {
+            create_block(tree, cp->data->pKey, DIFFICULTE);
+            add_block(DIFFICULTE, PENDING_BLOCK_FILE_PATH);
+            tree = read_tree();
+            i = 0;
+        }
+        cp = cp->next;
+    }
+    print_tree(tree);
+    Key *vainqueur = compute_winner_BT(tree, cleCandidat, clePopulation, NB_CANDIDAT, NB_VOTANT);
+    // printf("Le vaiqueur des élections est: %s\n", key_to_str(vainqueur));
 }

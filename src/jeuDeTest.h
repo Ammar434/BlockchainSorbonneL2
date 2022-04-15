@@ -7,8 +7,8 @@
 #include "partie2/partie2.h"
 #include "partie3/partie3.h"
 #include "partie4/partie4.h"
-#define NB_VOTANT 100
-#define NB_CANDIDAT 10
+#define NB_VOTANT 1000
+#define NB_CANDIDAT 5
 
 #include <openssl/sha.h>
 
@@ -21,5 +21,6 @@ void jeu_test_exercice_6bis();
 void jeu_test_exercice_7();
 void jeu_test_exercice_8();
 void jeu_test_exercice_9();
+void simulationComplete();
 
 #endif
