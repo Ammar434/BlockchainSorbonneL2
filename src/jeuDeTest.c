@@ -526,25 +526,51 @@ void jeu_test_exercice_8()
     CellTree *ct3 = create_node(blockFromFile3);
     CellTree *ct4 = create_node(blockFromFile4);
     CellTree *ct5 = create_node(blockFromFile5);
+
     // Q.8.2 et Q.8.3
+    // On utilise update_height dans la Q.8.3
     add_child(ct1, ct2);
     add_child(ct1, ct3);
     add_child(ct2, ct4);
     add_child(ct4, ct5);
+
+    // Q.8.4
+    printf("Q.8.4\n");
+    // Affichage de l'arbre
+    printf("Affichage de l'arbre\n");
     print_tree(ct1);
+    printf("\n");
 
-    // CellTree *high = highest_child(ct1);
-    // printf("Plus grand des bro %s\n", high->block->hash);
+    // Q.8.5
+    // printf("Q.8.5\n");
+    // // Suppresion du noeud ct5
+    // delete_node(ct5);
+    // // Affichage de l'arbre après la suppression du noeud
+    // printf("Affichage de l'arbre après la suppression du noeud\n");
+    // print_tree(ct1);
 
-    // CellTree *lastNode = last_node(ct3);
-    // printf("%s\n", lastNode->block->hash);
+    // Q.8.6
+    printf("Q.8.6\n");
+    CellTree *high = highest_child(ct1);
+    printf("Plus grand des bro %s\n", high->block->hash);
+    printf("\n");
 
-    // CellProtected *fusion = fusion_cell_protected(ct1->block->votes, ct2->block->votes);
-    // print_list_protected(ct1->block->votes);
+    // Q.8.7
+    printf("Q.8.7\n");
+    CellTree *lastNode = last_node(ct3);
+    printf("%s\n", lastNode->block->hash);
+    printf("\n");
 
-    CellProtected *allFusion = fusion_cell_protected_from_all_node(ct1);
+    // Q.8.8
+    printf("Q.8.8\n");
+    CellProtected *fusion = fusion_cell_protected(ct1->block->votes, ct2->block->votes);
+    print_list_protected(ct1->block->votes);
+    printf("\n");
 
-    print_list_protected(allFusion);
+    // Q.8.9
+    // printf("Q.8.9\n");
+    // CellProtected *allFusion = fusion_cell_protected_from_all_node(ct1);
+    // print_list_protected(allFusion);
 }
 
 void jeu_test_exercice_9()
