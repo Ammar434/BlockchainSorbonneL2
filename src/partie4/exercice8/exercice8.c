@@ -45,7 +45,7 @@ int update_height(CellTree *father, CellTree *child)
     return 0;
 }
 
-// Question 8.3 à revoir
+// Question 8.3
 void add_child(CellTree *father, CellTree *child)
 {
 
@@ -76,7 +76,7 @@ void print_tabulation(int count)
     }
 }
 
-// Question 8.4 à revoir
+// Question 8.4
 void print_tree_tmp(CellTree *ct, int level)
 {
     while (ct != NULL)
@@ -100,7 +100,7 @@ void print_tree(CellTree *ct)
     print_tree_tmp(ct, 0);
 }
 
-// Question 8.5 à revoir
+// Question 8.5
 void delete_node(CellTree *node)
 {
     if (node != NULL)

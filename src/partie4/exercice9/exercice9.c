@@ -1,6 +1,7 @@
 #include "exercice9.h"
 #include "exercice9.h"
 
+// Q.9.1
 void submit_vote(Protected *p)
 {
     FILE *file = fopen(PENDING_VOTE_FILE_PATH, "a");
@@ -10,6 +11,7 @@ void submit_vote(Protected *p)
     fclose(file);
 }
 
+// Q.9.2
 void create_block(CellTree *tree, Key *author, int d)
 {
 
@@ -46,6 +48,7 @@ void create_block(CellTree *tree, Key *author, int d)
     delete_block(newBlock);
 }
 
+// Q.9.3
 void add_block(int d, char *name)
 {
     Block *blockFromFile = read_block_from_file(name);
@@ -76,6 +79,9 @@ void add_block(int d, char *name)
 
     delete_block(blockFromFile);
 }
+
+
+// Q.9.4
 
 int count_file_in_directory(char *directory)
 {
@@ -147,6 +153,7 @@ CellTree *read_tree()
     return NULL;
 }
 
+// Q.9.5
 Key *compute_winner_BT(CellTree *tree, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
 {
     CellProtected *mergeDeclaration = fusion_cell_protected_from_all_node(tree);

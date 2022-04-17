@@ -529,12 +529,13 @@ void jeu_test_exercice_8()
     CellTree *ct3 = create_node(blockFromFile3);
     CellTree *ct4 = create_node(blockFromFile4);
     CellTree *ct5 = create_node(blockFromFile5);
+
     // Q.8.2 et Q.8.3
+    // On utilise update_height dans la Q.8.3
     add_child(ct1, ct2);
     add_child(ct1, ct3);
     add_child(ct2, ct4);
     add_child(ct4, ct5);
-    print_tree(ct1);
 
     CellTree *high = highest_child(ct1);
     printf("Plus grand des brothers %s\n", high->block->hash);
@@ -553,6 +554,8 @@ void jeu_test_exercice_8()
     delete_tree(ct1);
 
     delete_list_protected_from_node(allFusion);
+
+  
 }
 
 void jeu_test_exercice_9()
