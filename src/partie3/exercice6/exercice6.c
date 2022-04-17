@@ -189,9 +189,9 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
 {
     HashCell *actuelVainqueur = NULL;
     Key *messageKey = NULL;
-    HashTable *votantHashTable = create_hashtable(voters, sizeV);
+    HashTable *votantHashTable = create_hashtable(voters, sizeV * 2);
     count_element_hashtable(votantHashTable);
-    HashTable *candidatsHashTable = create_hashtable(candidates, sizeC);
+    HashTable *candidatsHashTable = create_hashtable(candidates, sizeC * 2);
     count_element_hashtable(candidatsHashTable);
     CellProtected *tmpDecl = decl;
     Key *keyVainqueur = malloc(sizeof(Key));

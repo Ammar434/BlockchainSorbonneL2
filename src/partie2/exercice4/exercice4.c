@@ -99,7 +99,7 @@ void generer_declaration_vote(char *filename, char *filename2, char *filename3, 
         }
         publicKey = str_to_key(pKey);
         secureKey = str_to_key(sKey);
-        int votePour = rand() % (nbCandidates + 1);
+        int votePour = rand() % (nbCandidates) + 1;
         while (fgets(bufferCandidat, sizeof(bufferCandidat), f2) != 0)
         {
             i++;

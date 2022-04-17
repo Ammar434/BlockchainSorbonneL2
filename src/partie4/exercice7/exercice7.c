@@ -24,15 +24,7 @@ void write_block_to_file(Block *b, char *filename)
     }
 
     // Ecriture de l’auteur du bloc, sa preuve de travail
-    fprintf(f, "%s %d %s %s", author, b->nonce, b->hash, b->previous_hash);
-    // for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-    //     // Ecriture de sa valeur hachee
-    //     fprintf(f, "%02x", (b->hash)[i]);
-    // fprintf(f, " ");
-    // Ecriture de la valeur hachee du bloc precedent
-    // for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-    //     fprintf(f, "%02x", b->previous_hash[i]);
-    fprintf(f, "\n");
+    fprintf(f, "%s %d %s %s\n", author, b->nonce, b->hash, b->previous_hash);
 
     // Ecriture de toutes les declarations de votes
     CellProtected *tmp = b->votes;
@@ -54,19 +46,11 @@ unsigned char *unsigned_strdup(char *chaine)
     printf("Len chaine %d\n", len);
     unsigned char *unsigned_chaine = malloc(sizeof(unsigned char) * (len + 1));
 
-    // memcpy(unsigned_chaine, chaine, SHA256_DIGEST_LENGTH);
     for (i = 0; i < len; i++)
     {
-        unsigned_chaine[i] = (unsigned char)(chaine[i]);
-        //     // printf("%s", chaine);
-        //     // sprintf(unsigned_chaine, "%s", chaine);
-        //     // unsigned_chaine[i] = chaine[i];
+        unsigned_chaine[i] = (unsigned char)chaine[i];
     }
     unsigned_chaine[i] = '\0';
-    printf("%s\n", unsigned_chaine);
-
-    // print_hash(unsigned_chaine);
-    // printf("\n");
 
     return unsigned_chaine;
 }
@@ -92,11 +76,10 @@ Block *read_block_from_file(char *filename)
 
     char buff[BUFFER_SIZE];
     char auteur[BUFFER_SIZE];
-    unsigned char hash[BUFFER_SIZE];
-    unsigned char previous_hash[BUFFER_SIZE];
+    char hash[BUFFER_SIZE];
+    char previous_hash[BUFFER_SIZE];
     char protected_text[BUFFER_SIZE];
     int nonce = 0;
-    size_t n = 0;
 
     FILE *f = fopen(filename, "r");
     if (f == NULL)
@@ -112,16 +95,9 @@ Block *read_block_from_file(char *filename)
         return NULL;
     }
 
-    print_hash(hash);
-
     newBlock->author = str_to_key(auteur);
     newBlock->hash = unsigned_strdup(hash);
     newBlock->previous_hash = unsigned_strdup(previous_hash);
-
-    // printf("%s\n", newBlock->hash);
-    // print_hash(newBlock->hash);
-    // print_hash(newBlock->hash);
-    // print_hash(newBlock->previous_hash);
 
     newBlock->nonce = nonce;
 
@@ -182,14 +158,8 @@ char *block_to_str(Block *block)
     char *auteur = key_to_str(block->author);
 
     memcpy(res, auteur, strlen(auteur));
-    // if (block->previous_hash == NULL)
-    // {
-    //     memcpy(res + strlen(auteur), str_to_SHA256("Premier block"), SHA256_DIGEST_LENGTH);
-    // }
-    // else
-    // {
+
     memcpy(res + strlen(auteur), block->previous_hash, SHA256_DIGEST_LENGTH);
-    // }
 
     char nonce_to_str[BUFFER_SIZE];
     snprintf(nonce_to_str, sizeof(nonce_to_str), "%d", block->nonce);
@@ -211,10 +181,15 @@ char *block_to_str(Block *block)
 
 void delete_block(Block *block)
 {
-    delete_list_protected(block->votes);
+    CellProtected *cell = block->votes;
+    while (cell != NULL)
+    {
+        CellProtected *tmp = cell;
+        cell = cell->next;
+        free(tmp);
+    }
     free(block->hash);
     free(block->previous_hash);
-    free(block->author);
     free(block);
 }
 
@@ -224,9 +199,10 @@ unsigned char *str_to_SHA256(char *chaine)
 {
     // unsigned char *d = SHA256((unsigned char *)chaine, sizeof(chaine), 0);
 
-    unsigned char *d = malloc(sizeof(unsigned char) * SHA256_DIGEST_LENGTH);
-    d = SHA256((unsigned char *)chaine, strlen(chaine), d);
-    print_hash(d);
+    unsigned char *d = malloc(sizeof(char) * SHA256_DIGEST_LENGTH);
+    unsigned char *uChaine = unsigned_strdup(chaine);
+    SHA256(uChaine, strlen(chaine), d);
+    free(uChaine);
     return d;
 }
 
@@ -241,89 +217,66 @@ char *hex_to_bin(unsigned char *hexdec)
         switch (hexdec[i])
         {
         case '0':
-            // printf("0000");
             strcat(chaine, "0000");
-            // memcpy(chaine, "0000", 4);
 
             break;
         case '1':
-            // printf("0001");
             strcat(chaine, "0001");
 
             break;
         case '2':
-            // printf("0010");
             strcat(chaine, "0010");
 
             break;
         case '3':
-            // printf("0011");
             strcat(chaine, "0011");
 
             break;
         case '4':
-            // printf("0100");
             strcat(chaine, "0100");
 
             break;
         case '5':
-            // printf("0101");
             strcat(chaine, "0101");
 
             break;
         case '6':
-            // printf("0110");
             strcat(chaine, "0110");
 
             break;
         case '7':
-            // printf("0111");
             strcat(chaine, "0111");
 
             break;
         case '8':
-            // printf("1000");
             strcat(chaine, "1000");
 
             break;
         case '9':
-            // printf("1001");
             strcat(chaine, "1001");
 
             break;
-        // case 'A':
         case 'a':
-            // printf("1010");
             strcat(chaine, "1010");
 
             break;
-        // case 'B':
         case 'b':
-            // printf("1011");
             strcat(chaine, "1011");
 
             break;
-        // case 'C':
         case 'c':
-            // printf("1100");
             strcat(chaine, "1100");
 
             break;
-        // case 'D':
         case 'd':
-            // printf("1101");
             strcat(chaine, "1101");
 
             break;
-        // case 'E':
         case 'e':
-            // printf("1110");
             strcat(chaine, "1110");
 
             break;
-        // case 'F':
         case 'f':
-            // printf("1111");
             strcat(chaine, "1111");
             break;
         default:
@@ -331,10 +284,8 @@ char *hex_to_bin(unsigned char *hexdec)
         }
         i++;
     }
-    // printf("i =%d\n", i);
-    // printf("len =%d\n", strlen(hexdec));
+
     chaine[i * 4] = '\0';
-    // printf("%s\n", chaine);
     return chaine;
 }
 
@@ -377,8 +328,6 @@ void compute_proof_of_work(Block *block, int d)
         strcat(strcat(block_str_with_nonce, block_str), nonce_to_str);
         block_hash = str_to_SHA256(block_str_with_nonce);
 
-        // printf("%s\n", block_str_with_nonce);
-        print_hash(block_hash);
         hexadecimal = malloc(sizeof(char) * BUFFER_SIZE);
         memset(hexadecimal, 0, BUFFER_SIZE);
         printf("Reprensentation hexadecimal hash block : ");
@@ -390,7 +339,7 @@ void compute_proof_of_work(Block *block, int d)
         }
 
         printf("\nReprensentation binaire hash block :\n");
-        binary = hex_to_bin(hexadecimal);
+        binary = hex_to_bin((unsigned char *)hexadecimal);
         printf("%s\n", binary);
 
         printf("\n");
@@ -401,6 +350,10 @@ void compute_proof_of_work(Block *block, int d)
             printf("---------------------------------------\n");
             printf("%s\n", binary);
             printf("---------------------------------------\n");
+            free(binary);
+            free(block_str);
+            free(block_str_with_nonce);
+            free(block_hash);
             break;
         }
 
@@ -413,21 +366,11 @@ void compute_proof_of_work(Block *block, int d)
     }
     block->nonce = d;
     block->hash = unsigned_strdup(hexadecimal);
-    // free(block_hash);
-
-    // free(hexadecimal);
-    // free(block_str);
-    // free(block_str_with_nonce);
-    free(binary);
-    free(chaine_a_comparer);
-    free(block_str);
-    free(block_str_with_nonce);
-    free(block_hash);
     free(hexadecimal);
+    free(chaine_a_comparer);
 }
 
 // Question 7.7
-// Pas sur que verify marche
 int verify_block(Block *block, int d)
 {
     int i = 0;
@@ -442,6 +385,9 @@ int verify_block(Block *block, int d)
     if (strncmp(chaine_a_comparer, binary, d) == 0)
     {
         printf("Block valide\n");
+        free(chaine_a_comparer);
+        free(binary);
+
         return 1;
     }
     printf("Block non valide\n");
