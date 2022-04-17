@@ -6,7 +6,7 @@ PROGRAMS = main
 OUTDIR = ./bin
 SRCDIR = ./src
 DATADIR = ./election_donnee
-BLOCKCHAINDIR = ./Blockchain/blocks
+BLOCKCHAINDIR = ./Blockchain
 
 REQUIREMENT = exercice1.o  exercice2.o  exercice3.o  exercice4.o  exercice5.o  exercice6.o exercice7.o exercice8.o exercice9.o jeuDeTest.o
 
@@ -54,4 +54,6 @@ clean:
 	rm -f $(OUTDIR)/*.o
 	rm -f *.o *~ $(PROGRAMS)
 	rm -f $(DATADIR)/*.txt
-	rm -f $(BLOCKCHAINDIR)/*.txt
+	# rm -f $(DATADIR)/blocks/*.txt
+	rm -f $(BLOCKCHAINDIR)/blocks/*.txt
+	rm -f $(BLOCKCHAINDIR)/pendings/*.txt

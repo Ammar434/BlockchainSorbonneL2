@@ -14,8 +14,6 @@ void submit_vote(Protected *p)
 // Q.9.2
 void create_block(CellTree *tree, Key *author, int d)
 {
-    // cr´ee un bloc valide contenant les votes en attente dans le fichier ”Pending votes.txt”
-    CellProtected *pendingVote = read_protected_from_file(PENDING_VOTE_FILE_PATH);
 
     CellTree *lastNode = last_node(tree);
     Block *newBlock = malloc(sizeof(Block));
@@ -25,13 +23,14 @@ void create_block(CellTree *tree, Key *author, int d)
     if (lastNode->block == NULL)
         newBlock->previous_hash = unsigned_strdup("476308207be73d246071f1e59ab2cfad5979031474cc8916c539eea8d3df4939");
     else
-        newBlock->previous_hash = lastNode->block->hash;
+        newBlock->previous_hash = unsigned_strdup((char *)lastNode->block->hash);
 
     newBlock->hash = NULL;
-    newBlock->votes = pendingVote;
+    // cree un bloc valide contenant les votes en attente dans le fichier ”Pending votes.txt”
 
+    newBlock->votes = read_protected_from_file(PENDING_VOTE_FILE_PATH);
+    newBlock->nonce = d;
     compute_proof_of_work(newBlock, d);
-
     // supprime le fichier ”Pending votes.txt” apr`es avoir cr´e´e le bloc
     if (remove(PENDING_VOTE_FILE_PATH) == 0)
     {
@@ -43,6 +42,10 @@ void create_block(CellTree *tree, Key *author, int d)
     };
     // ecrit le bloc obtenu dans un fichier appel´e ”Pending block”.
     write_block_to_file(newBlock, PENDING_BLOCK_FILE_PATH);
+    // free(newBlock->author);
+    delete_list_protected_from_node(newBlock->votes);
+
+    delete_block(newBlock);
 }
 
 // Q.9.3
@@ -71,9 +74,15 @@ void add_block(int d, char *name)
     {
         printf("The file is not deleted.\n");
     };
+    free(blockFromFile->author);
+    delete_list_protected_from_node(blockFromFile->votes);
+
+    delete_block(blockFromFile);
 }
 
+
 // Q.9.4
+
 int count_file_in_directory(char *directory)
 {
     int i = 0;
@@ -135,7 +144,9 @@ CellTree *read_tree()
     {
         if (tabTree[i]->father == NULL)
         {
-            return tabTree[i];
+            CellTree *tmp = tabTree[i];
+            free(tabTree);
+            return tmp;
         }
     }
     printf("Racine non trouvé\n");
@@ -146,10 +157,12 @@ CellTree *read_tree()
 Key *compute_winner_BT(CellTree *tree, CellKey *candidates, CellKey *voters, int sizeC, int sizeV)
 {
     CellProtected *mergeDeclaration = fusion_cell_protected_from_all_node(tree);
+    supprimer_fausse_signature(&mergeDeclaration);
+
     print_list_protected(mergeDeclaration);
-    // supprimer_fausse_signature(mergeDeclaration);
-    printf("---------------------------------------------\n");
-    print_list_protected(mergeDeclaration);
+
     Key *vainqueur = compute_winner(mergeDeclaration, candidates, voters, sizeC, sizeV);
+
+    delete_list_protected_from_node(mergeDeclaration);
     return vainqueur;
 }

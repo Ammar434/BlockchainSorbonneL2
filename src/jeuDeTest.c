@@ -355,12 +355,12 @@ void jeu_test_exercice_7()
     generate_random_data(NB_VOTANT, NB_CANDIDAT);
     // Q.7.1
     //  Initialisation d'un block :
-    //  ->Creation d'une clé
+    // Creation d'une clé
     Key *k1 = (Key *)(malloc(sizeof(Key)));
     k1->a = 7;
     k1->b = 8;
 
-    // ->Creation d'une liste de CellProtected
+    // Creation d'une liste de CellProtected
     // --Creation de 2 clés pour creer la liste CellProtected
     Key *k2 = (Key *)(malloc(sizeof(Key)));
     k2->a = 1;
@@ -368,34 +368,31 @@ void jeu_test_exercice_7()
     Key *k3 = (Key *)(malloc(sizeof(Key)));
     k3->a = 3;
     k3->b = 4;
-    // --Creation de la variable Signature
+    // Creation de la variable Signature
     char *tmp = key_to_str(k2);
     Signature *signature = sign(tmp, k3);
-    // --Creation de la variable Protected
+    // Creation de la variable Protected
     Protected *p = init_protected(k2, tmp, signature);
-    // --Ajout à une liste de Protected
+    // Ajout à une liste de Protected
     CellProtected *p2 = create_cell_protected(NULL);
     add_cell_protected_to_head(&p2, p);
 
-    // ->Initialisation de la valeur hachée du bloc
-    int nonce = 1;
-
     // Creation du block
     Block *b = malloc(sizeof(Block));
-    b->author = k1;
+    b->author = malloc(sizeof(Key));
+    b->author->a = k1->a;
+    b->author->b = k1->b;
     b->votes = read_protected_from_file("election_donnee/declaration.txt");
-    b->hash = str_to_SHA256("Matthias");
-    b->previous_hash = str_to_SHA256("Ammar");
-    b->nonce = nonce;
-    print_hash(b->hash);
-    print_hash(b->previous_hash);
+    b->hash = unsigned_strdup("764faf5c61ac315f1497f9dfa542713965b785e5cc2f707d6468d7d1124cdfcf");
+    b->previous_hash = unsigned_strdup("764faf5c61ac315f1497f9dfa542713965b785e5cc2f707d6468d7d1124cdfcf");
+    b->nonce = 1;
+
     // Ecriture dans un fichier
     write_block_to_file(b, PENDING_BLOCK_FILE_PATH);
 
     // Q.7.2
     // Lecture depuis fichier
-    Block *blockFromFile = read_block_from_file("election_donnee/blocks/(7,8).txt");
-
+    Block *blockFromFile = read_block_from_file(PENDING_BLOCK_FILE_PATH);
     // Q.7.3
     // affichage blocks
     printf("Q.7.3\n");
@@ -412,7 +409,7 @@ void jeu_test_exercice_7()
     putchar('\n');
     printf("\n");
 
-    // // Q.7.5
+    // Q.7.5
     printf("Q.7.5\n");
     unsigned char *c = str_to_SHA256((char *)s);
     free(c);
@@ -420,66 +417,58 @@ void jeu_test_exercice_7()
 
     // Q.7.6
     printf("Q.7.6\n");
-    compute_proof_of_work(blockFromFile, 9);
+    free(b->hash);
+    b->hash = NULL;
+    compute_proof_of_work(b, DIFFICULTE);
     printf("\n");
 
     // Q.7.7
     printf("Q.7.7\n");
-    int v = verify_block(blockFromFile, blockFromFile->nonce);
-    if (v == 1)
-    {
-        printf("Le block est valide\n");
-    }
-    else
-    {
-        printf("Le block n'est pas valide\n");
-    }
+    verify_block(b, b->nonce);
 
-    // // Suppresion de la liste CellProtected
+    // Suppresion de la liste CellProtected
     delete_list_protected(p2);
 
     // free
-    // free(k1);
+    free(k1);
     free(k3);
     free(tmp);
-    // free(hash);
-    // free(previous_hash);
+
     free(chaine_block);
     // Suppression du block
-    delete_block(b);
-    delete_block(blockFromFile);
-}
+    free(b->author);
+    CellProtected *cell = b->votes;
 
-char *make_random_string()
-{
-    int length = 30;
-    static char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.-#'?!"; // could be const
-    char *randomString;
-
-    if (length)
+    while (cell != NULL)
     {
-        randomString = malloc(length + 1);
-
-        if (randomString)
-        {
-            int l = (int)(sizeof(charset) - 1); // (static/global, could be const or #define SZ, would be even better)
-            int key;                            // one-time instantiation (static/global would be even better)
-            for (int n = 0; n < length; n++)
-            {
-                key = rand() % l;
-                randomString[n] = charset[key];
-            }
-
-            randomString[length] = '\0';
-        }
+        CellProtected *tmp = cell;
+        cell = cell->next;
+        delete_cell_protect(tmp);
     }
+    free(b->hash);
+    free(b->previous_hash);
+    free(b);
 
-    return randomString;
+    free(blockFromFile->author);
+
+    cell = blockFromFile->votes;
+    while (cell != NULL)
+    {
+        CellProtected *tmp = cell;
+        cell = cell->next;
+        delete_cell_protect(tmp);
+    }
+    free(blockFromFile->hash);
+    free(blockFromFile->previous_hash);
+    free(blockFromFile);
 }
 
+// Cette fonction initialise 5 blocks pour des tests
 void jeu_test_create_random_block()
 {
-    for (int i = 0; i < 10; i++)
+    // int index = 0;
+    // char filePathBuffer[BUFFER_SIZE];
+    for (int i = 0; i < 6; i++)
     {
         Key *pKey = malloc(sizeof(Key));
         Key *sKey = malloc(sizeof(Key));
@@ -488,11 +477,13 @@ void jeu_test_create_random_block()
         Block *b = malloc(sizeof(Block));
         b->author = pKey;
         b->votes = read_protected_from_file("election_donnee/declaration.txt");
-        b->previous_hash = str_to_SHA256(make_random_string());
+
+        b->previous_hash = unsigned_strdup("764faf5c61ac315f1497f9dfa542713965b785e5cc2f707d6468d7d1124cdfcf");
         b->nonce = 0;
-        compute_proof_of_work(b, 3);
+        compute_proof_of_work(b, 1);
+
         char *author = key_to_str(b->author);
-        char *path = "election_donnee/blocks/";
+        char *path = "election_donnee/";
         char *extension = ".txt";
         int len = (strlen(path) + strlen(author) + strlen(extension) + 1);
         char *filename = malloc(sizeof(char) * len);
@@ -504,21 +495,33 @@ void jeu_test_create_random_block()
         free(pKey);
         free(sKey);
         free(filename);
-        // delete_block(b);
+        free(author);
+        // Suppression du block
+        CellProtected *cell = b->votes;
+
+        while (cell != NULL)
+        {
+            CellProtected *tmp = cell;
+            cell = cell->next;
+            delete_cell_protect(tmp);
+        }
+        free(b->hash);
+        free(b->previous_hash);
+        free(b);
     }
 }
 
 void jeu_test_exercice_8()
 {
-    // Création de plusieurs blocs test
     // jeu_test_create_random_block();
 
+    // Création de plusieurs blocs test
     // Q.8.1
-    Block *blockFromFile1 = read_block_from_file("election_donnee/blocks/(1aa7,2a7d).txt");
-    Block *blockFromFile2 = read_block_from_file("election_donnee/blocks/(1bb,d49).txt");
-    Block *blockFromFile3 = read_block_from_file("election_donnee/blocks/(2b3,8d1).txt");
-    Block *blockFromFile4 = read_block_from_file("election_donnee/blocks/(4a03,5881).txt");
-    Block *blockFromFile5 = read_block_from_file("election_donnee/blocks/(5dd,6029).txt");
+    Block *blockFromFile1 = read_block_from_file("election_donnee/blocks/(3d87,447d).txt");
+    Block *blockFromFile2 = read_block_from_file("election_donnee/blocks/(4c5b,6f01).txt");
+    Block *blockFromFile3 = read_block_from_file("election_donnee/blocks/(7f5,8b3).txt");
+    Block *blockFromFile4 = read_block_from_file("election_donnee/blocks/(19d9,4ba7).txt");
+    Block *blockFromFile5 = read_block_from_file("election_donnee/blocks/(81d,a1b).txt");
 
     printf("\n\n");
     CellTree *ct1 = create_node(blockFromFile1);
@@ -534,71 +537,68 @@ void jeu_test_exercice_8()
     add_child(ct2, ct4);
     add_child(ct4, ct5);
 
-    // Q.8.4
-    printf("Q.8.4\n");
-    // Affichage de l'arbre
-    printf("Affichage de l'arbre\n");
-    print_tree(ct1);
-    printf("\n");
-
-    // Q.8.5
-    // printf("Q.8.5\n");
-    // // Suppresion du noeud ct5
-    // delete_node(ct5);
-    // // Affichage de l'arbre après la suppression du noeud
-    // printf("Affichage de l'arbre après la suppression du noeud\n");
-    // print_tree(ct1);
-
-    // Q.8.6
-    printf("Q.8.6\n");
     CellTree *high = highest_child(ct1);
-    printf("Plus grand des bro %s\n", high->block->hash);
-    printf("\n");
+    printf("Plus grand des brothers %s\n", high->block->hash);
 
-    // Q.8.7
-    printf("Q.8.7\n");
     CellTree *lastNode = last_node(ct3);
-    printf("%s\n", lastNode->block->hash);
-    printf("\n");
+    printf("Dernier node %s\n", lastNode->block->hash);
 
-    // Q.8.8
-    printf("Q.8.8\n");
-    CellProtected *fusion = fusion_cell_protected(ct1->block->votes, ct2->block->votes);
-    print_list_protected(ct1->block->votes);
-    printf("\n");
+    CellProtected *allFusion = fusion_cell_protected_from_all_node(ct1);
+    print_list_protected(allFusion);
 
-    // Q.8.9
-    // printf("Q.8.9\n");
-    // CellProtected *allFusion = fusion_cell_protected_from_all_node(ct1);
-    // print_list_protected(allFusion);
+    // delete_node(ct1);
+    // delete_node(ct2);
+    // delete_node(ct3);
+    // delete_node(ct4);
+    // delete_node(ct5);
+    delete_tree(ct1);
+
+    delete_list_protected_from_node(allFusion);
+
+  
 }
 
 void jeu_test_exercice_9()
 {
-    // CellTree *ct1 = create_node(NULL);
+    CellTree *ct1 = create_node(NULL);
 
-    // Key *secureKey = malloc(sizeof(Key));
-    // Key *candidatPublic = malloc(sizeof(Key));
-    // Key *publicKey = malloc(sizeof(Key));
+    Key *secureKey = malloc(sizeof(Key));
+    Key *candidatPublic = malloc(sizeof(Key));
+    Key *publicKey = malloc(sizeof(Key));
 
-    // init_pair_keys(publicKey, secureKey, 3, 7);
-    // generate_random_data(NB_VOTANT, NB_CANDIDAT);
+    init_pair_keys(publicKey, secureKey, 3, 7);
+    generate_random_data(NB_VOTANT, NB_CANDIDAT);
 
-    // candidatPublic->a = publicKey->a;
-    // candidatPublic->b = publicKey->b;
-    // Signature *sgn = sign(key_to_str(candidatPublic), secureKey);
-    // Protected *pr = init_protected(publicKey, key_to_str(candidatPublic), sgn);
+    candidatPublic->a = publicKey->a;
+    candidatPublic->b = publicKey->b;
+    char *chaine = key_to_str(candidatPublic);
+    Signature *sgn = sign(chaine, secureKey);
+    Protected *pr = init_protected(publicKey, chaine, sgn);
 
-    // submit_vote(pr);
+    submit_vote(pr);
 
-    // create_block(ct1, publicKey, DIFFICULTE);
+    create_block(ct1, publicKey, DIFFICULTE);
 
     // printf("dfgf\n");
 
-    // add_block(4, PENDING_BLOCK_FILE_PATH);
+    add_block(4, PENDING_BLOCK_FILE_PATH);
 
     CellTree *tree = read_tree();
     print_tree(tree);
+    delete_node(ct1);
+
+    free(secureKey);
+    free(candidatPublic);
+    free(publicKey);
+
+    free(pr->message);
+    // free(pr->pKey);
+    free(pr->signature->tab);
+    free(pr->signature);
+    free(pr);
+
+    free(chaine);
+    delete_tree(tree);
 }
 
 void simulationComplete()
@@ -623,6 +623,6 @@ void simulationComplete()
         cp = cp->next;
     }
     print_tree(tree);
-    Key *vainqueur = compute_winner_BT(tree, cleCandidat, clePopulation, NB_CANDIDAT, NB_VOTANT);
-    // printf("Le vaiqueur des élections est: %s\n", key_to_str(vainqueur));
+
+    compute_winner_BT(tree, cleCandidat, clePopulation, NB_CANDIDAT, NB_VOTANT);
 }

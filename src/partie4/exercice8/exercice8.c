@@ -9,7 +9,7 @@ CellTree *create_node(Block *b)
         printf("Erreur lors de l'allocation\n");
         return NULL;
     }
-    ct->block = malloc(sizeof(Block));
+    // ct->block = malloc(sizeof(Block));
     ct->block = b;
     ct->father = NULL,
     ct->firstChild = NULL;
@@ -103,16 +103,47 @@ void print_tree(CellTree *ct)
 // Question 8.5
 void delete_node(CellTree *node)
 {
-    if (node)
+    if (node != NULL)
     {
-        delete_node(node->firstChild);
-        delete_node(node->nextBro);
-        delete_node(node);
+        if (node->block != NULL)
+        {
+            free(node->block->author);
+            CellProtected *cell = node->block->votes;
+            while (cell != NULL)
+            {
+                CellProtected *tmp = cell;
+                cell = cell->next;
+                Protected *pr = tmp->data;
+                if (pr)
+                {
+                    free(pr->message);
+                    free(pr->pKey);
+                    free(pr->signature->tab);
+                    free(pr->signature);
+                    free(pr);
+                }
+                // free(tmp);
+            }
+
+            delete_block(node->block);
+        }
+        free(node);
     }
 }
 
 void delete_tree(CellTree *ct)
 {
+
+    while (ct != NULL)
+    {
+        CellTree *toDelete = ct;
+        if (ct->firstChild != NULL)
+        {
+            delete_tree(ct->firstChild);
+        }
+        ct = ct->nextBro;
+        delete_node(toDelete);
+    }
 }
 
 // Question 8.6
@@ -152,39 +183,93 @@ CellTree *last_node(CellTree *ct)
     return last_node(highest_child(ct));
 }
 
-// Question 8.8
 CellProtected *fusion_cell_protected(CellProtected *c1, CellProtected *c2)
 {
 
-    if (c1 == NULL)
+    CellProtected *fusion = NULL;
+
+    CellProtected *tmpC1 = c1;
+    CellProtected *tmpC2 = c2;
+    while (tmpC1 != NULL)
     {
-        return c2;
+        Protected *pr = init_protected(tmpC1->data->pKey, tmpC1->data->message, tmpC1->data->signature);
+
+        add_cell_protected_to_head(&fusion, pr);
+        tmpC1 = tmpC1->next;
     }
 
-    if (c2 == NULL)
+    while (tmpC2 != NULL)
     {
-        return c1;
-    }
+        Protected *pr = init_protected(tmpC2->data->pKey, tmpC2->data->message, tmpC2->data->signature);
 
-    while (c1->next != NULL)
-    {
-        c1 = c1->next;
+        add_cell_protected_to_head(&fusion, pr);
+        tmpC2 = tmpC2->next;
     }
-    c1->next = c2;
-    return c1;
+    // CellProtected *ptr = NULL;
+    // if (c1 == NULL)
+    // {
+    //     c1 = c2;
+    //     return c1;
+    // }
+
+    // if (c2 == NULL)
+    // {
+    //     return c1;
+    // }
+    // ptr = c1;
+    // while (ptr->next != NULL)
+    // {
+    //     ptr = ptr->next;
+    // }
+    // ptr->next = c2;
+    return fusion;
 }
 
 // Question 8.9
 CellProtected *fusion_cell_protected_from_all_node(CellTree *ct)
 {
-    CellProtected *fusion = ct->block->votes;
+    CellProtected *fusion = NULL;
+    CellProtected *ctTmp = ct->block->votes;
+    while (ctTmp)
+    {
+        add_cell_protected_to_head(&fusion, ctTmp->data);
+        ctTmp = ctTmp->next;
+    }
+
     CellTree *tmp = ct;
     while (tmp->firstChild)
     {
         CellTree *highest = highest_child(tmp);
-        fusion_cell_protected(fusion, highest->block->votes);
-
+        CellProtected *fusionTmp = fusion_cell_protected(fusion, highest->block->votes);
+        while (fusion != NULL)
+        {
+            CellProtected *tmp = fusion;
+            fusion = fusion->next;
+            free(tmp);
+        }
+        fusion = fusionTmp;
         tmp = tmp->firstChild;
     }
     return fusion;
+}
+
+void delete_list_protected_from_node(CellProtected *c)
+{
+    CellProtected *cell = c;
+    while (cell != NULL)
+    {
+        CellProtected *tmp = cell;
+        cell = cell->next;
+        Protected *pr = tmp->data;
+        if (pr)
+        {
+            free(pr->message);
+            free(pr->pKey);
+            free(pr->signature->tab);
+            free(pr->signature);
+            free(pr);
+        }
+        // free(tmp);
+    }
+    // free(c);
 }

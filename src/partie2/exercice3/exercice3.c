@@ -1,3 +1,4 @@
+
 #include "exercice3.h"
 // Question 3.2
 void init_key(Key *key, long val, long n)
@@ -122,7 +123,7 @@ Signature *str_to_signature(char *str)
             if (pos != 0)
             {
                 buffer[pos] = '\0';
-                sscanf(buffer, "%lx", &(content[num]));
+                sscanf(buffer, "%lx", (long unsigned int *)&(content[num]));
                 num++;
                 pos = 0;
             }
