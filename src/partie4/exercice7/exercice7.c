@@ -317,6 +317,7 @@ void compute_proof_of_work(Block *block, int d)
     // sleep(2);
     while (1)
     {
+        // ecriture de n caracteres
         snprintf(nonce_to_str, sizeof(int), "%d", nonce);
 
         block_str = block_to_str(block);
@@ -328,6 +329,7 @@ void compute_proof_of_work(Block *block, int d)
         strcat(strcat(block_str_with_nonce, block_str), nonce_to_str);
         block_hash = str_to_SHA256(block_str_with_nonce);
 
+        // conversion en hexadecimal chaine de caractere
         hexadecimal = malloc(sizeof(char) * BUFFER_SIZE);
         memset(hexadecimal, 0, BUFFER_SIZE);
         printf("Reprensentation hexadecimal hash block : ");
@@ -338,6 +340,7 @@ void compute_proof_of_work(Block *block, int d)
             strcat(hexadecimal, buffer);
         }
 
+        //  conversion en binaire
         printf("\nReprensentation binaire hash block :\n");
         binary = hex_to_bin((unsigned char *)hexadecimal);
         printf("%s\n", binary);
@@ -345,6 +348,8 @@ void compute_proof_of_work(Block *block, int d)
         printf("\n");
         // Si commence par n zero alors on a completer preuve de travail
 
+        // on compare si notre valeur en binaire commence bien par le bon nombre de zero
+        // Pour eviter les overflow, on utilise strncmp
         if (strncmp(chaine_a_comparer, binary, d) == 0)
         {
             printf("---------------------------------------\n");

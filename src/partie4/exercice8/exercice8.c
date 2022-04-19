@@ -192,15 +192,40 @@ CellProtected *fusion_cell_protected(CellProtected *c1, CellProtected *c2)
     CellProtected *tmpC2 = c2;
     while (tmpC1 != NULL)
     {
-        Protected *pr = init_protected(tmpC1->data->pKey, tmpC1->data->message, tmpC1->data->signature);
+        Protected *pr = malloc(sizeof(Protected));
+        pr->message = strdup(tmpC1->data->message);
+        pr->pKey = malloc(sizeof(Key));
+        pr->pKey->a = tmpC1->data->pKey->a;
+        pr->pKey->b = tmpC1->data->pKey->b;
 
+        pr->signature = malloc(sizeof(Signature));
+        pr->signature->tab = malloc(sizeof(long) * tmpC1->data->signature->size);
+
+        for (int i = 0; i < tmpC1->data->signature->size; i++)
+        {
+            pr->signature->tab[i] = tmpC1->data->signature->tab[i];
+        }
+        pr->signature->size = tmpC1->data->signature->size;
         add_cell_protected_to_head(&fusion, pr);
         tmpC1 = tmpC1->next;
     }
 
     while (tmpC2 != NULL)
     {
-        Protected *pr = init_protected(tmpC2->data->pKey, tmpC2->data->message, tmpC2->data->signature);
+        Protected *pr = malloc(sizeof(Protected));
+        pr->message = strdup(tmpC2->data->message);
+        pr->pKey = malloc(sizeof(Key));
+        pr->pKey->a = tmpC2->data->pKey->a;
+        pr->pKey->b = tmpC2->data->pKey->b;
+
+        pr->signature = malloc(sizeof(Signature));
+        pr->signature->tab = malloc(sizeof(long) * tmpC2->data->signature->size);
+
+        for (int i = 0; i < tmpC2->data->signature->size; i++)
+        {
+            pr->signature->tab[i] = tmpC2->data->signature->tab[i];
+        }
+        pr->signature->size = tmpC2->data->signature->size;
 
         add_cell_protected_to_head(&fusion, pr);
         tmpC2 = tmpC2->next;
@@ -225,31 +250,37 @@ CellProtected *fusion_cell_protected(CellProtected *c1, CellProtected *c2)
     return fusion;
 }
 
+// CellProtected *fusion_cell_protected(CellProtected *l1, CellProtected *l2)
+// {
+//     if (l1 == NULL)
+//     {
+//         return l2;
+//     }
+//     CellProtected *cour = l1;
+//     while (cour->next)
+//     {
+//         cour = cour->next;
+//     }
+//     cour->next = l2;
+//     return l1;
+// }
+
 // Question 8.9
 CellProtected *fusion_cell_protected_from_all_node(CellTree *ct)
 {
+    CellTree *courant = highest_child(ct);
+
     CellProtected *fusion = NULL;
-    CellProtected *ctTmp = ct->block->votes;
-    while (ctTmp)
+    fusion = fusion_cell_protected(ct->block->votes, fusion);
+
+    while (courant != NULL)
     {
-        add_cell_protected_to_head(&fusion, ctTmp->data);
-        ctTmp = ctTmp->next;
+        CellProtected *fusionTmp = fusion_cell_protected(courant->block->votes, fusion); // Souvent, la liste de déclarations signées sera plus courte que res, donc on est potentiellement plus efficaces
+        delete_list_protected(fusion);
+        fusion = fusionTmp;
+        courant = highest_child(courant); // Highest child nous permet de choisir le bon suivant dans le parcours, sa complexité dépend du nombre de frères
     }
 
-    CellTree *tmp = ct;
-    while (tmp->firstChild)
-    {
-        CellTree *highest = highest_child(tmp);
-        CellProtected *fusionTmp = fusion_cell_protected(fusion, highest->block->votes);
-        while (fusion != NULL)
-        {
-            CellProtected *tmp = fusion;
-            fusion = fusion->next;
-            free(tmp);
-        }
-        fusion = fusionTmp;
-        tmp = tmp->firstChild;
-    }
     return fusion;
 }
 
@@ -264,12 +295,9 @@ void delete_list_protected_from_node(CellProtected *c)
         if (pr)
         {
             free(pr->message);
-            free(pr->pKey);
-            free(pr->signature->tab);
-            free(pr->signature);
             free(pr);
         }
-        // free(tmp);
+        free(tmp);
     }
     // free(c);
 }

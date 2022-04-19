@@ -333,7 +333,6 @@ void jeu_test_exercice_6bis()
     delete_list_keys(ck);
 
     // Q.6.7
-    // Il y a un problème de segmentation que je ne trouve pas
 
     generate_random_data(NB_VOTANT, NB_CANDIDAT);
     CellKey *lc = read_public_keys("election_donnee/candidates.txt");
@@ -543,7 +542,11 @@ void jeu_test_exercice_8()
     CellTree *lastNode = last_node(ct3);
     printf("Dernier node %s\n", lastNode->block->hash);
 
+    CellProtected *fusionDeuxNode = fusion_cell_protected(ct1->block->votes, ct2->block->votes);
+    print_list_protected(fusionDeuxNode);
+
     CellProtected *allFusion = fusion_cell_protected_from_all_node(ct1);
+    printf("----------------\n");
     print_list_protected(allFusion);
 
     // delete_node(ct1);
@@ -553,9 +556,10 @@ void jeu_test_exercice_8()
     // delete_node(ct5);
     delete_tree(ct1);
 
-    delete_list_protected_from_node(allFusion);
+    delete_list_protected(fusionDeuxNode);
+    delete_list_protected(allFusion);
 
-  
+    // delete_list_protected_from_node(allFusion);
 }
 
 void jeu_test_exercice_9()
@@ -579,33 +583,35 @@ void jeu_test_exercice_9()
 
     create_block(ct1, publicKey, DIFFICULTE);
 
-    // printf("dfgf\n");
-
     add_block(4, PENDING_BLOCK_FILE_PATH);
 
     CellTree *tree = read_tree();
     print_tree(tree);
+
+    // Free
     delete_node(ct1);
 
     free(secureKey);
     free(candidatPublic);
     free(publicKey);
 
+    free(chaine);
+
+    free(sgn->tab);
+    free(sgn);
+
     free(pr->message);
-    // free(pr->pKey);
-    free(pr->signature->tab);
-    free(pr->signature);
     free(pr);
 
-    free(chaine);
     delete_tree(tree);
 }
 
 void simulationComplete()
 {
-    CellTree *tree = create_node(NULL);
     generate_random_data(NB_VOTANT, NB_CANDIDAT);
     CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
+    CellProtected *cell = cp;
+    CellTree *tree = create_node(NULL);
     CellKey *clePopulation = read_public_keys("election_donnee/keys.txt");
     CellKey *cleCandidat = read_public_keys("election_donnee/candidates.txt");
     int i = 0;
@@ -617,6 +623,7 @@ void simulationComplete()
         {
             create_block(tree, cp->data->pKey, DIFFICULTE);
             add_block(DIFFICULTE, PENDING_BLOCK_FILE_PATH);
+            delete_tree(tree);
             tree = read_tree();
             i = 0;
         }
@@ -624,5 +631,16 @@ void simulationComplete()
     }
     print_tree(tree);
 
-    compute_winner_BT(tree, cleCandidat, clePopulation, NB_CANDIDAT, NB_VOTANT);
+    Key *vainqueur = compute_winner_BT(tree, cleCandidat, clePopulation, NB_CANDIDAT, NB_VOTANT);
+
+    while (cell != NULL)
+    {
+        CellProtected *tmp = cell;
+        cell = cell->next;
+        delete_cell_protect(tmp);
+    }
+    delete_list_keys(clePopulation);
+    delete_list_keys(cleCandidat);
+    delete_tree(tree);
+    free(vainqueur);
 }

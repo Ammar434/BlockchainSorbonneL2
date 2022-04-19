@@ -190,12 +190,15 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
     HashCell *actuelVainqueur = NULL;
     Key *messageKey = NULL;
     HashTable *votantHashTable = create_hashtable(voters, sizeV * 2);
+    // on met tous les participants dans une table de hachage
     count_element_hashtable(votantHashTable);
     HashTable *candidatsHashTable = create_hashtable(candidates, sizeC * 2);
+    // On fait la meme chose pour les candidats sachant qu'ils peuvent voter
     count_element_hashtable(candidatsHashTable);
     CellProtected *tmpDecl = decl;
     Key *keyVainqueur = malloc(sizeof(Key));
 
+    // Parcours de la liste de declaration
     while (tmpDecl != NULL)
     {
 
@@ -211,6 +214,7 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
                 if (compare_cle(candidatsHashTable->tab[hashValueCandidate]->key, messageKey))
                 {
                     (candidatsHashTable->tab[hashValueCandidate])->val = (candidatsHashTable->tab[hashValueCandidate])->val + 1;
+                    // actuelvainqueur est un invariant de boucle et contient le vainqueur de l'election au bout de n tours
                     if (actuelVainqueur == NULL || actuelVainqueur->val < candidatsHashTable->tab[hashValueCandidate]->val)
                     {
                         actuelVainqueur = candidatsHashTable->tab[hashValueCandidate];
@@ -224,12 +228,14 @@ Key *compute_winner(CellProtected *decl, CellKey *candidates, CellKey *voters, i
 
         tmpDecl = tmpDecl->next;
     }
+    // Verification qu'on ait bien un vainqueur
     if (actuelVainqueur != NULL)
     {
         keyVainqueur->a = actuelVainqueur->key->a;
         keyVainqueur->b = actuelVainqueur->key->b;
     }
 
+    // Affichage des détails de l'election
     for (int i = 0; i < candidatsHashTable->size; i++)
     {
         if (candidatsHashTable->tab[i] != NULL)

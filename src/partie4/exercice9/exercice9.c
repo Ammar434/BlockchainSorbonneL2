@@ -31,7 +31,7 @@ void create_block(CellTree *tree, Key *author, int d)
     newBlock->votes = read_protected_from_file(PENDING_VOTE_FILE_PATH);
     newBlock->nonce = d;
     compute_proof_of_work(newBlock, d);
-    // supprime le fichier ”Pending votes.txt” apr`es avoir cr´e´e le bloc
+    // supprime le fichier ”Pending votes.txt” apr`es avoir cr´e´e le bloc car tout le monde a fini de voter
     if (remove(PENDING_VOTE_FILE_PATH) == 0)
     {
         printf("The file is deleted successfully.\n");
@@ -42,9 +42,23 @@ void create_block(CellTree *tree, Key *author, int d)
     };
     // ecrit le bloc obtenu dans un fichier appel´e ”Pending block”.
     write_block_to_file(newBlock, PENDING_BLOCK_FILE_PATH);
-    // free(newBlock->author);
-    delete_list_protected_from_node(newBlock->votes);
 
+    CellProtected *tmp = NULL;
+    while (newBlock->votes)
+    {
+        tmp = newBlock->votes;
+        newBlock->votes = newBlock->votes->next;
+        Protected *pr = tmp->data;
+        if (pr)
+        {
+            free(pr->message);
+            free(pr->pKey);
+            free(pr->signature->tab);
+            free(pr->signature);
+            free(pr);
+        }
+        free(tmp);
+    }
     delete_block(newBlock);
 }
 
@@ -53,6 +67,8 @@ void add_block(int d, char *name)
 {
     Block *blockFromFile = read_block_from_file(name);
     int boolean = verify_block(blockFromFile, d);
+
+    // ecriture dans des blocs valide
     if (boolean == 1)
     {
         char *author = key_to_str(blockFromFile->author);
@@ -74,15 +90,30 @@ void add_block(int d, char *name)
     {
         printf("The file is not deleted.\n");
     };
+    // delete_list_protected_from_node(blockFromFile->votes);
+    CellProtected *tmp = NULL;
+    while (blockFromFile->votes)
+    {
+        tmp = blockFromFile->votes;
+        blockFromFile->votes = blockFromFile->votes->next;
+        Protected *pr = tmp->data;
+        if (pr)
+        {
+            free(pr->message);
+            free(pr->pKey);
+            free(pr->signature->tab);
+            free(pr->signature);
+            free(pr);
+        }
+        free(tmp);
+    }
     free(blockFromFile->author);
-    delete_list_protected_from_node(blockFromFile->votes);
 
     delete_block(blockFromFile);
 }
 
-
 // Q.9.4
-
+// compter le nombre de fichier dans le repertoire
 int count_file_in_directory(char *directory)
 {
     int i = 0;
@@ -106,19 +137,23 @@ CellTree *read_tree()
 {
     char filePathBuffer[BUFFER_SIZE];
     int nbFileInDirectory = count_file_in_directory(VALID_BLOCK_PATH);
+    // Creation d'un arbre avec le nombre de bloc valide
     CellTree **tabTree = malloc(sizeof(CellTree *) * nbFileInDirectory);
     int indexTabTree = 0;
     DIR *rep = opendir(VALID_BLOCK_PATH);
     if (rep != NULL)
     {
         struct dirent *dir;
+        // tant qu'on arrive à lire, on continue
         while ((dir = readdir(rep)))
         {
+            // S'assurer de la bonne lecture des fichiers qui ne sont pas caché
             if (strncmp(dir->d_name, ".", 1) != 0 && strncmp(dir->d_name, "..", 2) != 0)
             {
                 snprintf(filePathBuffer, sizeof(VALID_BLOCK_PATH) + sizeof(dir->d_name), "%s%s", VALID_BLOCK_PATH, dir->d_name);
                 printf("%s\n", filePathBuffer);
                 Block *blockFromFile1 = read_block_from_file(filePathBuffer);
+                // Stockage des nodes dans un tableau
                 tabTree[indexTabTree] = create_node(blockFromFile1);
                 indexTabTree++;
             }
@@ -134,11 +169,11 @@ CellTree *read_tree()
 
             if (hash_compare(tabTree[i]->block->hash, tabTree[j]->block->previous_hash) == 1)
             {
-                printf("uhk\n");
                 add_child(tabTree[i], tabTree[j]);
             }
         }
     }
+
     // On parcourt une derni`ere fois le tableau T pour trouver la racine de l’arbre
     for (int i = 0; i < nbFileInDirectory; i++)
     {
@@ -150,6 +185,8 @@ CellTree *read_tree()
         }
     }
     printf("Racine non trouvé\n");
+    free(tabTree);
+
     return NULL;
 }
 
@@ -163,6 +200,6 @@ Key *compute_winner_BT(CellTree *tree, CellKey *candidates, CellKey *voters, int
 
     Key *vainqueur = compute_winner(mergeDeclaration, candidates, voters, sizeC, sizeV);
 
-    delete_list_protected_from_node(mergeDeclaration);
+    delete_list_protected(mergeDeclaration);
     return vainqueur;
 }

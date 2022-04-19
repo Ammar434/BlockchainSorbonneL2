@@ -210,5 +210,5 @@ void delete_list_protected(CellProtected *c)
         cell = cell->next;
         delete_cell_protect(tmp);
     }
-    free(c);
+    // free(c);
 }
