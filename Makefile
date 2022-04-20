@@ -1,4 +1,4 @@
-CFLAGS = -g -Wall -Wextra -pedantic -ggdb3 
+CFLAGS = -g -Wall -Wextra -Werror -pedantic -ggdb3 
 CC = gcc
 
 PROGRAMS = main

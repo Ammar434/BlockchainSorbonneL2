@@ -115,7 +115,7 @@ int main()
     //     }
     // } while (rep != 0);
     // printf("Merci , et au revoir.\n");
-    // generate_random_data(NB_VOTANT, NB_CANDIDAT);
+    generate_random_data(NB_VOTANT, NB_CANDIDAT);
 
     // jeu_test_exercice_1();
     // jeu_test_exercice_2();

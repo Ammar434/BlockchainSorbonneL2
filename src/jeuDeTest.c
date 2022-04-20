@@ -178,6 +178,8 @@ void jeu_test_exercice_3()
 
 void jeu_test_exercice_5()
 {
+
+    generate_random_data(NB_VOTANT, NB_CANDIDAT);
     // Creation de la clé
     Key *k = (Key *)(malloc(sizeof(Key)));
     k->a = 1;
@@ -241,6 +243,7 @@ void jeu_test_exercice_5()
 
 void jeu_test_exercice_6()
 {
+    generate_random_data(NB_VOTANT, NB_CANDIDAT);
     CellProtected *cp = read_protected_from_file("election_donnee/declaration.txt");
     printf("Liste avant supprimer_fausse_signature\n");
     print_list_protected(cp);
