@@ -85,7 +85,6 @@ int find_position(HashTable *t, Key *key)
         {
             if (compare_cle(t->tab[position]->key, key) == 1)
             {
-                // printf("Element  trouvé\n");
                 return position;
             }
         }

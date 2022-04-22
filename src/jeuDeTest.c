@@ -515,8 +515,6 @@ void jeu_test_create_random_block()
 
 void jeu_test_exercice_8()
 {
-    // jeu_test_create_random_block();
-
     // Création de plusieurs blocs test
     // Q.8.1
     Block *blockFromFile1 = read_block_from_file("election_donnee/blocks/(3d87,447d).txt");
@@ -538,31 +536,38 @@ void jeu_test_exercice_8()
     add_child(ct1, ct3);
     add_child(ct2, ct4);
     add_child(ct4, ct5);
+    printf("\n");
 
+    // Q.8.4
+    // Affichage de l'arbre
+    print_tree(ct1);
+    printf("\n");
+
+    // Q.8.6
     CellTree *high = highest_child(ct1);
     printf("Plus grand des brothers %s\n", high->block->hash);
+    printf("\n");
 
+    // Q.8.7
     CellTree *lastNode = last_node(ct3);
     printf("Dernier node %s\n", lastNode->block->hash);
+    printf("\n");
 
+    // Q.8.8
     CellProtected *fusionDeuxNode = fusion_cell_protected(ct1->block->votes, ct2->block->votes);
     print_list_protected(fusionDeuxNode);
 
+    // Q.8.9
     CellProtected *allFusion = fusion_cell_protected_from_all_node(ct1);
     printf("----------------\n");
     print_list_protected(allFusion);
 
-    // delete_node(ct1);
-    // delete_node(ct2);
-    // delete_node(ct3);
-    // delete_node(ct4);
-    // delete_node(ct5);
+    // Q.8.5
     delete_tree(ct1);
 
+    // suppression des listes de protected
     delete_list_protected(fusionDeuxNode);
     delete_list_protected(allFusion);
-
-    // delete_list_protected_from_node(allFusion);
 }
 
 void jeu_test_exercice_9()
@@ -582,12 +587,16 @@ void jeu_test_exercice_9()
     Signature *sgn = sign(chaine, secureKey);
     Protected *pr = init_protected(publicKey, chaine, sgn);
 
+    // Q.9.1
     submit_vote(pr);
 
+    // Q.9.2
     create_block(ct1, publicKey, DIFFICULTE);
 
+    // Q.9.3
     add_block(4, PENDING_BLOCK_FILE_PATH);
 
+    // Q.9.4
     CellTree *tree = read_tree();
     print_tree(tree);
 
@@ -609,6 +618,7 @@ void jeu_test_exercice_9()
     delete_tree(tree);
 }
 
+// Q.9.5 et Q.9.6
 void simulationComplete()
 {
     generate_random_data(NB_VOTANT, NB_CANDIDAT);

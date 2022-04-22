@@ -9,7 +9,6 @@ CellTree *create_node(Block *b)
         printf("Erreur lors de l'allocation\n");
         return NULL;
     }
-    // ct->block = malloc(sizeof(Block));
     ct->block = b;
     ct->father = NULL,
     ct->firstChild = NULL;
@@ -29,7 +28,6 @@ int max(int a, int b)
 int update_height(CellTree *father, CellTree *child)
 {
     CellTree *grandFather = NULL;
-    // La hauteur est modifier?
     if (father->height != (child->height + 1))
     {
         father->height = max(father->height, child->height + 1);
@@ -122,7 +120,6 @@ void delete_node(CellTree *node)
                     free(pr->signature);
                     free(pr);
                 }
-                // free(tmp);
             }
 
             delete_block(node->block);
@@ -170,6 +167,7 @@ CellTree *highest_child(CellTree *ct)
 
     return highestNode;
 }
+
 // Question 8.7
 CellTree *last_node(CellTree *ct)
 {
@@ -230,40 +228,8 @@ CellProtected *fusion_cell_protected(CellProtected *c1, CellProtected *c2)
         add_cell_protected_to_head(&fusion, pr);
         tmpC2 = tmpC2->next;
     }
-    // CellProtected *ptr = NULL;
-    // if (c1 == NULL)
-    // {
-    //     c1 = c2;
-    //     return c1;
-    // }
-
-    // if (c2 == NULL)
-    // {
-    //     return c1;
-    // }
-    // ptr = c1;
-    // while (ptr->next != NULL)
-    // {
-    //     ptr = ptr->next;
-    // }
-    // ptr->next = c2;
     return fusion;
 }
-
-// CellProtected *fusion_cell_protected(CellProtected *l1, CellProtected *l2)
-// {
-//     if (l1 == NULL)
-//     {
-//         return l2;
-//     }
-//     CellProtected *cour = l1;
-//     while (cour->next)
-//     {
-//         cour = cour->next;
-//     }
-//     cour->next = l2;
-//     return l1;
-// }
 
 // Question 8.9
 CellProtected *fusion_cell_protected_from_all_node(CellTree *ct)
@@ -299,5 +265,4 @@ void delete_list_protected_from_node(CellProtected *c)
         }
         free(tmp);
     }
-    // free(c);
 }

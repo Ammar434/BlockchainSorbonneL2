@@ -197,8 +197,6 @@ void delete_block(Block *block)
 // Fonction qui permet de renvoyer la valeur hachee
 unsigned char *str_to_SHA256(char *chaine)
 {
-    // unsigned char *d = SHA256((unsigned char *)chaine, sizeof(chaine), 0);
-
     unsigned char *d = malloc(sizeof(char) * SHA256_DIGEST_LENGTH);
     unsigned char *uChaine = unsigned_strdup(chaine);
     SHA256(uChaine, strlen(chaine), d);
@@ -425,14 +423,12 @@ void simulation_compute_proof_of_work()
         somme_temps = 0;
         for (int i = 0; i < 2; i++)
         {
-            // printf("%s\n", block_to_str(block));
             temps_initial = clock();
             compute_proof_of_work(block, d);
             temps_final = clock();
             temps_cpu = (temps_final - temps_initial) * pow(10, -6);
             somme_temps = somme_temps + temps_cpu;
             printf("Iteration %d pour %d nb zero Duree %f\n", i, d, temps_cpu);
-            // free(pKey);
         }
         delete_block(block);
         free(sKey);

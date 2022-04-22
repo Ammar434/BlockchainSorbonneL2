@@ -31,7 +31,7 @@ void create_block(CellTree *tree, Key *author, int d)
     newBlock->votes = read_protected_from_file(PENDING_VOTE_FILE_PATH);
     newBlock->nonce = d;
     compute_proof_of_work(newBlock, d);
-    // supprime le fichier ”Pending votes.txt” apr`es avoir cr´e´e le bloc car tout le monde a fini de voter
+    // supprime le fichier ”Pending votes.txt” après avoir créé le bloc car tout le monde a fini de voter
     if (remove(PENDING_VOTE_FILE_PATH) == 0)
     {
         printf("The file is deleted successfully.\n");
@@ -40,7 +40,7 @@ void create_block(CellTree *tree, Key *author, int d)
     {
         printf("The file is not deleted.\n");
     };
-    // ecrit le bloc obtenu dans un fichier appel´e ”Pending block”.
+    // ecrit le bloc obtenu dans un fichier appelé ”Pending block”.
     write_block_to_file(newBlock, PENDING_BLOCK_FILE_PATH);
 
     CellProtected *tmp = NULL;
@@ -174,7 +174,7 @@ CellTree *read_tree()
         }
     }
 
-    // On parcourt une derni`ere fois le tableau T pour trouver la racine de l’arbre
+    // On parcourt une dernière fois le tableau T pour trouver la racine de l’arbre
     for (int i = 0; i < nbFileInDirectory; i++)
     {
         if (tabTree[i]->father == NULL)

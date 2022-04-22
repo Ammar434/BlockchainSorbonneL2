@@ -54,7 +54,6 @@ void generer_selection_candidat(char *filename, char *filename2, int nv, int nc)
                 sscanf(buffer, "%s %s", kPublic, kPrivee);
                 printf("%s\n", buffer);
                 fprintf(f2, "%s\n", kPublic);
-                // printf("%s\n", kPublic);
                 break;
             }
         }
