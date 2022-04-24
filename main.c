@@ -114,11 +114,9 @@ int main()
     // jeu_test_exercice_8();
     // jeu_test_exercice_9();
 
-    // AVANT DE TESTER LA FONCTION SUIVANTE, FAITES UN MAKE CLEAN !!!
+    // Q.9.6
+    // AVANT DE TESTER LA FONCTION SUIVANTE, FAITES UN MAKE CLEAN SVP!!!
     // simulationComplete();
-
-    // jeu_test_create_random_block();
-    // simulation_compute_proof_of_work();
 
     return 0;
 }
